@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>סימולציות בסטטיסטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1;
+  --accent:#2F5BD3; --yellow:#FFE04A; --orange:#F2892B; --median:#8A4FD0; --teal:#23A08A; --good:#17895F;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --yellow:#E8C93A; --orange:#F29A48; --median:#B990F0; --teal:#4CC9B0; --good:#3CC28A;}}
+:root[data-theme="dark"]{--bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --yellow:#E8C93A; --orange:#F29A48; --median:#B990F0; --teal:#4CC9B0; --good:#3CC28A;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:17px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding:36px 18px 28px}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.1;margin:0 0 8px}
+.lead{color:var(--muted);margin:0 0 30px;max-width:60ch}
+h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.2rem;margin:26px 0 12px;color:var(--muted)}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.card{background:var(--paper);border:1px solid var(--grid);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card svg{width:100%;height:84px;display:block;background:var(--bg);border-radius:10px}
+.card h3{margin:0;font-size:1.15rem;line-height:1.25}
+.card h3 a{color:var(--ink);text-decoration:none}
+.card h3 a::after{content:"";position:absolute;inset:0}
+.card{position:relative}
+.card p{margin:0;color:var(--muted);font-size:.95rem;flex:1}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;position:relative;z-index:1}
+.open{font-weight:700;color:var(--accent);text-decoration:none}
+.copy{font:inherit;font-size:.88rem;font-weight:600;border:1.5px solid var(--grid);background:var(--paper);color:var(--ink);border-radius:8px;padding:4px 10px;cursor:pointer}
+.copy.done{border-color:var(--good);color:var(--good)}
+.tag{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.02em}
+.credit{margin-top:40px;font-size:.82rem;color:var(--muted)}
+.credit a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>סימולציות בסטטיסטיקה</h1>
+  <p class="lead">סימולציות אינטראקטיביות לשיעורי מדדי מרכז ופיזור, התפלגויות וקשר בין משתנים. בחרו סימולציה כדי לפתוח אותה.</p>
+
+  <h2>מדדי מרכז ופיזור</h2>
+  <div class="cards">
+    <article class="card">
+      <svg viewBox="0 0 300 84" aria-hidden="true"><rect x="40" y="20" width="220" height="48" rx="4" fill="var(--paper)" stroke="var(--grid)"/><rect x="60" y="30" width="60" height="8" rx="2" fill="var(--ink)" opacity=".7"/><rect x="60" y="46" width="90" height="5" rx="2" fill="var(--muted)" opacity=".5"/><rect x="170" y="30" width="70" height="12" rx="3" fill="var(--orange)"/><rect x="170" y="48" width="70" height="12" rx="3" fill="#00B0F0"/><rect x="40" y="64" width="220" height="4" fill="#FFC926"/></svg>
+      <span class="tag">מצגת</span>
+      <h3><a href="presentation.html">השפעה של שינוי בערכים על מדדי מרכז ופיזור</a></h3>
+      <p>מצגת מקדימה: מה קורה לממוצע, לחציון, לטווח ולסטיית התקן כשמוסיפים, מורידים או מחליפים ערך.</p>
+      <div class="row"><a class="open" href="presentation.html">פתיחה ←</a><button class="copy" data-href="presentation.html">העתקת קישור</button></div>
+    </article>
+    <article class="card">
+      <svg viewBox="0 0 300 84" aria-hidden="true"><g stroke="var(--ink)" stroke-width="1"><circle cx="70" cy="60" r="6" fill="var(--yellow)"/><circle cx="100" cy="60" r="6" fill="var(--yellow)"/><circle cx="100" cy="46" r="6" fill="var(--yellow)"/><circle cx="130" cy="60" r="6" fill="var(--yellow)"/><circle cx="130" cy="46" r="6" fill="var(--yellow)"/><circle cx="130" cy="32" r="6" fill="var(--yellow)"/><circle cx="160" cy="60" r="6" fill="var(--yellow)"/><circle cx="160" cy="46" r="6" fill="var(--yellow)"/><circle cx="190" cy="60" r="6" fill="var(--yellow)"/><circle cx="250" cy="60" r="6" fill="var(--orange)"/></g><line x1="50" x2="270" y1="68" y2="68" stroke="var(--ink)"/><path d="M148 74 l6 8 h-12 Z" fill="var(--accent)"/></svg>
+      <span class="tag">סימולציה</span>
+      <h3><a href="measures-sim.html">מה קורה למדדים כשמשנים ערך?</a></h3>
+      <p>29 ציונים. משנים, מוסיפים או מוחקים ערך, ומסמנים מה קרה לממוצע, לחציון, לטווח ולסטיית התקן.</p>
+      <div class="row"><a class="open" href="measures-sim.html">פתיחה ←</a><button class="copy" data-href="measures-sim.html">העתקת קישור</button></div>
+    </article>
+    <article class="card">
+      <svg viewBox="0 0 300 84" aria-hidden="true"><path d="M40 70 C90 70 100 20 120 20 C140 20 150 70 200 70 Z" fill="#8A93A8" fill-opacity=".35" stroke="#8A93A8" stroke-width="2"/><path d="M90 70 C160 70 170 36 200 36 C230 36 240 70 290 70 Z" fill="var(--orange)" fill-opacity=".35" stroke="var(--orange)" stroke-width="2"/><line x1="20" x2="290" y1="70" y2="70" stroke="var(--ink)"/><line x1="122" x2="192" y1="62" y2="62" stroke="var(--ink)" stroke-width="1.8"/><path d="M198 62 l-7 -4 v8 Z" fill="var(--ink)"/></svg>
+      <span class="tag">סימולציה</span>
+      <h3><a href="transform-sim.html">פעולה על כל הערכים: מה קורה למדדים?</a></h3>
+      <p>הוספה, הפחתה, הכפלה וחלוקה בקבוע, על התפלגות נורמלית. ההתפלגות המקורית נשארת והחדשה מופיעה מעליה.</p>
+      <div class="row"><a class="open" href="transform-sim.html">פתיחה ←</a><button class="copy" data-href="transform-sim.html">העתקת קישור</button></div>
+    </article>
+  </div>
+
+  <h2>התפלגויות</h2>
+  <div class="cards">
+    <article class="card">
+      <svg viewBox="0 0 300 84" aria-hidden="true"><g opacity=".9"><rect x="50" y="46" width="30" height="14" fill="#C9D6EA"/><rect x="80" y="22" width="30" height="38" fill="#C9D6EA"/><rect x="110" y="14" width="30" height="46" fill="#C9D6EA"/><rect x="140" y="30" width="30" height="30" fill="#C9D6EA"/><rect x="170" y="44" width="30" height="16" fill="#C9D6EA"/><rect x="200" y="52" width="30" height="8" fill="#C9D6EA"/><rect x="230" y="56" width="30" height="4" fill="#C9D6EA"/></g><line x1="40" x2="270" y1="60" y2="60" stroke="var(--ink)"/><line x1="58" x2="88" y1="74" y2="74" stroke="#4C78D0" stroke-width="3"/><rect x="88" y="67" width="30" height="14" fill="var(--teal)" fill-opacity=".35" stroke="var(--teal)" stroke-width="2"/><rect x="118" y="67" width="44" height="14" fill="#E09A12" fill-opacity=".35" stroke="#E09A12" stroke-width="2"/><line x1="162" x2="222" y1="74" y2="74" stroke="#D8574E" stroke-width="3"/><circle cx="250" cy="74" r="3.5" fill="none" stroke="#D8574E" stroke-width="2"/></svg>
+      <span class="tag">סימולציה</span>
+      <h3><a href="distributions-sim.html">אותם נתונים, שלושה תרשימים</a></h3>
+      <p>תרשים נקודות, היסטוגרמה ובוקספלוט של אותם נתונים, בהתפלגות סימטרית, אסימטרית ימנית ואסימטרית שמאלית.</p>
+      <div class="row"><a class="open" href="distributions-sim.html">פתיחה ←</a><button class="copy" data-href="distributions-sim.html">העתקת קישור</button></div>
+    </article>
+  </div>
+
+  <h2>קשר בין משתנים</h2>
+  <div class="cards">
+    <article class="card">
+      <svg viewBox="0 0 300 84" aria-hidden="true"><line x1="30" y1="66" x2="140" y2="46" stroke="var(--ink)" stroke-width="2"/><g fill="#4C78D0"><circle cx="45" cy="63" r="3.5"/><circle cx="62" cy="60" r="3.5"/><circle cx="78" cy="58" r="3.5"/><circle cx="95" cy="54" r="3.5"/><circle cx="110" cy="52" r="3.5"/><circle cx="125" cy="48" r="3.5"/></g><line x1="170" y1="76" x2="280" y2="10" stroke="var(--ink)" stroke-width="2"/><g fill="#E0891A"><circle cx="180" cy="56" r="3.5"/><circle cx="195" cy="74" r="3.5"/><circle cx="210" cy="38" r="3.5"/><circle cx="225" cy="62" r="3.5"/><circle cx="240" cy="22" r="3.5"/><circle cx="255" cy="48" r="3.5"/><circle cx="268" cy="14" r="3.5"/></g></svg>
+      <span class="tag">סימולציה</span>
+      <h3><a href="correlation-sim.html">קשר חזק לא אומר קו תלול</a></h3>
+      <p>שני תרשימי פיזור זה לצד זה, עם מחוונים ל-r ולשיפוע. עוצמת הקשר נמדדת בפיזור סביב הקו, לא בשיפוע שלו.</p>
+      <div class="row"><a class="open" href="correlation-sim.html">פתיחה ←</a><button class="copy" data-href="correlation-sim.html">העתקת קישור</button></div>
+    </article>
+  </div>
+
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async e=>{
+  e.preventDefault();e.stopPropagation();
+  const url=new URL(b.dataset.href,location.href).href;
+  try{await navigator.clipboard.writeText(url);}catch(err){window.prompt('העתיקו את הקישור:',url);return;}
+  const t=b.textContent;b.textContent='הקישור הועתק';b.classList.add('done');
+  setTimeout(()=>{b.textContent=t;b.classList.remove('done');},1800);
+}));
+</script>
+</body>
+</html>

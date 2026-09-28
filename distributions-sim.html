@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תרשים נקודות, היסטוגרמה ובוקספלוט</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1;
+  --accent:#2F5BD3; --median:#8A4FD0; --bar:#C9D6EA; --barhi:#8FA8D6;
+  --q0:#4C78D0; --q1:#23A08A; --q2:#E09A12; --q3:#D8574E;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550;
+  --accent:#7C9BFF; --median:#B990F0; --bar:#33415E; --barhi:#50648F;
+  --q0:#7FA2F0; --q1:#4CC9B0; --q2:#F2B84B; --q3:#F07F76;}}
+:root[data-theme="dark"]{
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550;
+  --accent:#7C9BFF; --median:#B990F0; --bar:#33415E; --barhi:#50648F;
+  --q0:#7FA2F0; --q1:#4CC9B0; --q2:#F2B84B; --q3:#F07F76;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{max-width:1440px;margin:0 auto;padding:14px 14px 30px}
+.mnote{background:#FFF4E0;color:#1B2540;border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:.95rem}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-bottom:12px}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.15;margin:0}
+.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem}
+h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.05rem;margin:0 0 8px}
+.seg{display:flex;background:var(--paper);border:1.5px solid var(--grid);border-radius:12px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:8px 14px;background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.grid{display:grid;gap:12px}
+.chartp{order:-1}
+.panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px}
+#chart{width:100%;touch-action:manipulation}
+svg text{font-family:"Assistant",Arial,sans-serif}
+.cap h2{margin-bottom:4px}
+.cap ul{margin:6px 0 0;padding:0 18px 0 0}
+.cap li{margin-bottom:4px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:5px 6px;border-bottom:1px solid var(--grid);text-align:right}
+td.num{direction:ltr;text-align:right;font-weight:700}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:6px;vertical-align:middle}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bw button{font:inherit;font-weight:700;border:1.5px solid var(--grid);background:var(--paper);color:var(--ink);border-radius:8px;padding:4px 12px;cursor:pointer}
+.bw button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--paper)}
+.keybar{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid var(--grid);margin-bottom:4px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.9rem}
+.hint{color:var(--muted);font-size:.86rem;margin:6px 0 0}
+.lines{font-size:.88rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (min-width:1000px){
+  .app{height:100%;display:flex;flex-direction:column;padding-bottom:14px}
+  .mnote{display:none}
+  .grid{flex:1;min-height:0;grid-template-columns:minmax(320px,370px) minmax(0,1fr)}
+  .side{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto}
+  .chartp{display:flex;flex-direction:column;min-height:0;order:0}
+  #chart{flex:1;min-height:0}
+}
+.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.back:hover{color:var(--accent);text-decoration:underline}
+.credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
+.credit a{color:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="mnote">מומלץ לעבוד במחשב: שם כל חלקי הסימולציה נראים יחד במסך אחד.</p>
+  <header class="top">
+    <div>
+      <a class="back" href="index.html">→ כל הסימולציות</a>
+      <h1>אותם נתונים, שלושה תרשימים</h1>
+      <p class="lead">ציוני 100 תלמידים במבחן. בחרו סוג התפלגות וראו איך תרשים הנקודות, ההיסטוגרמה והבוקספלוט משתנים יחד.</p>
+    </div>
+    <div class="seg" id="seg" role="group" aria-label="סוג התפלגות">
+      <button data-s="normal">נורמלית (סימטרית)</button>
+      <button data-s="right">אסימטרית ימנית</button>
+      <button data-s="left">אסימטרית שמאלית</button>
+    </div>
+  </header>
+  <div class="grid">
+    <aside class="side">
+      <section class="panel cap" id="cap" aria-live="polite"></section>
+      <section class="panel">
+        <h2>מדדים</h2>
+        <table><tbody id="stats"></tbody></table>
+      </section>
+    </aside>
+    <section class="panel chartp" aria-label="התרשימים">
+      <div class="keybar">
+        <div class="legend">
+          <span><i class="dot" style="background:var(--q0)"></i>רבע תחתון</span>
+          <span><i class="dot" style="background:var(--q1)"></i>רבע שני</span>
+          <span><i class="dot" style="background:var(--q2)"></i>רבע שלישי</span>
+          <span><i class="dot" style="background:var(--q3)"></i>רבע עליון</span>
+        </div>
+        <div class="lines">
+          <span style="color:var(--accent)">━ ממוצע</span>
+          <span style="color:var(--median)">┅ חציון</span>
+          <span>┄ רבעון תחתון ועליון</span>
+        </div>
+        <div class="row bw" id="bw" role="group" aria-label="רוחב עמודה בהיסטוגרמה">
+          <span>רוחב עמודה בהיסטוגרמה:</span>
+          <button data-w="5">5</button><button data-w="10">10</button><button data-w="20">20</button>
+        </div>
+      </div>
+      <div id="chart"></div>
+      <p class="hint">כל צבע הוא רבע מהתלמידים (25), גם כשהחלקים בבוקספלוט באורכים שונים. ציון שחוזר כמה פעמים בדיוק על גבול של רבעון יכול להופיע בשני צבעים. העבירו את העכבר (או הקישו) על נקודה, עמודה או חלק בבוקספלוט כדי לראות אילו תלמידים שייכים אליו.</p>
+    </section>
+  </div>
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+<script>
+const R=[42,42,43,43,44,44,44,44,45,45,45,45,46,46,46,46,46,47,47,47,47,47,48,48,48,48,49,49,49,49,49,50,50,50,50,50,51,51,51,51,51,52,52,52,52,53,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,57,57,57,57,58,58,58,59,59,59,60,60,61,61,61,62,62,63,63,64,64,65,65,66,67,67,68,69,70,71,72,73,74,76,78,80,83,87,97];
+const DATA={
+  normal:[42,46,48,49,50,51,52,52,53,54,54,55,55,55,56,56,57,57,57,58,58,58,59,59,59,59,60,60,60,61,61,61,61,62,62,62,62,63,63,63,63,63,64,64,64,64,65,65,65,65,66,66,66,66,66,67,67,67,67,68,68,68,68,69,69,69,69,69,70,70,70,71,71,71,71,72,72,72,73,73,73,73,74,74,75,75,75,76,76,77,77,78,78,79,80,81,82,83,85,89],
+  right:R,
+  left:R.map(v=>140-v).sort((a,b)=>a-b)
+};
+const LO=40,HI=100,N=100;
+const QC=['var(--q0)','var(--q1)','var(--q2)','var(--q3)'];
+function quant(s,p){const h=(s.length-1)*p,l=Math.floor(h);return s[l]+(h-l)*((s[l+1]??s[l])-s[l]);}
+function stats(s){
+  const mean=s.reduce((a,b)=>a+b,0)/s.length,q1=quant(s,.25),med=quant(s,.5),q3=quant(s,.75),iqr=q3-q1;
+  const f1=q1-1.5*iqr,f2=q3+1.5*iqr;
+  const inside=s.filter(v=>v>=f1&&v<=f2);
+  return {mean,q1,med,q3,iqr,min:s[0],max:s[s.length-1],wlo:inside[0],whi:inside[inside.length-1],out:s.filter(v=>v<f1||v>f2)};
+}
+const binOf=(v,w)=>v<=LO?0:Math.ceil((v-LO)/w)-1;
+function counts(s,w){const c=new Array((HI-LO)/w).fill(0);s.forEach(v=>c[binOf(v,w)]++);return c;}
+function stacks(s){const k={};return s.map(v=>(k[v]=(k[v]||0)+1));}
+const MAXSTACK=Math.max(...Object.values(DATA).map(s=>Math.max(...stacks(s))));
+const HMAX={};[5,10,20].forEach(w=>HMAX[w]=Math.max(...Object.values(DATA).map(s=>Math.max(...counts(s,w)))));
+
+const CAP={
+  normal:s=>({t:'מבחן רגיל: התפלגות סימטרית',b:[
+    'ההיסטוגרמה בצורת פעמון, בלי זנב בולט לאף צד.',
+    `הממוצע (${f(s.mean)}) והחציון (${f(s.med)}) כמעט שווים.`,
+    'בבוקספלוט החציון כמעט באמצע הקופסה, והשפמים באורך דומה.']}),
+  right:s=>({t:'מבחן קשה: אסימטרית ימנית (זנב ימני)',b:[
+    'רוב הציונים נמוכים, ומעט ציונים גבוהים יוצרים זנב ארוך ימינה.',
+    `הזנב מושך את הממוצע (${f(s.mean)}) מעל החציון (${f(s.med)}). זה המצב הנפוץ באסימטריה ימנית, אם כי לא חוק שמתקיים תמיד.`,
+    'בבוקספלוט החציון קרוב לצד השמאלי של הקופסה והשפם הימני ארוך יותר. החריגים (ערכים שרחוקים מהקופסה יותר מפי 1.5 מהטווח הבין-רבעוני) נמצאים מימין, והשפם נגמר לפניהם ולא במקסימום.']}),
+  left:s=>({t:'מבחן קל: אסימטרית שמאלית (זנב שמאלי)',b:[
+    'רוב הציונים גבוהים, ומעט ציונים נמוכים יוצרים זנב ארוך שמאלה.',
+    `הזנב מושך את הממוצע (${f(s.mean)}) מתחת לחציון (${f(s.med)}). זה המצב הנפוץ באסימטריה שמאלית, אם כי לא חוק שמתקיים תמיד.`,
+    'בבוקספלוט החציון קרוב לצד הימני של הקופסה והשפם השמאלי ארוך יותר. החריגים (ערכים שרחוקים מהקופסה יותר מפי 1.5 מהטווח הבין-רבעוני) נמצאים משמאל, והשפם נגמר לפניהם ולא במינימום.']})
+};
+function f(x){return (Math.round(x*100)/100).toString();}
+
+let state={sc:'normal',w:10,hl:null};
+let from=null,anim=null;
+
+function target(sc){
+  const s=DATA[sc];const st=stats(s);
+  return {x:s.slice(),k:stacks(s),c:counts(s,state.w),st};
+}
+function lerp(a,b,t){return a+(b-a)*t;}
+function mix(A,B,t){
+  return {x:A.x.map((v,i)=>lerp(v,B.x[i],t)),k:A.k.map((v,i)=>lerp(v,B.k[i],t)),c:A.c.map((v,i)=>lerp(v,B.c[i],t)),
+    st:Object.fromEntries(['mean','q1','med','q3','wlo','whi'].map(k=>[k,lerp(A.st[k],B.st[k],t)])),out:t>=1?B.st.out:[],outA:t<1?A.st.out:[],t};
+}
+const desk=()=>!!(window.matchMedia&&window.matchMedia('(min-width:1000px)').matches);
+
+function draw(G){
+  const box=document.getElementById('chart');
+  const W=Math.max(300,box.clientWidth);
+  const H=desk()?Math.max(380,box.clientHeight):Math.round(Math.min(620,W*1.35));
+  const mL=14,mR=14,top=26,x=v=>mL+(v-LO)/(HI-LO)*(W-mL-mR);
+  const labH=22,axH=22,gapB=18;
+  const avail=H-top-3*labH-2*axH-2*gapB-10;
+  const hDot=avail*0.42,hHist=avail*0.36,hBox=avail*0.22;
+  const colW=(W-mL-mR)/(HI-LO);
+  const gap=Math.min(colW*1.05,hDot/MAXSTACK),r=Math.max(1.6,Math.min(gap/2-0.4,colW/2-0.2));
+  const y0=top+labH,axDot=y0+hDot;
+  const y1=axDot+axH+gapB+labH,axHist=y1+hHist;
+  const y2=axHist+axH+gapB+labH,boxMid=y2+hBox/2;
+  const st=G.st,hl=state.hl;
+  const rankQ=i=>Math.min(3,Math.floor(i/(N/4)));
+  const isHl=(i,v)=>!hl?true:hl.type==='bin'?binOf(v,state.w)===hl.v:hl.type==='q'?rankQ(i)===hl.v:hl.type==='dot'?i===hl.v:true;
+  const hlBin=hl?(hl.type==='bin'?hl.v:hl.type==='dot'?binOf(DATA[state.sc][hl.v],state.w):null):null;
+  const hlQ=hl?(hl.type==='q'?hl.v:hl.type==='dot'?rankQ(hl.v):null):null;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="direction:ltr;display:block" role="img" aria-label="תרשים נקודות, היסטוגרמה ובוקספלוט של הציונים">`;
+  s+=`<rect x="0" y="0" width="${W}" height="${H}" fill="transparent" data-bg="1"/>`;
+  const label=(t,y)=>`<text x="${W-mR}" y="${y-7}" text-anchor="end" font-size="14" font-weight="700" fill="var(--ink)">${t}</text>`;
+  const axis=(y)=>{let a=`<line x1="${mL}" x2="${W-mR}" y1="${y}" y2="${y}" stroke="var(--ink)" stroke-width="1.2"/>`;
+    for(let t=LO;t<=HI;t+=10)a+=`<line x1="${x(t)}" x2="${x(t)}" y1="${y}" y2="${y+4}" stroke="var(--ink)"/><text x="${x(t)}" y="${y+17}" text-anchor="middle" font-size="12" fill="var(--muted)">${t}</text>`;return a;};
+  // guide lines across all
+  const gl=(v,c,dash,w)=>`<line x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${y2+hBox}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} opacity=".85"/>`;
+  s+=gl(st.q1,'var(--muted)','3 4',1)+gl(st.q3,'var(--muted)','3 4',1)+gl(st.med,'var(--median)','6 4',2)+gl(st.mean,'var(--accent)','',2);
+  s+=`<text x="${x(st.mean)}" y="${top-8}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent)">ממוצע</text>`;
+  s+=`<text x="${x(st.med)}" y="${top+6}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--median)" dy="${Math.abs(x(st.med)-x(st.mean))<42?6:-14}">חציון</text>`;
+  // dots
+  s+=label('תרשים נקודות',y0)+axis(axDot);
+  G.x.forEach((v,i)=>{const cy=axDot-r-1-(G.k[i]-1)*gap;const on=isHl(i,DATA[state.sc][i]);
+    s+=`<circle data-dot="${i}" cx="${x(v)}" cy="${cy}" r="${r}" fill="${QC[rankQ(i)]}" opacity="${on?1:.15}" stroke="${hl&&hl.type==='dot'&&hl.v===i?'var(--ink)':'none'}" stroke-width="2"/>`;});
+  // histogram
+  s+=label('היסטוגרמה'+(W>600?` (רוחב עמודה ${state.w})`:''),y1)+axis(axHist);
+  const hm=HMAX[state.w]*1.15;
+  for(let t=0;t<=HMAX[state.w];t+=HMAX[state.w]>20?10:5)s+=`<line x1="${mL}" x2="${W-mR}" y1="${axHist-t/hm*hHist}" y2="${axHist-t/hm*hHist}" stroke="var(--grid)"/>`;
+  G.c.forEach((c,b)=>{const a=LO+b*state.w,bh=c/hm*hHist,xx=x(a),ww=x(a+state.w)-xx;
+    const hi=hlBin===b;
+    s+=`<rect data-bin="${b}" x="${xx+0.5}" y="${axHist-bh}" width="${ww-1}" height="${Math.max(0,bh)}" fill="${hi?'var(--barhi)':'var(--bar)'}" stroke="${hi?'var(--ink)':'var(--paper)'}" stroke-width="${hi?2:1}"/>`;
+    if(G.t>=1&&c>0)s+=`<text x="${xx+ww/2}" y="${axHist-bh-4}" text-anchor="middle" font-size="${ww<22?10:12}" fill="var(--muted)" pointer-events="none">${c}</text>`;
+    // invisible hit area for empty-ish bars
+    s+=`<rect data-bin="${b}" x="${xx}" y="${y1}" width="${ww}" height="${hHist}" fill="transparent"/>`;});
+  // box plot
+  s+=label('בוקספלוט',y2)+axis(y2+hBox+4);
+  const bh2=Math.min(46,hBox*0.7),bt=boxMid-bh2/2;
+  const seg=(q,a,b,isBox)=>{const on=hlQ===null||hlQ===q,col=QC[q];
+    if(isBox)return `<rect data-q="${q}" x="${x(a)}" y="${bt}" width="${Math.max(0,x(b)-x(a))}" height="${bh2}" fill="${col}" fill-opacity="${on?.35:.08}" stroke="${col}" stroke-width="${hlQ===q?3:2}"/>`;
+    return `<line x1="${x(a)}" x2="${x(b)}" y1="${boxMid}" y2="${boxMid}" stroke="${col}" stroke-width="${hlQ===q?5:3}" opacity="${on?1:.25}"/><line x1="${x(q===0?a:b)}" x2="${x(q===0?a:b)}" y1="${boxMid-bh2/4}" y2="${boxMid+bh2/4}" stroke="${col}" stroke-width="3" opacity="${on?1:.25}"/><rect data-q="${q}" x="${Math.min(x(a),x(b))}" y="${bt}" width="${Math.abs(x(b)-x(a))+1}" height="${bh2}" fill="transparent"/>`;};
+  s+=seg(0,st.wlo,st.q1,false)+seg(3,st.q3,st.whi,false)+seg(1,st.q1,st.med,true)+seg(2,st.med,st.q3,true);
+  s+=`<line x1="${x(st.med)}" x2="${x(st.med)}" y1="${bt}" y2="${bt+bh2}" stroke="var(--median)" stroke-width="3"/>`;
+  s+=`<path d="M${x(st.mean)} ${bt+bh2+3} l6 9 h-12 Z" fill="var(--accent)"/>`;
+  const oq=v=>v<st.med?0:3;
+  G.out.forEach(v=>{s+=`<circle cx="${x(v)}" cy="${boxMid}" r="5" fill="none" stroke="${QC[oq(v)]}" stroke-width="2.5" opacity="${hlQ===null||hlQ===oq(v)?1:.25}"/>`;
+    });
+  if(hl&&hl.type==='dot'){const v=DATA[state.sc][hl.v];const cx=x(G.x[hl.v]);const tx=Math.min(W-70,Math.max(70,cx));
+    s+=`<g pointer-events="none"><rect x="${tx-62}" y="${top-24}" width="124" height="22" rx="6" fill="var(--ink)"/><text x="${tx}" y="${top-9}" text-anchor="middle" font-size="12" fill="var(--paper)">ציון ${v} · ${['רבע תחתון','רבע שני','רבע שלישי','רבע עליון'][rankQ(hl.v)]}</text></g>`;}
+  s+='</svg>';box.innerHTML=s;
+  if(G.t>=1)bind();
+}
+function bind(){
+  const box=document.getElementById('chart');
+  const set=h=>{const k=JSON.stringify(h);if(k!==JSON.stringify(state.hl)){state.hl=h;draw(cur());}};
+  box.querySelectorAll('[data-dot]').forEach(el=>{el.onpointerenter=e=>{if(e.pointerType==='mouse')set({type:'dot',v:+el.dataset.dot});};el.onclick=e=>{e.stopPropagation();set({type:'dot',v:+el.dataset.dot});};});
+  box.querySelectorAll('[data-bin]').forEach(el=>{el.onpointerenter=e=>{if(e.pointerType==='mouse')set({type:'bin',v:+el.dataset.bin});};el.onclick=e=>{e.stopPropagation();set({type:'bin',v:+el.dataset.bin});};});
+  box.querySelectorAll('[data-q]').forEach(el=>{el.onpointerenter=e=>{if(e.pointerType==='mouse')set({type:'q',v:+el.dataset.q});};el.onclick=e=>{e.stopPropagation();set({type:'q',v:+el.dataset.q});};});
+  box.querySelector('svg').onpointerleave=e=>{if(e.pointerType==='mouse')set(null);};
+  box.querySelector('[data-bg]').onclick=()=>set(null);
+}
+let current=null;
+function cur(){return current;}
+function side(){
+  const st=stats(DATA[state.sc]);const c=CAP[state.sc](st);
+  document.getElementById('cap').innerHTML=`<h2>${c.t}</h2><ul>${c.b.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  const rows=[['ממוצע',st.mean,'var(--accent)'],['חציון',st.med,'var(--median)'],['רבעון תחתון',st.q1],['רבעון עליון',st.q3],['טווח בין-רבעוני',st.iqr],['מינימום',st.min],['מקסימום',st.max]];
+  document.getElementById('stats').innerHTML=rows.map(([l,v,c])=>`<tr><td${c?` style="color:${c};font-weight:700"`:''}>${l}</td><td class="num">${f(v)}</td></tr>`).join('');
+  document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===state.sc));
+  document.querySelectorAll('#bw button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.w===state.w));
+}
+function go(sc){
+  if(sc===state.sc&&current)return;
+  const A=current?{x:current.x,k:current.k,c:current.c,st:{...current.st,out:[]}}:null;
+  state.sc=sc;state.hl=null;side();
+  const B=target(sc);
+  if(!A||matchMedia('(prefers-reduced-motion: reduce)').matches){current=mix(B,B,1);draw(current);return;}
+  const t0=performance.now(),D=750;cancelAnimationFrame(anim);
+  const step=now=>{let t=Math.min(1,(now-t0)/D);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    current=mix(A,B,t>=1?1:e);if(t>=1)current.out=B.st.out;draw(current);if(t<1)anim=requestAnimationFrame(step);};
+  anim=requestAnimationFrame(step);
+}
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>go(b.dataset.s));
+document.querySelectorAll('#bw button').forEach(b=>b.onclick=()=>{cancelAnimationFrame(anim);state.w=+b.dataset.w;state.hl=null;const B=target(state.sc);current=mix(B,B,1);side();draw(current);});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>current&&draw(current),120);});
+go('normal');
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>current&&draw(current));
+</script>
+</body>
+</html>

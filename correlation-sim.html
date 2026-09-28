@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>קשר חזק לא אומר קו תלול</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1;
+  --accent:#2F5BD3; --A:#4C78D0; --B:#E0891A; --warnbg:#FFF4E0;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --A:#7FA2F0; --B:#F2A54B; --warnbg:#3A2E1A;}}
+:root[data-theme="dark"]{--bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --A:#7FA2F0; --B:#F2A54B; --warnbg:#3A2E1A;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{max-width:1300px;margin:0 auto;padding:14px 14px 30px}
+.mnote{background:var(--warnbg);border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:.95rem}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-bottom:10px}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.15;margin:0}
+.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem}
+.presets{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.presets span{font-weight:600;color:var(--muted)}
+.presets button{font:inherit;font-weight:700;border:1.5px solid var(--grid);background:var(--paper);color:var(--ink);border-radius:9px;padding:7px 12px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.cap{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:10px 14px;margin-bottom:12px;min-height:48px}
+.cap b{font-weight:700}
+.pair{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.pair{grid-template-columns:1fr 1fr}}
+.panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;min-height:0}
+.phead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px}
+.pname{font-family:"Secular One","Assistant",Arial,sans-serif;font-size:1.2rem}
+.big{font-size:1.35rem;font-weight:700;direction:ltr;font-variant-numeric:tabular-nums}
+.big small{font-size:.95rem;color:var(--muted);font-weight:600;margin-left:10px}
+.plot{flex:1;min-height:0;display:flex;justify-content:center}
+svg text{font-family:"Assistant",Arial,sans-serif}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;margin-top:8px}
+.ctl label{font-weight:600}
+.ctl output{direction:ltr;font-weight:700;min-width:44px;text-align:left;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;direction:ltr;accent-color:var(--accent)}
+.note{font-size:.88rem;background:var(--warnbg);border-radius:8px;padding:5px 8px;margin:6px 0 0;min-height:0}
+.note:empty{display:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (min-width:1000px){
+  .app{height:100%;display:flex;flex-direction:column;padding-bottom:14px}
+  .mnote{display:none}
+  .pair{flex:1;min-height:0}
+}
+.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.back:hover{color:var(--accent);text-decoration:underline}
+.credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
+.credit a{color:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="mnote">מומלץ לעבוד במחשב: שם שני התרשימים נראים זה לצד זה.</p>
+  <header class="top">
+    <div>
+      <a class="back" href="index.html">→ כל הסימולציות</a>
+      <h1>קשר חזק לא אומר קו תלול</h1>
+      <p class="lead">מקדם פירסון (r) מודד כמה הנקודות צמודות לקו ישר, יחסית לפיזור שלהן, ולא כמה הקו תלול. השוו בין שני תרשימים.</p>
+    </div>
+    <div class="presets" role="group" aria-label="דוגמאות">
+      <span>דוגמאות:</span>
+      <button data-p="0">אותו r, שיפוע שונה</button>
+      <button data-p="1">אותו שיפוע, r שונה</button>
+      <button data-p="2">חזק ושטוח מול חלש ותלול</button>
+    </div>
+  </header>
+  <p class="cap" id="cap" aria-live="polite"></p>
+  <div class="pair" id="pair"></div>
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+<script>
+// fixed base: x and e standardized & orthogonal, so the sample r equals the slider exactly
+let X=[0.1855,1.7436,1.5849,-0.4545,-0.2049,-0.4746,0.815,0.0794,1.0232,-2.0261,1.9867,0.032,0.9451,-0.0152,-0.3003,0.6897,1.1145,-0.0927,-0.0343,0.9513,-0.8777,-1.6348,0.6096,-0.6429,-2.1119,-0.8116,-0.4043,-1.2572,-1.609,0.1884,1.2,-0.1287,-0.7287,0.5979,0.9884,-0.2073,0.7855,1.3712,-0.0979,-0.8109,0.554,0.4363,1.4369,-1.3646,-0.6324,-0.8399,-1.8929,0.2939,0.7657,-0.7231];
+let E=[1.3515,1.1203,0.8723,0.1367,0.7939,-1.7362,0.6719,0.4823,-1.844,-0.3017,0.0235,0.6634,-0.4312,-0.2097,0.1105,-0.964,0.7277,-0.3219,0.336,-0.5189,0.7721,0.071,-0.231,0.3393,0.661,1.5476,-1.9795,0.4616,-0.0738,-0.242,-0.9813,1.1372,-1.7218,0.5689,1.4551,-1.9601,-0.3226,-1.2659,0.053,1.2496,2.1278,-1.9969,-0.4589,0.2422,1.3627,0.0647,-1.4474,0.2048,-0.0194,-0.5805];
+(function norm(){const n=X.length,m=a=>a.reduce((s,v)=>s+v,0)/n,sd=a=>{const mu=m(a);return Math.sqrt(a.reduce((s,v)=>s+(v-mu)**2,0)/n)};
+  let mx=m(X);X=X.map(v=>v-mx);const s=sd(X);X=X.map(v=>v/s);
+  let me=m(E);E=E.map(v=>v-me);const p=E.reduce((a,v,i)=>a+v*X[i],0)/X.reduce((a,v)=>a+v*v,0);E=E.map((v,i)=>v-p*X[i]);const se=sd(E);E=E.map(v=>v/se);})();
+const SX=10, SYMAX=22, CX=50, CY=50;
+function model(r,b){
+  // b = requested steepness (>=0); sign comes from r
+  let sy, slope, capped=false;
+  if(Math.abs(r)<0.005){sy=12;slope=0;}
+  else{const q=Math.sqrt(Math.max(0,1-r*r)),z=Math.max(...X.map((x,i)=>Math.abs(r*x+q*E[i]))),lim=Math.min(SYMAX,48/z);
+    sy=b*SX/Math.abs(r);if(sy>lim){sy=lim;capped=true;}slope=r*sy/SX;}
+  const pts=X.map((x,i)=>[CX+SX*x,CY+sy*(r*x+Math.sqrt(Math.max(0,1-r*r))*E[i])]);
+  return {pts,slope,capped,zero:Math.abs(r)<0.005};
+}
+const P={A:{r:0.9,b:0.4},B:{r:0.9,b:1.6}};
+const PRESETS=[
+  {A:{r:0.9,b:0.4},B:{r:0.9,b:1.6},t:'<b>לשני התרשימים אותו r = 0.9</b>, אבל הקו ב-B תלול פי 4. חוזק הקשר לא נמדד בשיפוע. ב-B הנקודות מתפרסות על טווח גדול יותר בציר Y, אבל גם הקו עולה הרבה יותר, כך שיחסית לעלייה של הקו הן צמודות אליו באותה מידה.'},
+  {A:{r:0.95,b:0.8},B:{r:0.45,b:0.8},t:'<b>לשני הקווים אותו שיפוע (0.8).</b> ב-A הנקודות צמודות לקו (r = 0.95), וב-B הן מפוזרות סביבו (r = 0.45). ההבדל בחוזק הקשר הוא בפיזור סביב הקו, לא בשיפוע.'},
+  {A:{r:0.95,b:0.3},B:{r:0.6,b:1.2},t:'<b>הקו ב-A כמעט שטוח, אבל הקשר חזק מאוד</b>, כי הנקודות צמודות לקו. הקו ב-B תלול, אבל הקשר בינוני בלבד, כי הנקודות מפוזרות סביבו.'}
+];
+let preset=0,anim=null;
+function strength(r){const a=Math.abs(r);return a<0.005?'אין קשר ליניארי':(a>=0.8?'קשר חזק':a>=0.5?'קשר בינוני':a>=0.2?'קשר חלש':'קשר חלש מאוד')+(r>0?' חיובי':' שלילי');}
+function build(){
+  document.getElementById('pair').innerHTML=['A','B'].map(k=>`
+  <section class="panel" aria-label="תרשים ${k}">
+    <div class="phead"><span class="pname" style="color:var(--${k})">תרשים ${k}</span><span class="big" id="big${k}"></span></div>
+    <div class="plot" id="plot${k}"></div>
+    <div class="ctl">
+      <label for="r${k}">r</label><input type="range" style="accent-color:var(--${k})" id="r${k}" min="-1" max="1" step="0.05"><output id="ro${k}"></output>
+      <label for="b${k}">שיפוע</label><input type="range" style="accent-color:var(--${k})" id="b${k}" min="0.1" max="1.8" step="0.05"><output id="bo${k}"></output>
+    </div>
+    <p class="note" id="note${k}"></p>
+  </section>`).join('');
+  ['A','B'].forEach(k=>{
+    document.getElementById('r'+k).oninput=e=>{P[k].r=+e.target.value;preset=-1;render();};
+    document.getElementById('b'+k).oninput=e=>{P[k].b=+e.target.value;preset=-1;render();};
+  });
+}
+function plotSize(){
+  const d=matchMedia('(min-width:1000px)').matches;
+  const el=document.getElementById('plotA');const w=el.clientWidth;
+  if(!d)return Math.min(w,460);
+  return Math.max(240,Math.min(w,el.clientHeight));
+}
+function draw(k){
+  const S=plotSize(),m=model(P[k].r,P[k].b),pad=30,inner=S-pad-10,sx=v=>pad+v/100*inner,sy=v=>10+inner-v/100*inner;
+  let s=`<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}" style="direction:ltr;display:block" role="img" aria-label="תרשים פיזור ${k}, r שווה ${P[k].r.toFixed(2)}">`;
+  s+=`<defs><clipPath id="c${k}"><rect x="${pad}" y="10" width="${inner}" height="${inner}"/></clipPath></defs>`;
+  for(let t=0;t<=100;t+=20){s+=`<line x1="${sx(t)}" x2="${sx(t)}" y1="10" y2="${10+inner}" stroke="var(--grid)"/><line x1="${pad}" x2="${pad+inner}" y1="${sy(t)}" y2="${sy(t)}" stroke="var(--grid)"/>`;
+    s+=`<text x="${sx(t)}" y="${S-2}" font-size="11" text-anchor="middle" fill="var(--muted)">${t}</text><text x="${pad-5}" y="${sy(t)+4}" font-size="11" text-anchor="end" fill="var(--muted)">${t}</text>`;}
+  s+=`<rect x="${pad}" y="10" width="${inner}" height="${inner}" fill="none" stroke="var(--ink)" stroke-width="1"/>`;
+  s+=`<g clip-path="url(#c${k})">`;
+  const y=x=>CY+m.slope*(x-CX);
+  s+=`<line x1="${sx(0)}" y1="${sy(y(0))}" x2="${sx(100)}" y2="${sy(y(100))}" stroke="var(--ink)" stroke-width="2.5"/>`;
+  const rad=Math.max(3,S/95);
+  m.pts.forEach(([a,b])=>{s+=`<circle cx="${sx(a)}" cy="${sy(b)}" r="${rad}" fill="var(--${k})" fill-opacity=".8" stroke="var(--paper)" stroke-width="1"/>`;});
+  s+='</g></svg>';
+  document.getElementById('plot'+k).innerHTML=s;
+  document.getElementById('big'+k).innerHTML=`r = ${P[k].r.toFixed(2)}<small>שיפוע ${m.slope.toFixed(2)}</small>`;
+  document.getElementById('r'+k).value=P[k].r;document.getElementById('b'+k).value=P[k].b;
+  document.getElementById('ro'+k).textContent=P[k].r.toFixed(2);document.getElementById('bo'+k).textContent=m.slope.toFixed(2);
+  const bIn=document.getElementById('b'+k);bIn.disabled=m.zero;
+  document.getElementById('note'+k).textContent=m.zero?'כש-r = 0, קו הרגרסיה אופקי (שיפוע 0), ולכן אי אפשר לשנות את השיפוע.':
+    m.capped?'עם ה-r הזה, כדי להגיע לשיפוע שבחרתם הנקודות היו צריכות להתפזר מעבר לגבולות התרשים. לכן הקו כאן פחות תלול ממה שבחרתם.':'';
+  return m;
+}
+function render(){
+  draw('A');draw('B');
+  document.querySelectorAll('.presets button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.p===preset));
+  document.getElementById('cap').innerHTML=preset>=0?PRESETS[preset].t:
+    `<b>תרשים A:</b> ${strength(P.A.r)} (r = ${P.A.r.toFixed(2)}). <b>תרשים B:</b> ${strength(P.B.r)} (r = ${P.B.r.toFixed(2)}). ככל ש-|r| קרוב יותר ל-1, הנקודות צמודות יותר לקו, בלי קשר לשיפוע שלו.`;
+}
+function goPreset(i){
+  preset=i;const from=JSON.parse(JSON.stringify(P)),to=PRESETS[i];
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){Object.assign(P.A,to.A);Object.assign(P.B,to.B);render();return;}
+  const t0=performance.now(),D=700;cancelAnimationFrame(anim);
+  const step=now=>{const t=Math.min(1,(now-t0)/D),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    ['A','B'].forEach(k=>{P[k].r=from[k].r+(to[k].r-from[k].r)*e;P[k].b=from[k].b+(to[k].b-from[k].b)*e;});
+    if(t>=1){P.A={...to.A};P.B={...to.B};}render();if(t<1)anim=requestAnimationFrame(step);};
+  anim=requestAnimationFrame(step);
+}
+document.querySelectorAll('.presets button').forEach(b=>b.onclick=()=>goPreset(+b.dataset.p));
+build();render();
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,120);});
+</script>
+</body>
+</html>

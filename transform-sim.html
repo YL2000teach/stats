@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>פעולה על כל הערכים: מה קורה למדדים?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1;
+  --accent:#2F5BD3; --orig:#8A93A8; --new:#E0891A; --warnbg:#FFF4E0; --same:#17895F;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --orig:#8C97B0; --new:#F2A54B; --warnbg:#3A2E1A; --same:#3CC28A;}}
+:root[data-theme="dark"]{--bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --orig:#8C97B0; --new:#F2A54B; --warnbg:#3A2E1A; --same:#3CC28A;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{max-width:1400px;margin:0 auto;padding:14px 14px 30px}
+.mnote{background:var(--warnbg);border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:.95rem}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-bottom:12px}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.15;margin:0}
+.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem}
+h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.05rem;margin:0 0 8px}
+.seg{display:flex;background:var(--paper);border:1.5px solid var(--grid);border-radius:12px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:8px 14px;background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.grid{display:grid;gap:12px}
+.panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px}
+.chartp{order:-1;display:flex;flex-direction:column}
+#chart{width:100%}
+svg text{font-family:"Assistant",Arial,sans-serif}
+.formula{font-size:1.5rem;font-weight:700;direction:ltr;text-align:center;margin:0 0 6px;font-variant-numeric:tabular-nums}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.ctl label{font-weight:600}
+input[type=range]{width:100%;direction:ltr;accent-color:var(--new)}
+input[type=number]{font:inherit;font-weight:700;width:76px;padding:4px 6px;border:1.5px solid var(--grid);border-radius:8px;background:var(--paper);color:var(--ink);direction:ltr;text-align:center}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 6px;border-bottom:1px solid var(--grid);text-align:right}
+th{font-weight:600;color:var(--muted);font-size:.86rem}
+td.num{direction:ltr;text-align:right;font-weight:700}
+td.rule{direction:ltr;text-align:right;font-weight:700;color:var(--new)}
+td.rule.same{color:var(--same)}
+tr.grp td{background:var(--bg);font-weight:700;color:var(--muted);font-size:.86rem;padding:4px 6px}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.95rem;color:var(--muted);margin-top:6px}
+.sw{display:inline-block;width:14px;height:10px;border-radius:3px;margin-left:6px;vertical-align:middle}
+.cap{margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--grid)}
+.hint{color:var(--muted);font-size:.86rem;margin:8px 0 0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (min-width:1000px){
+  .app{height:100%;display:flex;flex-direction:column;padding-bottom:14px}
+  .mnote{display:none}
+  .grid{flex:1;min-height:0;grid-template-columns:minmax(330px,380px) minmax(0,1fr)}
+  .chartp{order:0;min-height:0}
+  #chart{flex:1;min-height:0}
+  .side{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto}
+}
+.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.back:hover{color:var(--accent);text-decoration:underline}
+.credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
+.credit a{color:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="mnote">מומלץ לעבוד במחשב: שם כל חלקי הסימולציה נראים יחד במסך אחד.</p>
+  <header class="top">
+    <div>
+      <a class="back" href="index.html">→ כל הסימולציות</a>
+      <h1>פעולה על כל הערכים: מה קורה למדדים?</h1>
+      <p class="lead">בחרו פעולה וגודל קבוע. ההתפלגות המקורית (X) נשארת, וההתפלגות החדשה (Y) מופיעה מעליה.</p>
+    </div>
+    <div class="seg" id="seg" role="group" aria-label="סוג הפעולה">
+      <button data-op="add">הוספת קבוע</button>
+      <button data-op="sub">הפחתת קבוע</button>
+      <button data-op="mul">הכפלה בקבוע</button>
+      <button data-op="div">חלוקה בקבוע</button>
+    </div>
+  </header>
+  <div class="grid">
+    <aside class="side">
+      <section class="panel">
+        <p class="formula" id="formula"></p>
+        <div class="ctl">
+          <label for="k" id="klabel">הקבוע</label>
+          <input type="range" id="k">
+          <input type="number" id="kn" aria-label="ערך הקבוע">
+        </div>
+      </section>
+      <section class="panel">
+        <h2>המדדים</h2>
+        <table>
+          <thead><tr><th>מדד</th><th>מקורי X</th><th>חדש Y</th><th>שינוי</th></tr></thead>
+          <tbody id="tbl"></tbody>
+        </table>
+        <p class="hint">בהתפלגות נורמלית הממוצע, החציון והשכיח שווים.</p>
+      </section>
+    </aside>
+    <section class="panel chartp" aria-label="גרף ההתפלגויות">
+      <p class="cap" id="cap" aria-live="polite"></p>
+      <div id="chart"></div>
+      <div class="key">
+        <span style="color:var(--ink);font-weight:700"><i class="sw" style="background:var(--orig);opacity:.5"></i><span id="kx"></span></span>
+        <span style="color:var(--new);font-weight:700"><i class="sw" style="background:var(--new);opacity:.6"></i><span id="ky"></span></span>
+        <span>קו מקווקו: הממוצע</span>
+        <span>⊢⊣ ממוצע ± סטיית תקן אחת</span>
+      </div>
+    </section>
+  </div>
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+<script>
+const MU=30,SD=5,LO=-10,HI=120;
+const OPS={
+  add:{sym:'+',min:0,max:25,step:1,def:10,label:'כמה להוסיף'},
+  sub:{sym:'−',min:0,max:25,step:1,def:10,label:'כמה להפחית'},
+  mul:{sym:'×',min:0.5,max:2.5,step:0.1,def:2,label:'פי כמה להכפיל'},
+  div:{sym:'÷',min:0.5,max:2.5,step:0.1,def:2,label:'בכמה לחלק'}
+};
+let state={op:'add',k:10};
+const f=x=>{const r=Math.round(x*100)/100;return (Object.is(r,-0)?0:r).toString();};
+function params(){const {op,k}=state;
+  if(op==='add')return {mu:MU+k,sd:SD};
+  if(op==='sub')return {mu:MU-k,sd:SD};
+  if(op==='mul')return {mu:MU*k,sd:SD*k};
+  return {mu:MU/k,sd:SD/k};}
+const pdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
+function rules(){const {op,k}=state,K=f(k),K2=f(k*k);
+  if(op==='add')return {c:`+${K}`,s:'ללא שינוי',v:'ללא שינוי'};
+  if(op==='sub')return {c:`−${K}`,s:'ללא שינוי',v:'ללא שינוי'};
+  if(op==='mul')return {c:`×${K}`,s:`×${K}`,v:`×${K}² = ×${K2}`};
+  return {c:`÷${K}`,s:`÷${K}`,v:`÷${K}² = ÷${K2}`};}
+function caption(){const {op,k}=state,K=f(k),p=params();
+  if(op==='add')return `הוספת ${K} לכל ערך מזיזה את כל ההתפלגות ימינה ב-${K}. מדדי המרכז גדלים ב-${K}, ומדדי הפיזור לא משתנים: הצורה והרוחב של העקומה נשארים זהים.`;
+  if(op==='sub')return `הפחתת ${K} מכל ערך מזיזה את כל ההתפלגות שמאלה ב-${K}. מדדי המרכז קטנים ב-${K}, ומדדי הפיזור לא משתנים: הצורה והרוחב של העקומה נשארים זהים.`;
+  const grow=(op==='mul'&&k>1)||(op==='div'&&k<1), same=Math.abs(k-1)<1e-9;
+  if(same)return `${op==='mul'?'הכפלה':'חלוקה'} ב-1 לא משנה אף ערך, ולכן אף מדד לא משתנה.`;
+  const verb=op==='mul'?`הכפלת כל ערך ב-${K}`:`חלוקת כל ערך ב-${K}`;
+  return `${verb} משנה גם את המרכז וגם את הפיזור. הממוצע עבר מ-${MU} ל-${f(p.mu)}, וסטיית התקן מ-${SD} ל-${f(p.sd)}. השונות משתנה בריבוע הקבוע. `+
+    (grow?'העקומה רחבה ונמוכה יותר: השטח מתחתיה מייצג את כל התלמידים (100%) ולכן לא משתנה. כשהיא מתרחבת, היא חייבת להתנמך.':'העקומה צרה וגבוהה יותר: השטח מתחתיה מייצג את כל התלמידים (100%) ולכן לא משתנה. כשהיא מצטמצמת, היא חייבת לגבוה.');}
+function draw(){
+  const box=document.getElementById('chart'),W=Math.max(300,box.clientWidth);
+  const D=matchMedia('(min-width:1000px)').matches;
+  const H=D?Math.max(320,box.clientHeight):Math.round(Math.min(420,W*0.8));
+  const mL=14,mR=14,top=34,bot=40,x=v=>mL+(v-LO)/(HI-LO)*(W-mL-mR);
+  // fixed y-axis: scaled to the narrowest curve any setting can produce, so the original never moves
+  const p=params(),peak=pdf(0,0,SD/2.5)*1.1;
+  const y=d=>top+(H-top-bot)*(1-d/peak),base=H-bot;
+  const curve=(m,s)=>{let d=`M${x(LO)} ${base}`;const n=500;for(let i=0;i<=n;i++){const v=LO+(HI-LO)*i/n;d+=` L${x(v).toFixed(1)} ${y(pdf(v,m,s)).toFixed(1)}`;}return d+` L${x(HI)} ${base} Z`;};
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="direction:ltr;display:block" role="img" aria-label="התפלגות מקורית עם ממוצע ${MU} וסטיית תקן ${SD}, והתפלגות חדשה עם ממוצע ${f(p.mu)} וסטיית תקן ${f(p.sd)}">`;
+  for(let t=LO;t<=HI;t+=10)s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${base}" stroke="var(--grid)"/><text x="${x(t)}" y="${base+18}" text-anchor="middle" font-size="12" fill="var(--muted)">${t}</text>`;
+  s+=`<path d="${curve(MU,SD)}" fill="var(--orig)" fill-opacity=".35" stroke="var(--orig)" stroke-width="2.5"/>`;
+  s+=`<path d="${curve(p.mu,p.sd)}" fill="var(--new)" fill-opacity=".35" stroke="var(--new)" stroke-width="2.5"/>`;
+  s+=`<line x1="${x(LO)}" x2="${x(HI)}" y1="${base}" y2="${base}" stroke="var(--ink)" stroke-width="1.3"/>`;
+  const marks=(m,sd,col,lab,up)=>{
+    let o=`<line x1="${x(m)}" x2="${x(m)}" y1="${y(pdf(m,m,sd))}" y2="${base}" stroke="${col}" stroke-width="2" stroke-dasharray="6 4"/>`;
+    const yb=y(pdf(m+sd,m,sd));
+    o+=`<line x1="${x(m-sd)}" x2="${x(m+sd)}" y1="${yb}" y2="${yb}" stroke="${col}" stroke-width="2.5"/><line x1="${x(m-sd)}" x2="${x(m-sd)}" y1="${yb-6}" y2="${yb+6}" stroke="${col}" stroke-width="2.5"/><line x1="${x(m+sd)}" x2="${x(m+sd)}" y1="${yb-6}" y2="${yb+6}" stroke="${col}" stroke-width="2.5"/>`;
+    return o;};
+  s+=marks(MU,SD,'var(--muted)')+marks(p.mu,p.sd,'var(--new)');
+  const dm=Math.abs(p.mu-MU);if(dm>0.05){const yy=base-12,op=Math.min(1,dm/4);s+=`<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--ink)"/></marker></defs><line x1="${x(MU)}" x2="${x(p.mu)+(p.mu>MU?-4:4)}" y1="${yy}" y2="${yy}" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ah)" opacity="${op}"/>`;}
+  s+='</svg>';box.innerHTML=s;
+  document.getElementById('kx').textContent=`מקורי X: ממוצע ${MU}, ס״ת ${SD}`;
+  document.getElementById('ky').textContent=`חדש Y: ממוצע ${f(p.mu)}, ס״ת ${f(p.sd)}`;
+}
+function side(){
+  const o=OPS[state.op],p=params(),r=rules(),K=f(state.k);
+  document.getElementById('formula').textContent=`Y = X ${o.sym} ${K}`;
+  document.getElementById('klabel').textContent=o.label;
+  const rows=[['grp','מדדי מרכז'],['ממוצע',MU,p.mu,r.c],['חציון',MU,p.mu,r.c],['שכיח',MU,p.mu,r.c],['grp','מדדי פיזור'],['סטיית תקן',SD,p.sd,r.s],['שונות',SD*SD,p.sd*p.sd,r.v]];
+  document.getElementById('tbl').innerHTML=rows.map(rw=>rw[0]==='grp'?`<tr class="grp"><td colspan="4">${rw[1]}</td></tr>`:
+    `<tr><td>${rw[0]}</td><td class="num">${f(rw[1])}</td><td class="num">${f(rw[2])}</td><td class="rule${rw[3]==='ללא שינוי'?' same':''}" ${rw[3]==='ללא שינוי'?'style="direction:rtl"':''}>${rw[3]==='ללא שינוי'?rw[3]:`<span dir="ltr" style="unicode-bidi:isolate">${rw[3]}</span>`}</td></tr>`).join('');
+  document.getElementById('cap').textContent=caption();
+  document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.op===state.op));
+}
+function setOp(op){
+  state.op=op;const o=OPS[op];state.k=o.def;
+  const k=document.getElementById('k'),kn=document.getElementById('kn');
+  [k,kn].forEach(el=>{el.min=o.min;el.max=o.max;el.step=o.step;el.value=o.def;});
+  side();draw();
+}
+document.getElementById('k').oninput=e=>{state.k=+e.target.value;document.getElementById('kn').value=state.k;side();draw();};
+document.getElementById('kn').onchange=e=>{const o=OPS[state.op];let v=e.target.value.trim()===''?o.def:+e.target.value;if(!isFinite(v))v=o.def;v=Math.min(o.max,Math.max(o.min,v));state.k=v;e.target.value=v;document.getElementById('k').value=v;side();draw();};
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setOp(b.dataset.op));
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(draw,120);});
+setOp('add');
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
+</script>
+</body>
+</html>
