@@ -3,66 +3,99 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>פעולה על כל הערכים: מה קורה למדדים?</title>
+<title>טרנספורמציה של משתנה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1;
-  --accent:#2F5BD3; --orig:#8A93A8; --new:#E0891A; --warnbg:#FFF4E0; --same:#17895F;
+  --accent:#2F5BD3; --orig:#8A93A8; --new:#E0891A; --warnbg:#FFF4E0; --same:#17895F; --goodbg:#E3F5EC;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --orig:#8C97B0; --new:#F2A54B; --warnbg:#3A2E1A; --same:#3CC28A;}}
-:root[data-theme="dark"]{--bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --orig:#8C97B0; --new:#F2A54B; --warnbg:#3A2E1A; --same:#3CC28A;}
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --orig:#8C97B0; --new:#F2A54B; --warnbg:#3A2E1A; --same:#3CC28A; --goodbg:#16342A;}}
+:root[data-theme="dark"]{--bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --accent:#7C9BFF; --orig:#8C97B0; --new:#F2A54B; --warnbg:#3A2E1A; --same:#3CC28A; --goodbg:#16342A;}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.45}
-.app{max-width:1400px;margin:0 auto;padding:14px 14px 30px}
+.app{max-width:1440px;margin:0 auto;padding:14px 14px 30px}
 .mnote{background:var(--warnbg);border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:.95rem}
-.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-bottom:12px}
-h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.15;margin:0}
-.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem}
-h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.05rem;margin:0 0 8px}
-.seg{display:flex;background:var(--paper);border:1.5px solid var(--grid);border-radius:12px;padding:3px;gap:3px;flex-wrap:wrap}
-.seg button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:8px 14px;background:transparent;color:var(--ink);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
-.grid{display:grid;gap:12px}
-.panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px}
-.chartp{order:-1;display:flex;flex-direction:column}
-#chart{width:100%}
-svg text{font-family:"Assistant",Arial,sans-serif}
-.formula{font-size:1.5rem;font-weight:700;direction:ltr;text-align:center;margin:0 0 6px;font-variant-numeric:tabular-nums}
-.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
-.ctl label{font-weight:600}
-input[type=range]{width:100%;direction:ltr;accent-color:var(--new)}
-input[type=number]{font:inherit;font-weight:700;width:76px;padding:4px 6px;border:1.5px solid var(--grid);border-radius:8px;background:var(--paper);color:var(--ink);direction:ltr;text-align:center}
-table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
-th,td{padding:6px 6px;border-bottom:1px solid var(--grid);text-align:right}
-th{font-weight:600;color:var(--muted);font-size:.86rem}
-td.num{direction:ltr;text-align:right;font-weight:700}
-td.rule{direction:ltr;text-align:right;font-weight:700;color:var(--new)}
-td.rule.same{color:var(--same)}
-tr.grp td{background:var(--bg);font-weight:700;color:var(--muted);font-size:.86rem;padding:4px 6px}
-.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.95rem;color:var(--muted);margin-top:6px}
-.sw{display:inline-block;width:14px;height:10px;border-radius:3px;margin-left:6px;vertical-align:middle}
-.cap{margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--grid)}
-.hint{color:var(--muted);font-size:.86rem;margin:8px 0 0}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-@media (min-width:1000px){
-  .app{height:100%;display:flex;flex-direction:column;padding-bottom:14px}
-  .mnote{display:none}
-  .grid{flex:1;min-height:0;grid-template-columns:minmax(330px,380px) minmax(0,1fr)}
-  .chartp{order:0;min-height:0}
-  #chart{flex:1;min-height:0}
-  .side{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto}
-}
 .back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
 .back:hover{color:var(--accent);text-decoration:underline}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-bottom:12px}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.15;margin:0}
+.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem;max-width:62ch}
+.seg{display:flex;background:var(--paper);border:1.5px solid var(--grid);border-radius:12px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:6px 11px;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2;text-align:center}
+.seg button small{display:block;font-weight:600;font-size:.75rem;opacity:.75}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);grid-template-areas:"task" "plot" "ctrl"}
+.panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px}
+.taskp{grid-area:task}.ctrlp{grid-area:ctrl}.plotp{grid-area:plot;display:flex;flex-direction:column}
+.taskp .q{margin-bottom:0}
+.tag{font-size:.85rem;font-weight:700;color:var(--muted);margin:0 0 2px}
+.story{font-size:1.02rem;font-weight:600;line-height:1.35;margin:0 0 6px}
+.q{margin:0 0 10px;background:var(--bg);border-radius:8px;padding:6px 10px;line-height:1.35}
+.q b{font-weight:700}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;margin:0 0 8px}
+.ctl label{grid-column:1/-1;font-weight:700}
+.ctl output{font-weight:700;font-size:1.1rem;min-width:84px;text-align:center;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;direction:ltr;-webkit-appearance:none;appearance:none;height:8px;border-radius:999px;background:var(--grid);margin:8px 0;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--new);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--new)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--new);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--new)}
+input[type=range]::-moz-range-track{background:transparent}
+.ctl[hidden],.actrow[hidden]{display:none}
+.actrow{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 8px}
+button.act{font:inherit;font-weight:700;border-radius:9px;padding:8px 14px;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:var(--paper)}
+button.act.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.how{margin:0 0 6px;font-weight:700;min-height:2.9em}
+.how .op{color:var(--new)}
+.how .sub{display:block;font-weight:600;color:var(--muted);font-size:.9rem}
+.ex{border-collapse:collapse;width:100%;margin:0 0 8px;font-size:.93rem;font-variant-numeric:tabular-nums}
+.ex caption{text-align:right;font-weight:700;font-size:.85rem;color:var(--muted);padding-bottom:3px}
+.ex th,.ex td{border-bottom:1px solid var(--grid);padding:2px 6px;text-align:right}
+.ex th{font-weight:600;color:var(--muted);font-size:.85rem}
+.ex td.n{font-weight:700}
+.ex tr.gap td{font-weight:700}
+.ex td.hl{color:var(--new)}
+.why{background:var(--goodbg);border-radius:10px;padding:8px 10px;margin:0;min-height:5.2em;font-size:.95rem;line-height:1.4}
+.why.idle{background:var(--bg);color:var(--muted)}
+.target{color:var(--same);font-weight:700;margin:-2px 0 8px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 8px}
+.card{border:1.5px solid var(--grid);border-radius:12px;padding:8px 12px;background:var(--paper)}
+.card .lab{font-weight:700;color:var(--muted);font-size:.88rem}
+.card .val{display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;margin-top:2px;white-space:nowrap}
+.card .num{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+.card .chg{font-weight:700;color:var(--new);white-space:nowrap}
+.card .chg.same{color:var(--muted);font-size:.88rem}
+.card .was{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.88rem;color:var(--muted);margin:0 0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:16px;height:10px;border-radius:3px}
+#chart{width:100%}
+svg text{font-family:"Assistant",Arial,sans-serif}
 .credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
 .credit a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:999px){.card .val{flex-wrap:wrap}.card{height:120px;overflow:hidden}}
+@media (min-width:1000px){
+  .mnote{display:none}
+  .grid{grid-template-columns:minmax(380px,460px) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"task plot" "ctrl plot"}
+  .grid{gap:10px 12px}
+  .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media (min-width:1000px) and (min-height:640px){
+  .why{min-height:0}
+  .panel{padding:10px 14px}
+  .app{height:100%;display:flex;flex-direction:column;padding-bottom:12px}
+  .grid{flex:1;min-height:0}
+  .ctrlp{overflow:auto;min-height:0}
+  .plotp{min-height:0}
+  #chart{flex:1;min-height:0;overflow:hidden}
+  .top{margin-bottom:8px}
+}
 </style>
 </head>
 <body>
@@ -71,44 +104,39 @@ tr.grp td{background:var(--bg);font-weight:700;color:var(--muted);font-size:.86r
   <header class="top">
     <div>
       <a class="back" href="index.html">→ כל הסימולציות</a>
-      <h1>פעולה על כל הערכים: מה קורה למדדים?</h1>
-      <p class="lead">בחרו פעולה וגודל קבוע. ההתפלגות המקורית (X) נשארת, וההתפלגות החדשה (Y) מופיעה מעליה.</p>
+      <h1>טרנספורמציה של משתנה</h1>
+      <p class="lead">בכל תרחיש: מה עושים לנתונים, ומה קורה למדדי המרכז והפיזור?</p>
     </div>
-    <div class="seg" id="seg" role="group" aria-label="סוג הפעולה">
-      <button data-op="add">הוספת קבוע</button>
-      <button data-op="sub">הפחתת קבוע</button>
-      <button data-op="mul">הכפלה בקבוע</button>
-      <button data-op="div">חלוקה בקבוע</button>
-    </div>
+    <div class="seg" id="seg" role="group" aria-label="תרחיש"></div>
   </header>
+
   <div class="grid">
-    <aside class="side">
-      <section class="panel">
-        <p class="formula" id="formula"></p>
-        <div class="ctl">
-          <label for="k" id="klabel">הקבוע</label>
-          <input type="range" id="k">
-          <input type="number" id="kn" aria-label="ערך הקבוע">
-        </div>
-      </section>
-      <section class="panel">
-        <h2>המדדים</h2>
-        <table>
-          <thead><tr><th>מדד</th><th>מקורי X</th><th>חדש Y</th><th>שינוי</th></tr></thead>
-          <tbody id="tbl"></tbody>
-        </table>
-        <p class="hint">בהתפלגות נורמלית הממוצע, החציון והשכיח שווים.</p>
-      </section>
-    </aside>
-    <section class="panel chartp" aria-label="גרף ההתפלגויות">
-      <p class="cap" id="cap" aria-live="polite"></p>
-      <div id="chart"></div>
-      <div class="key">
-        <span style="color:var(--ink);font-weight:700"><i class="sw" style="background:var(--orig);opacity:.5"></i><span id="kx"></span></span>
-        <span style="color:var(--new);font-weight:700"><i class="sw" style="background:var(--new);opacity:.6"></i><span id="ky"></span></span>
-        <span>קו מקווקו: הממוצע</span>
-        <span>⊢⊣ ממוצע ± סטיית תקן אחת</span>
+    <section class="panel taskp" aria-live="polite">
+      <p class="tag" id="tag"></p>
+      <p class="story" id="story"></p>
+      <p class="q" id="q"></p>
+    </section>
+    <section class="panel ctrlp" aria-live="polite">
+      <div class="ctl" id="ctl">
+        <label for="k" id="klabel"></label>
+        <input type="range" id="k">
+        <output id="kout" for="k"></output>
       </div>
+      <div class="actrow" id="actrow"><button class="act" id="apply"></button></div>
+      <p class="how" id="how"></p>
+      <table class="ex" id="ex"></table>
+      <p class="why" id="why"></p>
+    </section>
+
+    <section class="panel plotp" aria-label="התרשים והמדדים">
+      <div class="cards" id="cards"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--orig);opacity:.55"></i><span id="lx"></span></span>
+        <span><i class="sw" style="background:var(--new);opacity:.65"></i><span id="ly"></span></span>
+        <span>קו מקווקו: הממוצע</span>
+        <span>⊢⊣ ממוצע ± סטיית תקן</span>
+      </div>
+      <div id="chart"></div>
     </section>
   </div>
   <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
@@ -116,80 +144,172 @@ tr.grp td{background:var(--bg);font-weight:700;color:var(--muted);font-size:.86r
   <!-- ===== סוף קרדיט ===== -->
 </div>
 <script>
-const MU=30,SD=5,LO=-10,HI=120;
-const OPS={
-  add:{sym:'+',min:0,max:25,step:1,def:10,label:'כמה להוסיף'},
-  sub:{sym:'−',min:0,max:25,step:1,def:10,label:'כמה להפחית'},
-  mul:{sym:'×',min:0.5,max:2.5,step:0.1,def:2,label:'פי כמה להכפיל'},
-  div:{sym:'÷',min:0.5,max:2.5,step:0.1,def:2,label:'בכמה לחלק'}
-};
-let state={op:'add',k:10};
-const f=x=>{const r=Math.round(x*100)/100;return (Object.is(r,-0)?0:r).toString();};
-function params(){const {op,k}=state;
-  if(op==='add')return {mu:MU+k,sd:SD};
-  if(op==='sub')return {mu:MU-k,sd:SD};
-  if(op==='mul')return {mu:MU*k,sd:SD*k};
-  return {mu:MU/k,sd:SD/k};}
+/* Every scenario: a normal variable X (mu, sd) and one linear transformation controlled by k. */
+const f4=x=>{const r=Math.round(x*10000)/10000;return r.toLocaleString('en-US',{maximumFractionDigits:4});};
+const f=x=>{const r=Math.round(x*100)/100;return (Object.is(r,-0)?0:r).toLocaleString('en-US',{maximumFractionDigits:2});};
+const WAGE={mu:37,sd:3.5,u:'₪',u2:'₪²',lab:'שכר לשעה (₪)',axis:[20,75,5],exA:30,exB:44,who:'עובד',before:'השכר לפני',after:'השכר אחרי',
+  story:'השכר לשעה של בני נוער שעובדים ברשת חנויות.'};
+const SHOP={mu:60,sd:12,u:'₪',u2:'₪²',lab:'מחיר (₪)',axis:[0,110,10],exA:40,exB:80,who:'פריט',before:'המחיר לפני',after:'המחיר אחרי',
+  story:'המחירים של פריטי לבוש בחנות.'};
+const SC=[
+  {...WAGE,type:'add',name:'העלאה בשקלים',opName:'הוספת קבוע',
+   story:WAGE.story+' הרשת נותנת לכולם את אותה העלאה בשקלים.',
+   q:'מה קורה לכל תצפית? מה יקרה לשכר הממוצע ולפיזור השכר?',
+   slider:{min:0,max:8,step:0.5,label:'גובה ההעלאה'},out:k=>`${f(k)} ₪`,
+   T:k=>x=>x+k,mult:k=>1,
+   how:k=>`לכל שכר מוסיפים <span class="op">${f(k)} ₪</span>`,
+   why:k=>`כולם קיבלו את אותה תוספת, ${f(k)} ₪. לכן כל ההתפלגות זזה ימינה ב-${f(k)} ₪, וגם הממוצע והחציון עלו ב-${f(k)} ₪. הפער בין כל שני עובדים נשאר אותו פער, ולכן סטיית התקן והשונות לא השתנו.`},
+  {...WAGE,type:'mulUp',name:'העלאה באחוזים',opName:'הכפלה בקבוע',
+   story:WAGE.story+' הפעם הרשת נותנת לכולם העלאה באחוזים.',
+   q:'מה קורה לכל תצפית? מה יקרה לשכר הממוצע ולפיזור השכר? השוו להעלאה בשקלים.',
+   slider:{min:0,max:50,step:5,label:'גובה ההעלאה באחוזים'},out:k=>`${k}%`,
+   T:k=>x=>x*(1+k/100),mult:k=>1+k/100,
+   how:k=>`העלאה של ${k}%: כל שכר מוכפל <span class="op">ב-${f(1+k/100)}</span><span class="sub">כי השכר החדש הוא 100% מהשכר הישן ועוד ${k}%, כלומר ${100+k}% ממנו. ${100+k}% זה ${f(1+k/100)}.</span>`,
+   why:k=>{const m=1+k/100;return `כל שכר מוכפל ב-${f(m)}, ולכן גם הממוצע מוכפל ב-${f(m)}. מי שמרוויח יותר מקבל תוספת גדולה יותר בשקלים, ולכן הפערים גדלים: כל מרחק מהממוצע גדל פי ${f(m)}. השונות היא ממוצע ריבועי המרחקים, ולכן היא גדלה פי ${f(m)} בריבוע, כלומר פי ${f4(m*m)}. סטיית התקן היא שורש השונות, ולכן היא גדלה פי ${f(m)}, בדיוק כמו המרחקים. העקומה רחבה יותר, ולכן גם נמוכה יותר: השטח מתחתיה מייצג תמיד 100% מהעובדים.`;}},
+  {...SHOP,type:'sub',name:'הנחה בשקלים',opName:'הפחתת קבוע',
+   story:SHOP.story+' בחנות יש מבצע: אותה הנחה בשקלים על כל פריט.',
+   q:'מה קורה לכל תצפית? מה יקרה למחיר הממוצע ולפיזור המחירים?',
+   slider:{min:0,max:20,step:1,label:'גובה ההנחה',neg:true},out:k=>`<bdi dir="ltr">${k?'−':''}${f(k)}</bdi> ₪`,
+   T:k=>x=>x-k,mult:k=>1,
+   how:k=>`מכל מחיר מפחיתים <span class="op">${f(k)} ₪</span>`,
+   why:k=>`כל הפריטים הוזלו באותו סכום, ${f(k)} ₪. לכן כל ההתפלגות זזה שמאלה ב-${f(k)} ₪, וגם הממוצע והחציון ירדו ב-${f(k)} ₪. הפער בין כל שני פריטים נשאר אותו פער, ולכן סטיית התקן והשונות לא השתנו.`},
+  {...SHOP,type:'mulDown',name:'הנחה באחוזים',opName:'הכפלה בקבוע קטן מ-1',
+   story:SHOP.story+' הפעם המבצע הוא הנחה באחוזים על כל פריט.',
+   q:'מה קורה לכל תצפית? מה יקרה למחיר הממוצע ולפיזור המחירים? השוו להנחה בשקלים.',
+   slider:{min:0,max:50,step:5,label:'גובה ההנחה באחוזים',neg:true},out:k=>`<bdi dir="ltr">${k?'−':''}${k}%</bdi>`,
+   T:k=>x=>x*(1-k/100),mult:k=>1-k/100,
+   how:k=>`הנחה של ${k}%: כל מחיר מוכפל <span class="op">ב-${f(1-k/100)}</span><span class="sub">כי משלמים רק ${100-k}% מהמחיר. ${100-k}% זה ${f(1-k/100)}.${k===50?' הנחה של 50% היא בדיוק חלוקה ב-2.':''}</span>`,
+   why:k=>{const m=1-k/100;return `כל מחיר מוכפל ב-${f(m)}, ולכן גם הממוצע מוכפל ב-${f(m)}. פריט יקר מקבל הנחה גדולה יותר בשקלים, ולכן הפערים קטנים: כל מרחק מהממוצע מוכפל ב-${f(m)}. השונות היא ממוצע ריבועי המרחקים, ולכן היא מוכפלת ב-${f(m)} בריבוע, כלומר ב-${f4(m*m)}. סטיית התקן היא שורש השונות, ולכן היא מוכפלת ב-${f(m)}, בדיוק כמו המרחקים. העקומה צרה יותר, ולכן גם גבוהה יותר: השטח מתחתיה מייצג תמיד 100% מהפריטים.`;}},
+  {type:'units',dual:true,name:'המרת יחידות',opName:'הכפלה ב-60',
+   story:'סקר זמן מסך יומי של תלמידים, בשעות. רוצים להציג את התוצאות בדקות.',
+   q:'מה עושים עם כל תצפית כדי להמיר לדקות? מה יקרה לממוצע ולסטיית התקן?',
+   mu:4,sd:1,u:'שעות',uB:'דקות',u2:'שעות²',u2B:'דקות²',lab:'זמן מסך (שעות)',labB:'זמן מסך (דקות)',axis:[0,8,1],axisB:[0,480,60],
+   exA:2,exB:5,who:'תלמיד',before:'בשעות',after:'בדקות',
+   btn:'המירו לדקות',undo:'חזרה לשעות',
+   T:k=>x=>x*60,mult:k=>60,
+   how:()=>`כל תצפית מוכפלת <span class="op">ב-60</span><span class="sub">כי בשעה יש 60 דקות</span>`,
+   why:()=>'כל תצפית הוכפלה ב-60, ולכן הממוצע גדל פי 60, וגם כל מרחק מהממוצע גדל פי 60. השונות היא ממוצע ריבועי המרחקים, ולכן היא גדלה פי 60 בריבוע, כלומר פי 3,600. סטיית התקן היא שורש השונות, ולכן היא גדלה פי 60. הציור נשאר אותו ציור, כי התצפיות לא השתנו. השתנו רק יחידות המדידה.'}
+];
+let state={i:0,k:0,on:false,t:0},anim=null;
+const $=id=>document.getElementById(id);
 const pdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
-function rules(){const {op,k}=state,K=f(k),K2=f(k*k);
-  if(op==='add')return {c:`+${K}`,s:'ללא שינוי',v:'ללא שינוי'};
-  if(op==='sub')return {c:`−${K}`,s:'ללא שינוי',v:'ללא שינוי'};
-  if(op==='mul')return {c:`×${K}`,s:`×${K}`,v:`×${K}² = ×${K2}`};
-  return {c:`÷${K}`,s:`÷${K}`,v:`÷${K}² = ÷${K2}`};}
-function caption(){const {op,k}=state,K=f(k),p=params();
-  if(op==='add')return `הוספת ${K} לכל ערך מזיזה את כל ההתפלגות ימינה ב-${K}. מדדי המרכז גדלים ב-${K}, ומדדי הפיזור לא משתנים: הצורה והרוחב של העקומה נשארים זהים.`;
-  if(op==='sub')return `הפחתת ${K} מכל ערך מזיזה את כל ההתפלגות שמאלה ב-${K}. מדדי המרכז קטנים ב-${K}, ומדדי הפיזור לא משתנים: הצורה והרוחב של העקומה נשארים זהים.`;
-  const grow=(op==='mul'&&k>1)||(op==='div'&&k<1), same=Math.abs(k-1)<1e-9;
-  if(same)return `${op==='mul'?'הכפלה':'חלוקה'} ב-1 לא משנה אף ערך, ולכן אף מדד לא משתנה.`;
-  const verb=op==='mul'?`הכפלת כל ערך ב-${K}`:`חלוקת כל ערך ב-${K}`;
-  return `${verb} משנה גם את המרכז וגם את הפיזור. הממוצע עבר מ-${MU} ל-${f(p.mu)}, וסטיית התקן מ-${SD} ל-${f(p.sd)}. השונות משתנה בריבוע הקבוע. `+
-    (grow?'העקומה רחבה ונמוכה יותר: השטח מתחתיה מייצג את כל התלמידים (100%) ולכן לא משתנה. כשהיא מתרחבת, היא חייבת להתנמך.':'העקומה צרה וגבוהה יותר: השטח מתחתיה מייצג את כל התלמידים (100%) ולכן לא משתנה. כשהיא מצטמצמת, היא חייבת לגבוה.');}
+const changed=()=>{const S=SC[state.i];return S.slider?state.k>0:state.on;};
+function after(S){const T=S.T(state.k),m=S.mult(state.k);return {mu:T(S.mu),sd:S.sd*m};}
+const U=u=>`<bdi dir="${/[֐-׿]/.test(u)?'rtl':'ltr'}">${u}</bdi>`;
+const N=x=>`<bdi dir="ltr">${f(x)}</bdi>`;
+
+/* ---------- chart ---------- */
+const desk=()=>!!(window.matchMedia&&window.matchMedia('(min-width:1000px) and (min-height:640px)').matches);
+function axisSvg(x,y,[lo,hi,step],W,mL,mR,label){
+  let s=`<line x1="${mL}" x2="${W-mR}" y1="${y}" y2="${y}" stroke="var(--ink)" stroke-width="1.4"/>`;
+  for(let t=lo;t<=hi+1e-9;t+=step)s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${y}" y2="${y+5}" stroke="var(--ink)"/><text x="${x(t)}" y="${y+19}" text-anchor="middle" font-size="12" fill="var(--muted)">${f(t)}</text>`;
+  return s+`<text x="${(mL+W-mR)/2}" y="${y+37}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)" direction="rtl">${label}</text>`;
+}
+function curve(x,y,lo,hi,m,sd,base){
+  let d=`M${x(lo)} ${base}`;const n=400;
+  for(let j=0;j<=n;j++){const v=lo+(hi-lo)*j/n;d+=` L${x(v).toFixed(1)} ${y(pdf(v,m,sd)).toFixed(1)}`;}
+  return d+` L${x(hi)} ${base} Z`;
+}
+const halo='stroke="var(--paper)" stroke-width="4" paint-order="stroke" stroke-linejoin="round"';
+function marks(x,y,m,sd,col,base,txt,lift){
+  const yb=y(pdf(m+sd,m,sd)),yt=y(pdf(m,m,sd));
+  let o=`<line x1="${x(m)}" x2="${x(m)}" y1="${yt}" y2="${base}" stroke="${col}" stroke-width="2" stroke-dasharray="6 4"/>`;
+  o+=`<line x1="${x(m-sd)}" x2="${x(m+sd)}" y1="${yb}" y2="${yb}" stroke="${col}" stroke-width="2.5"/><line x1="${x(m-sd)}" x2="${x(m-sd)}" y1="${yb-6}" y2="${yb+6}" stroke="${col}" stroke-width="2.5"/><line x1="${x(m+sd)}" x2="${x(m+sd)}" y1="${yb-6}" y2="${yb+6}" stroke="${col}" stroke-width="2.5"/>`;
+  return {g:o,t:`<text x="${x(m)}" y="${yt-8-(lift||0)}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}" direction="rtl" ${halo}>${txt}</text>`};
+}
 function draw(){
-  const box=document.getElementById('chart'),W=Math.max(300,box.clientWidth);
-  const D=matchMedia('(min-width:1000px)').matches;
-  const H=D?Math.max(320,box.clientHeight):Math.round(Math.min(420,W*0.8));
-  const mL=14,mR=14,top=34,bot=40,x=v=>mL+(v-LO)/(HI-LO)*(W-mL-mR);
-  // fixed y-axis: scaled to the narrowest curve any setting can produce, so the original never moves
-  const p=params(),peak=pdf(0,0,SD/2.5)*1.1;
-  const y=d=>top+(H-top-bot)*(1-d/peak),base=H-bot;
-  const curve=(m,s)=>{let d=`M${x(LO)} ${base}`;const n=500;for(let i=0;i<=n;i++){const v=LO+(HI-LO)*i/n;d+=` L${x(v).toFixed(1)} ${y(pdf(v,m,s)).toFixed(1)}`;}return d+` L${x(HI)} ${base} Z`;};
-  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="direction:ltr;display:block" role="img" aria-label="התפלגות מקורית עם ממוצע ${MU} וסטיית תקן ${SD}, והתפלגות חדשה עם ממוצע ${f(p.mu)} וסטיית תקן ${f(p.sd)}">`;
-  for(let t=LO;t<=HI;t+=10)s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${base}" stroke="var(--grid)"/><text x="${x(t)}" y="${base+18}" text-anchor="middle" font-size="12" fill="var(--muted)">${t}</text>`;
-  s+=`<path d="${curve(MU,SD)}" fill="var(--orig)" fill-opacity=".35" stroke="var(--orig)" stroke-width="2.5"/>`;
-  s+=`<path d="${curve(p.mu,p.sd)}" fill="var(--new)" fill-opacity=".35" stroke="var(--new)" stroke-width="2.5"/>`;
-  s+=`<line x1="${x(LO)}" x2="${x(HI)}" y1="${base}" y2="${base}" stroke="var(--ink)" stroke-width="1.3"/>`;
-  const marks=(m,sd,col,lab,up)=>{
-    let o=`<line x1="${x(m)}" x2="${x(m)}" y1="${y(pdf(m,m,sd))}" y2="${base}" stroke="${col}" stroke-width="2" stroke-dasharray="6 4"/>`;
-    const yb=y(pdf(m+sd,m,sd));
-    o+=`<line x1="${x(m-sd)}" x2="${x(m+sd)}" y1="${yb}" y2="${yb}" stroke="${col}" stroke-width="2.5"/><line x1="${x(m-sd)}" x2="${x(m-sd)}" y1="${yb-6}" y2="${yb+6}" stroke="${col}" stroke-width="2.5"/><line x1="${x(m+sd)}" x2="${x(m+sd)}" y1="${yb-6}" y2="${yb+6}" stroke="${col}" stroke-width="2.5"/>`;
-    return o;};
-  s+=marks(MU,SD,'var(--muted)')+marks(p.mu,p.sd,'var(--new)');
-  const dm=Math.abs(p.mu-MU);if(dm>0.05){const yy=base-12,op=Math.min(1,dm/4);s+=`<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--ink)"/></marker></defs><line x1="${x(MU)}" x2="${x(p.mu)+(p.mu>MU?-4:4)}" y1="${yy}" y2="${yy}" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ah)" opacity="${op}"/>`;}
-  s+='</svg>';box.innerHTML=s;
-  document.getElementById('kx').textContent=`מקורי X: ממוצע ${MU}, ס״ת ${SD}`;
-  document.getElementById('ky').textContent=`חדש Y: ממוצע ${f(p.mu)}, ס״ת ${f(p.sd)}`;
+  const S=SC[state.i],box=$('chart'),W=Math.max(300,box.clientWidth),mL=18,mR=18,bot=46,top=30;
+  const P=after(S),show=changed()||state.t>0;
+  let s='';
+  if(!S.dual){
+    const H=desk()?Math.max(260,box.clientHeight):340,base=H-bot,[lo,hi]=S.axis;
+    const x=v=>mL+(v-lo)/(hi-lo)*(W-mL-mR);
+    // fixed vertical scale per scenario: fits the narrowest curve the slider can produce, so nothing rescales
+    const minMult=S.type==='mulDown'?1-S.slider.max/100:1;
+    const peak=pdf(0,0,S.sd*minMult)*1.12,y=d=>top+(base-top)*(1-d/peak);
+    s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="direction:ltr;display:block" role="img" aria-label="${S.before}: ממוצע ${S.mu}, סטיית תקן ${S.sd}${show?`. ${S.after}: ממוצע ${f(P.mu)}, סטיית תקן ${f(P.sd)}`:''}">`;
+    for(let t=lo;t<=hi;t+=S.axis[2])s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${base}" stroke="var(--grid)"/>`;
+    s+=`<path d="${curve(x,y,lo,hi,S.mu,S.sd,base)}" fill="var(--orig)" fill-opacity=".3" stroke="var(--orig)" stroke-width="2.5"/>`;
+    if(show)s+=`<path d="${curve(x,y,lo,hi,P.mu,P.sd,base)}" fill="var(--new)" fill-opacity=".3" stroke="var(--new)" stroke-width="2.5"/>`;
+    const a=marks(x,y,S.mu,S.sd,'var(--muted)',base,`${f(S.mu)} ${S.u}`,0);
+    let b=null;
+    if(show){const close=Math.abs(x(P.mu)-x(S.mu))<80&&Math.abs(y(pdf(P.mu,P.mu,P.sd))-y(pdf(S.mu,S.mu,S.sd)))<22;
+      b=marks(x,y,P.mu,P.sd,'var(--new)',base,`${f(P.mu)} ${S.u}`,close?18:0);}
+    s+=a.g+(b?b.g:'')+a.t+(b?b.t:'');
+    s+=axisSvg(x,base,S.axis,W,mL,mR,S.lab)+'</svg>';
+  }else{
+    const H=desk()?Math.max(320,box.clientHeight):420,half=(H-2*bot-top)/2,baseA=top+half,baseB=baseA+bot+half;
+    const xA=v=>mL+(v-S.axis[0])/(S.axis[1]-S.axis[0])*(W-mL-mR);
+    const xB=v=>mL+(v-S.axisB[0])/(S.axisB[1]-S.axisB[0])*(W-mL-mR);
+    const pA=pdf(0,0,S.sd)*1.15,pB=pdf(0,0,S.sd*60)*1.15;
+    const yA=d=>top+14+(half-14)*(1-d/pA),yB=d=>baseB-half+14+(half-14)*(1-d/pB);
+    s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="direction:ltr;display:block" role="img" aria-label="${S.before}: ממוצע ${S.mu}, סטיית תקן ${S.sd}${show?`. ${S.after}: ממוצע ${f(P.mu)}, סטיית תקן ${f(P.sd)}`:''}">`;
+    for(let t=S.axis[0];t<=S.axis[1];t+=S.axis[2])s+=`<line x1="${xA(t)}" x2="${xA(t)}" y1="${top}" y2="${baseB}" stroke="var(--grid)"/>`;
+    s+=`<text x="${W-mR}" y="${top+4}" text-anchor="start" direction="rtl" font-size="13" font-weight="700" fill="var(--muted)">${S.before}</text>`;
+    s+=`<path d="${curve(xA,yA,S.axis[0],S.axis[1],S.mu,S.sd,baseA)}" fill="var(--orig)" fill-opacity=".3" stroke="var(--orig)" stroke-width="2.5"/>`;
+    const a=marks(xA,yA,S.mu,S.sd,'var(--muted)',baseA,`${f(S.mu)} ${S.u}`,0);s+=a.g+a.t;
+    s+=axisSvg(xA,baseA,S.axis,W,mL,mR,S.lab);
+    s+=`<text x="${W-mR}" y="${baseA+bot+4}" text-anchor="start" direction="rtl" font-size="13" font-weight="700" fill="${show?'var(--new)':'var(--muted)'}">${S.after}</text>`;
+    if(show){const b=marks(xB,yB,S.mu*60,S.sd*60,'var(--new)',baseB,`${f(S.mu*60)} ${S.uB}`,0);
+      s+=`<g opacity="${state.t}"><path d="${curve(xB,yB,S.axisB[0],S.axisB[1],S.mu*60,S.sd*60,baseB)}" fill="var(--new)" fill-opacity=".3" stroke="var(--new)" stroke-width="2.5"/>${b.g}${b.t}</g>`;}
+    else s+=`<text x="${W/2}" y="${baseB-half/2}" text-anchor="middle" direction="rtl" font-size="14" fill="var(--muted)">לחצו על "${S.btn}"</text>`;
+    s+=axisSvg(xB,baseB,S.axisB,W,mL,mR,S.labB)+'</svg>';
+  }
+  box.innerHTML=s;
 }
-function side(){
-  const o=OPS[state.op],p=params(),r=rules(),K=f(state.k);
-  document.getElementById('formula').textContent=`Y = X ${o.sym} ${K}`;
-  document.getElementById('klabel').textContent=o.label;
-  const rows=[['grp','מדדי מרכז'],['ממוצע',MU,p.mu,r.c],['חציון',MU,p.mu,r.c],['שכיח',MU,p.mu,r.c],['grp','מדדי פיזור'],['סטיית תקן',SD,p.sd,r.s],['שונות',SD*SD,p.sd*p.sd,r.v]];
-  document.getElementById('tbl').innerHTML=rows.map(rw=>rw[0]==='grp'?`<tr class="grp"><td colspan="4">${rw[1]}</td></tr>`:
-    `<tr><td>${rw[0]}</td><td class="num">${f(rw[1])}</td><td class="num">${f(rw[2])}</td><td class="rule${rw[3]==='ללא שינוי'?' same':''}" ${rw[3]==='ללא שינוי'?'style="direction:rtl"':''}>${rw[3]==='ללא שינוי'?rw[3]:`<span dir="ltr" style="unicode-bidi:isolate">${rw[3]}</span>`}</td></tr>`).join('');
-  document.getElementById('cap').textContent=caption();
-  document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.op===state.op));
+
+/* ---------- side ---------- */
+function renderSeg(){
+  $('seg').innerHTML=SC.map((S,i)=>`<button data-i="${i}" aria-pressed="${state.i===i}">${S.name}<small>${S.opName}</small></button>`).join('');
+  $('seg').querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
 }
-function setOp(op){
-  state.op=op;const o=OPS[op];state.k=o.def;
-  const k=document.getElementById('k'),kn=document.getElementById('kn');
-  [k,kn].forEach(el=>{el.min=o.min;el.max=o.max;el.step=o.step;el.value=o.def;});
-  side();draw();
+function paintTrack(){
+  // orange part = the size of the change: from 0 to the thumb (from the right end for discounts)
+  const S=SC[state.i];if(!S.slider)return;const el=$('k'),p=(state.k-S.slider.min)/(S.slider.max-S.slider.min)*100;
+  el.style.background=S.slider.neg?`linear-gradient(to left, var(--new) ${p}%, var(--grid) ${p}%)`:`linear-gradient(to right, var(--new) ${p}%, var(--grid) ${p}%)`;
 }
-document.getElementById('k').oninput=e=>{state.k=+e.target.value;document.getElementById('kn').value=state.k;side();draw();};
-document.getElementById('kn').onchange=e=>{const o=OPS[state.op];let v=e.target.value.trim()===''?o.def:+e.target.value;if(!isFinite(v))v=o.def;v=Math.min(o.max,Math.max(o.min,v));state.k=v;e.target.value=v;document.getElementById('k').value=v;side();draw();};
-document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setOp(b.dataset.op));
+function renderTask(){
+  const S=SC[state.i],ch=changed(),k=state.k;
+  $('tag').textContent=`תרחיש ${state.i+1} מתוך ${SC.length} · ${S.opName}`;
+  $('story').textContent=S.story;
+  $('q').innerHTML=`<b>מה יקרה לנתונים?</b> ${S.q}`;
+  $('ctl').hidden=!S.slider;$('actrow').hidden=!!S.slider;
+  if(S.slider){const el=$('k'),ng=S.slider.neg;el.min=ng?-S.slider.max:S.slider.min;el.max=ng?-S.slider.min:S.slider.max;el.step=S.slider.step;el.value=ng?-k:k;$('klabel').textContent=S.slider.label;$('kout').innerHTML=S.out(k);paintTrack();}
+  else{$('apply').textContent=state.on?S.undo:S.btn;$('apply').classList.toggle('ghost',state.on);}
+  $('how').innerHTML=ch?S.how(k):(S.slider?'הזיזו את המחוון כדי לראות מה קורה לכל תצפית.':`לחצו על "${S.btn}".`);
+  // worked example: two observations, before and after, and the gap between them
+  const T=S.T(k),uA=S.u,uB=ch?(S.uB||S.u):S.u,a=S.exA,b=S.exB,ta=ch?T(a):a,tb=ch?T(b):b;
+  $('ex').innerHTML=`<tr><th>דוגמה</th><th>לפני</th><th>אחרי</th></tr>
+    <tr><td>${S.who} א'</td><td class="n">${N(a)} ${U(uA)}</td><td class="n hl">${N(ta)} ${U(uB)}</td></tr>
+    <tr><td>${S.who} ב'</td><td class="n">${N(b)} ${U(uA)}</td><td class="n hl">${N(tb)} ${U(uB)}</td></tr>
+    <tr class="gap"><td>הפער ביניהם</td><td>${N(b-a)} ${U(uA)}</td><td class="hl">${N(tb-ta)} ${U(uB)}</td></tr>`;
+  const w=$('why');w.textContent=ch?S.why(k):'כאן יופיע הסבר למה המדדים השתנו, או למה לא.';w.classList.toggle('idle',!ch);
+  $('lx').textContent=S.before;$('ly').textContent=S.after;
+}
+function renderCards(){
+  const S=SC[state.i],ch=changed(),P=after(S),m=S.mult(state.k),k=state.k;
+  const uA=S.u,uB=ch?(S.uB||S.u):S.u,v2A=S.u2,v2B=ch?(S.u2B||S.u2):S.u2;
+  const shift=S.type==='add'?`+${f(k)}`:S.type==='sub'?`−${f(k)}`:`×${f(m)}`;
+  const spread=(S.type==='add'||S.type==='sub')?null:`×${f(m)}`,vr=spread?`×${f4(m*m)}`:null;
+  const rows=[['ממוצע',S.mu,P.mu,uA,uB,shift],['חציון',S.mu,P.mu,uA,uB,shift],['סטיית תקן',S.sd,P.sd,uA,uB,spread],['שונות',S.sd*S.sd,P.sd*P.sd,v2A,v2B,vr]];
+  $('cards').innerHTML=rows.map(([l,a,b,ua,ub,r])=>{
+    const same=!ch||!r||(m===1&&S.type!=='add'&&S.type!=='sub');
+    const chg=!ch||!r?'<span class="chg same">ללא שינוי</span>':`<span class="chg"><bdi dir="ltr">${r}</bdi></span>`;
+    return `<div class="card"><div class="lab">${l}</div><div class="val"><span class="num">${N(ch?b:a)} ${U(ch?ub:ua)}</span>${chg}</div><div class="was">לפני: ${N(a)} ${U(ua)}</div></div>`;
+  }).join('');
+}
+function update(){renderSeg();renderTask();renderCards();draw();}
+function go(i){cancelAnimationFrame(anim);state={i,k:0,on:false,t:0};update();}
+$('k').addEventListener('input',e=>{state.k=Math.abs(+e.target.value);renderTask();renderCards();draw();});
+$('apply').addEventListener('click',()=>{
+  state.on=!state.on;const from=state.t,to=state.on?1:0;renderTask();renderCards();
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){state.t=to;draw();return;}
+  const t0=performance.now(),D=600;cancelAnimationFrame(anim);
+  const step=now=>{const p=Math.min(1,(now-t0)/D);state.t=from+(to-from)*p;draw();if(p<1)anim=requestAnimationFrame(step);};
+  anim=requestAnimationFrame(step);
+});
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(draw,120);});
-setOp('add');
+go(0);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
 </script>
 </body>

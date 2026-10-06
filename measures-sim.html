@@ -3,133 +3,113 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>שינויים בערכים ומדדי מרכז ופיזור</title>
+<title>שכר לשעה: מה קורה למדדים?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1;
-  --yellow:#FFE04A; --orange:#F2892B; --good:#17895F; --bad:#C9392F;
-  --accent:#2F5BD3; --median:#8A4FD0; --ghost:#A8B3C7; --goodbg:#E3F5EC; --badbg:#FBE7E5; --warnbg:#FFF4E0;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --accent:#2F5BD3; --median:#8A4FD0; --dot:#4C78D0; --new:#F2892B; --ghost:#A8B3C7;
+  --good:#17895F; --goodbg:#E3F5EC; --warnbg:#FFF4E0; --band:rgba(47,91,211,.10);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550;
-    --yellow:#E8C93A; --orange:#F29A48; --good:#3CC28A; --bad:#F0685E;
-    --accent:#7C9BFF; --median:#B990F0; --ghost:#56627C; --goodbg:#16342A; --badbg:#3A1F22; --warnbg:#3A2E1A;
-  }
-}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550;
+  --accent:#7C9BFF; --median:#B990F0; --dot:#7FA2F0; --new:#F29A48; --ghost:#56627C;
+  --good:#3CC28A; --goodbg:#16342A; --warnbg:#3A2E1A; --band:rgba(124,155,255,.14);}}
 :root[data-theme="dark"]{
   --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550;
-  --yellow:#E8C93A; --orange:#F29A48; --good:#3CC28A; --bad:#F0685E;
-  --accent:#7C9BFF; --median:#B990F0; --ghost:#56627C; --goodbg:#16342A; --badbg:#3A1F22; --warnbg:#3A2E1A;
-}
+  --accent:#7C9BFF; --median:#B990F0; --dot:#7FA2F0; --new:#F29A48; --ghost:#56627C;
+  --good:#3CC28A; --goodbg:#16342A; --warnbg:#3A2E1A; --band:rgba(124,155,255,.14);}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.45}
 .app{max-width:1440px;margin:0 auto;padding:14px 14px 30px}
-.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 20px;margin-bottom:10px}
-h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.35rem,3.6vw,1.8rem);line-height:1.15;margin:0}
-.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem}
-h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.05rem;margin:0 0 8px}
 .mnote{background:var(--warnbg);border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:.95rem}
-.tasknav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.tasknav .lbl{font-weight:600;color:var(--muted);margin-left:4px}
-.tbtn{font:inherit;font-weight:700;width:36px;height:36px;border-radius:9px;border:1.5px solid var(--grid);background:var(--paper);color:var(--ink);cursor:pointer;position:relative}
-.tbtn[aria-current="true"]{border-color:var(--accent);background:var(--accent);color:var(--paper)}
-.tbtn .st{position:absolute;top:-4px;left:-4px;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg)}
-.st.ok{background:var(--good)} .st.part{background:var(--orange)}
+.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.back:hover{color:var(--accent);text-decoration:underline}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-bottom:12px}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.15;margin:0}
+.lead{color:var(--muted);margin:2px 0 0;font-size:.95rem;max-width:62ch}
+h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.05rem;margin:0}
+.nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.nav .lbl{font-weight:600;color:var(--muted);margin-left:2px}
+.nb{font:inherit;font-weight:700;min-width:36px;height:36px;padding:0 8px;border-radius:9px;border:1.5px solid var(--grid);background:var(--paper);color:var(--ink);cursor:pointer;position:relative}
+.nb[aria-current="true"]{border-color:var(--accent);background:var(--accent);color:var(--paper)}
+.nb .ok{position:absolute;top:-5px;left:-5px;width:15px;height:15px;border-radius:50%;background:var(--good);color:#fff;font-size:10px;line-height:15px;border:2px solid var(--bg)}
+.grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);grid-template-areas:"task" "plot" "res"}
 .panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px}
-.grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);grid-template-areas:"task" "vals" "plot" "ans"}
-.taskp{grid-area:task}.strip{grid-area:vals}.plotp{grid-area:plot;position:relative}.ansp{grid-area:ans}
-.tnum{color:var(--muted);font-weight:600;margin:0}
-.task-text{font-size:1.15rem;font-weight:700;margin:0 0 4px}
-.defs{color:var(--muted);font-size:.9rem;margin:0 0 8px}
-.status{border-radius:8px;padding:7px 10px;font-size:.92rem;margin:0 0 10px}
-.status.none{background:var(--bg);color:var(--muted)}
-.status.ok{background:var(--goodbg)} .status.warn{background:var(--warnbg)}
+.taskp{grid-area:task}.resp{grid-area:res}.plotp{grid-area:plot}
+.taskp .howto{margin-bottom:0}.taskp .modes{margin:10px 0 0}
+.modes[hidden]{display:none}
+.tag{font-size:.85rem;font-weight:700;color:var(--muted);margin:0 0 2px}
+.ctext{font-size:1.2rem;font-weight:700;line-height:1.3;margin:0 0 10px}
+.conds{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}
+.conds li{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--muted)}
+.conds li i{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--grid);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+.conds li.on{color:var(--ink)}
+.conds li.on i{background:var(--good);border-color:var(--good);color:#fff}
+.howto{margin:-4px 0 10px;font-size:.95rem;background:var(--bg);border-radius:8px;padding:8px 10px}
+.howto b{font-weight:700}
+.success{background:var(--goodbg);border-radius:10px;padding:10px 12px;margin:0 0 10px}
+.success b{color:var(--good)}
+.success:empty{display:none}
+.modes{display:flex;gap:4px;flex-wrap:wrap;background:var(--bg);border-radius:10px;padding:3px;margin:0 0 10px}
+.modes button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:6px 12px;background:transparent;color:var(--ink);cursor:pointer;flex:1}
+.modes button[aria-pressed="true"]{background:var(--paper);box-shadow:0 0 0 1.5px var(--accent);color:var(--accent)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 button.act{font:inherit;font-weight:600;border-radius:9px;padding:7px 13px;cursor:pointer;border:1.5px solid var(--ink);background:transparent;color:var(--ink)}
 button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper)}
-button.link{font:inherit;font-weight:600;background:none;border:0;color:var(--accent);cursor:pointer;padding:6px 4px;text-decoration:underline}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .hint{color:var(--muted);font-size:.86rem;margin:8px 0 0}
-/* values strip */
-.strip h2{margin-bottom:6px}
-.vals{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;direction:ltr}
-.cell{display:flex;align-items:center;border:1.5px solid var(--grid);border-radius:8px;background:var(--yellow);overflow:hidden}
-.cell input{width:100%;min-width:0;border:0;background:transparent;font:inherit;font-weight:700;text-align:center;padding:7px 1px;color:#1B2540;font-variant-numeric:tabular-nums}
-.cell button{border:0;background:transparent;font:inherit;font-size:.85rem;color:#1B2540;opacity:.55;cursor:pointer;padding:6px 6px;line-height:1}
-.cell button:hover{opacity:1}
-.cell.changed{background:var(--orange);border-color:var(--orange)}
-.cell.deleted{background:var(--paper);border-style:dashed;border-color:var(--ghost)}
-.cell.deleted input,.cell.deleted button,.cell.slot.empty input,.cell.slot.empty button{color:var(--muted)}
-.cell.slot{border-color:var(--orange);border-width:2px}
-.cell.slot.empty{background:var(--paper)}
-.cell.invalid{outline:2px solid var(--bad)}
-/* plot */
-#plot{width:100%}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 8px}
+.card{border:1.5px solid var(--grid);border-radius:12px;padding:10px 12px;background:var(--paper)}
+.card.focus{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.card .lab{font-weight:700;color:var(--muted);font-size:.92rem}
+.card .val{display:flex;align-items:baseline;gap:8px;margin-top:2px;flex-wrap:wrap}
+.card .num{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.card .arr{font-size:1.2rem;font-weight:700;white-space:nowrap}
+.card .was{font-size:.86rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.card.up .arr,.card.down .arr{color:var(--new)}
+.card.same .arr{color:var(--muted);font-size:.9rem}
+.plotp{display:flex;flex-direction:column}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.86rem;color:var(--muted);margin:0 0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:16px;height:10px;border-radius:2px}
+#plot{width:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 svg text{font-family:"Assistant",Arial,sans-serif}
-.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.84rem;color:var(--muted);margin-top:6px}
-.legend span{display:inline-flex;align-items:center;gap:5px}
-.sw{display:inline-block;width:11px;height:11px;border-radius:50%}
-/* tables */
-.tscroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
-th,td{padding:6px 6px;border-bottom:1px solid var(--grid);text-align:right;vertical-align:middle}
-th{font-weight:600;color:var(--muted);font-size:.86rem}
-td.num{direction:ltr;text-align:right}
-tr.info td{color:var(--muted);font-size:.92rem}
-select{font:inherit;font-size:.95rem;padding:5px 6px;border-radius:8px;border:1.5px solid var(--grid);background:var(--paper);color:var(--ink);min-width:100px}
-tr.good>td{background:var(--goodbg)} tr.bad>td{background:var(--badbg)}
-tr.why td{font-size:.85rem;color:var(--muted);border-top:0;padding-top:0}
-.mark{font-weight:700;white-space:nowrap} .mark.good{color:var(--good)} .mark.bad{color:var(--bad)}
-.feedback{margin:8px 0 0;font-weight:600}
-.sumov{display:none}
-.sumov.open{display:block;margin-top:12px;border-top:1px solid var(--grid);padding-top:10px}
-.sumhead{display:flex;justify-content:space-between;align-items:center}
-.sum td,.sum th{text-align:center;font-size:.9rem;padding:6px 4px}
-.sum td:first-child,.sum th:first-child{text-align:right}
-.sum td.good{background:var(--goodbg);color:var(--good);font-weight:700}
-.sum td.bad{background:var(--badbg);color:var(--bad);font-weight:700}
-.sum tr.cur td:first-child{font-weight:700;color:var(--accent)}
-@media (min-width:1000px){
-  .app{height:100%;display:flex;flex-direction:column;padding-bottom:14px}
-  .mnote{display:none}
-  .grid{flex:1;min-height:0;grid-template-columns:minmax(340px,390px) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);
-    grid-template-areas:"vals vals" "task plot" "ans plot"}
-  .strip{display:flex;align-items:center;gap:12px;padding:8px 12px}
-  .strip h2{margin:0;white-space:nowrap;font-size:.95rem}
-  .vals{flex:1;grid-template-columns:repeat(30,minmax(0,1fr));gap:4px}
-  .cell input{padding:5px 0;font-size:.95rem}
-  .plotp{display:flex;flex-direction:column;min-height:0}
-  #plot{flex:1;min-height:0}
-  .ansp{min-height:0;overflow:auto}
-  .taskp{padding:10px 14px}
-  .task-text{font-size:1.05rem}
-  .defs,.status{font-size:.86rem;margin-bottom:6px}
-  .hint{margin-top:6px;font-size:.8rem}
-  button.act{padding:5px 12px}
-  .ansp th,.ansp td{padding:3px 6px}
-  .ansp select{padding:3px 6px;font-size:.9rem}
-  .ansp h2{margin-bottom:4px}
-  .top{margin-bottom:8px}.app{padding-top:10px}
-  .sumov.open{position:absolute;inset:0;margin:0;border:0;background:var(--paper);border-radius:12px;padding:12px 14px;overflow:auto;z-index:2}
-}
-@media (min-width:1000px) and (hover:hover){
-  .cell{position:relative;overflow:visible}
-  .cell button{position:absolute;top:-10px;left:50%;transform:translateX(-50%);display:none;background:var(--paper);border:1px solid var(--ghost);border-radius:50%;width:20px;height:20px;padding:0;font-size:.7rem;opacity:1;color:var(--ink);z-index:1}
-  .cell:hover button,.cell:focus-within button{display:block}
-}
-@media (prefers-reduced-motion:no-preference){.cell{transition:background .2s}}
-.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
-.back:hover{color:var(--accent);text-decoration:underline}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center;margin-top:8px;padding-top:10px;border-top:1px solid var(--grid)}
+.ctl label{font-weight:700}
+.ctl[hidden]{display:none}
+input[type=range]{width:100%;direction:ltr;accent-color:var(--new)}
+input[type=number]{font:inherit;font-weight:700;width:84px;padding:4px 6px;border:1.5px solid var(--grid);border-radius:8px;background:var(--paper);color:var(--ink);direction:ltr;text-align:center}
+input:disabled{opacity:.45}
+@media (max-width:600px){.ctl{grid-template-columns:1fr auto}.ctl label{grid-column:1/-1}}
+/* fixed card height on narrow screens so the chart below does not move while values change */
+@media (max-width:999px){.card{height:106px;overflow:hidden}}
+@media (max-width:420px){.card{height:134px}}
+@media (max-width:359px){.card{height:160px}}
 .credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
 .credit a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (min-width:1000px){
+  .mnote{display:none}
+  .grid{grid-template-columns:minmax(330px,380px) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"task plot" "res plot"}
+  .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .card{padding:6px 12px}
+  .card .num{font-size:1.35rem}
+  .card .lab{font-size:.85rem}.card .was{font-size:.8rem}
+}
+@media (min-width:1000px) and (min-height:640px){
+  .app{height:100%;display:flex;flex-direction:column;padding-bottom:12px}
+  .grid{flex:1;min-height:0}
+  .resp{overflow:auto;min-height:0}
+  .grid{gap:10px 12px}
+  .plotp{min-height:0}
+  #plot{flex:1;min-height:0;overflow:hidden}
+  .top{margin-bottom:8px}
+}
 </style>
 </head>
 <body>
@@ -138,336 +118,316 @@ tr.why td{font-size:.85rem;color:var(--muted);border-top:0;padding-top:0}
   <header class="top">
     <div>
       <a class="back" href="index.html">→ כל הסימולציות</a>
-      <h1>מה קורה למדדים כשמשנים ערך?</h1>
-      <p class="lead">29 ציונים ו-8 משימות. בכל משימה: שנו את הערכים, סמנו מה קרה לכל מדד ולחצו "בדיקה".</p>
+      <h1>שכר לשעה: מה קורה למדדים?</h1>
+      <p class="lead">השכר לשעה של 80 עובדים ברשת חנויות. בכל אתגר משנים עובד אחד: מגייסים עובד, עובד עוזב, או משנים שכר. המדדים מתעדכנים מיד.</p>
     </div>
-    <nav class="tasknav" aria-label="משימות"><span class="lbl">משימות:</span><span id="tasks" class="tasknav"></span></nav>
+    <nav class="nav" aria-label="אתגרים"><span class="lbl">אתגרים:</span><span id="nav" class="nav"></span></nav>
   </header>
 
   <div class="grid">
-    <section class="panel taskp" aria-labelledby="taskText">
-      <p class="tnum" id="taskNum"></p>
-      <p class="task-text" id="taskText"></p>
-      <p class="defs" id="taskDefs"></p>
-      <p class="status none" id="status"></p>
-      <div class="row">
-        <button class="act" id="resetBtn">חזרה למצב ההתחלתי</button>
-        <button class="act" id="nextBtn">למשימה הבאה</button>
+    <section class="panel taskp" aria-live="polite">
+      <p class="tag" id="tag"></p>
+      <p class="ctext" id="ctext"></p>
+      <p class="howto" id="howto"></p>
+      <div class="modes" id="modes" role="group" aria-label="סוג השינוי" hidden>
+        <button data-m="add">גיוס עובד</button>
+        <button data-m="del">עזיבת עובד</button>
+        <button data-m="mod">שינוי שכר</button>
       </div>
-      <p class="hint">מעבר למשימה אחרת מחזיר את הנתונים למצב ההתחלתי. כדי לנסות שוב באותה משימה, לחצו "חזרה למצב ההתחלתי".</p>
     </section>
-
-    <section class="panel strip" aria-labelledby="valsH">
-      <h2 id="valsH">הערכים</h2>
-      <div class="vals" id="vals"></div>
+    <section class="panel resp" aria-live="polite">
+      <ul class="conds" id="conds"></ul>
+      <div class="success" id="success"></div>
+      <div class="row">
+        <button class="act" id="reset">התחלה מחדש</button>
+        <button class="act" id="next">לאתגר הבא</button>
+      </div>
+      <p class="hint">מעבר לאתגר אחר מחזיר את השכר של כל העובדים למצב ההתחלתי.</p>
     </section>
 
     <section class="panel plotp" aria-labelledby="plotH">
-      <h2 id="plotH">גרף הנקודות</h2>
-      <div id="plot"></div>
       <div class="legend">
-        <span><i class="sw" style="background:var(--yellow);border:1.5px solid var(--ink)"></i>ערך מקורי</span>
-        <span><i class="sw" style="background:var(--orange)"></i>ערך ששונה או נוסף</span>
-        <span><i class="sw" style="border:1.5px dashed var(--ghost)"></i>ערך שנמחק או הוחלף</span>
-        <span style="color:var(--ghost)">סימונים באפור: המצב המקורי</span>
-        <span>התא הכתום ברשימה: הוספת ערך</span>
+        <span><i class="sw" style="background:var(--band);outline:1px solid var(--accent)"></i>ממוצע ± סטיית תקן</span>
+        <span style="color:var(--accent)">━ ממוצע</span>
+        <span style="color:var(--median)">┅ חציון</span>
+        <span style="color:var(--median)">▮ העובדים שבאמצע השורה</span>
+        <span><i class="sw" style="background:var(--new);border-radius:50%;width:10px"></i>העובד שהשתנה</span>
+        <span style="color:var(--ghost)">אפור: לפני השינוי</span>
       </div>
-      <div class="sumov" id="sumov">
-        <div class="sumhead"><h2>טבלת סיכום</h2><button class="link" id="sumClose">סגירה</button></div>
-        <div class="tscroll"><table class="sum">
-          <thead><tr><th>משימה</th><th>ממוצע</th><th>חציון</th><th>טווח</th><th>סטיית תקן</th></tr></thead>
-          <tbody id="summary"></tbody>
-        </table></div>
-        <p class="hint" id="score"></p>
-        <div class="row" style="margin-top:8px"><button class="act" id="resetAll">איפוס כל המשימות</button></div>
+      <h2 id="plotH" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">תרשים נקודות של השכר לשעה</h2>
+      <div class="cards" id="cards" aria-label="המדדים"></div>
+      <div id="plot"></div>
+      <div class="ctl" id="ctl">
+        <label for="k" id="klabel"></label>
+        <input type="range" id="k" min="30" max="130" step="1">
+        <input type="number" id="kn" min="30" max="130" step="1" aria-label="שכר לשעה בשקלים">
       </div>
     </section>
 
-    <section class="panel ansp" aria-labelledby="aH">
-      <h2 id="aH">מדדים ותשובות</h2>
-      <div class="tscroll"><table>
-        <thead><tr><th>מדד</th><th>מקורי</th><th>אחרי</th><th>מה קרה?</th><th></th></tr></thead>
-        <tbody id="mtable"></tbody>
-      </table></div>
-      <div class="row" style="margin-top:10px">
-        <button class="act primary" id="checkBtn">בדיקה</button>
-        <button class="link" id="sumBtn">טבלת סיכום</button>
-      </div>
-      <p class="feedback" id="feedback"></p>
-    </section>
   </div>
   <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
   <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
   <!-- ===== סוף קרדיט ===== -->
 </div>
 <script>
-
-const ORIG=[80,75,65,80,70,70,75,90,90,70,65,80,90,85,60,80,85,95,90,75,85,75,90,85,80,85,95,90,95].sort((a,b)=>a-b).concat([null]);
-const SLOT=29;
-const DIRS=['עלייה','ירידה','ללא שינוי'];
-const MKEYS=[['mean','ממוצע'],['median','חציון'],['range','טווח'],['sd','סטיית תקן']];
-const EPS=1e-9;
-
-function stats(arr){
-  const v=arr.filter(x=>x!==null&&isFinite(x)); const n=v.length;
-  if(!n) return {n:0,mean:NaN,median:NaN,min:NaN,max:NaN,range:NaN,sd:NaN,sum:0};
-  const s=[...v].sort((a,b)=>a-b); const sum=v.reduce((a,b)=>a+b,0); const mean=sum/n;
+const ORIG=[34,37,38,39,40,41,41,42,42,43,43,44,44,45,45,45,46,46,46,46,47,47,47,48,48,48,48,49,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,53,54,54,54,54,55,55,55,56,56,56,56,57,57,57,58,58,59,59,60,60,61,61,62,63,64,65,68,76,84,94,110];
+const LO=30,HI=130,BIN=1,EPS=1e-9;
+const same=(a,b)=>Math.abs(a-b)<EPS;
+function stats(v){
+  const n=v.length,s=[...v].sort((a,b)=>a-b),sum=v.reduce((a,b)=>a+b,0),mean=sum/n;
   const median=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;
   const sd=Math.sqrt(v.reduce((a,x)=>a+(x-mean)**2,0)/n);
-  return {n,mean,median,min:s[0],max:s[n-1],range:s[n-1]-s[0],sd,sum};
+  return {n,mean,median,range:s[n-1]-s[0],sd,min:s[0],max:s[n-1]};
 }
 const S0=stats(ORIG);
-const f1=x=>(Math.round(x*10)/10).toString();
-const band={lo:S0.mean-S0.sd/2,hi:S0.mean+S0.sd/2};
-const near=v=>v>=band.lo&&v<=band.hi;
-const lowSig=v=>v<S0.mean-S0.sd, highSig=v=>v>S0.mean+S0.sd;
-const above=v=>v>band.hi, below=v=>v<band.lo;
-const EXT_LO=62,EXT_HI=100;
-const extAdd=v=>v<EXT_LO||v>=EXT_HI;
-const extDel=v=>v===S0.min||v===S0.max;
-const D={
-  near:`קרוב לממוצע = בין ${f1(band.lo)} ל-${f1(band.hi)} (ממוצע ± חצי סטיית תקן)`,
-  low:`נמוך משמעותית = מתחת ל-${f1(S0.mean-S0.sd)}`,
-  high:`גבוה משמעותית = מעל ${f1(S0.mean+S0.sd)}`,
-  above:`גבוה מהממוצע = מעל ${f1(band.hi)}`,
-  below:`נמוך מהממוצע = מתחת ל-${f1(band.lo)}`,
-  ext:`קיצוני = מתחת ל-${EXT_LO} או ${EXT_HI} ומעלה`,
-  extDel:`קיצוני = המינימום (${S0.min}) או המקסימום (${S0.max})`,
-  typ:`טיפוסי = בין ${f1(band.lo)} ל-${f1(band.hi)}`
-};
-const TASKS=[
-  {t:'החליפו ערך קרוב לממוצע בערך נמוך משמעותית',k:'rep',from:near,to:lowSig,defs:[D.near,D.low]},
-  {t:'החליפו ערך קרוב לממוצע בערך גבוה משמעותית',k:'rep',from:near,to:highSig,defs:[D.near,D.high]},
-  {t:'החליפו ערך גבוה מהממוצע בערך קרוב לממוצע',k:'rep',from:above,to:near,defs:[D.above,D.near]},
-  {t:'החליפו ערך נמוך מהממוצע בערך קרוב לממוצע',k:'rep',from:below,to:near,defs:[D.below,D.near]},
-  {t:'הוסיפו בתא הכתום ערך קיצוני',k:'add',ok:extAdd,defs:[D.ext]},
-  {t:'הוסיפו בתא הכתום ערך טיפוסי',k:'add',ok:near,defs:[D.typ]},
-  {t:'מחקו ערך קיצוני',k:'del',ok:extDel,defs:[D.extDel]},
-  {t:'מחקו ערך טיפוסי',k:'del',ok:near,defs:[D.typ]}
+const MAXS=(()=>{const c={};ORIG.forEach(v=>{const k=Math.floor((v-LO)/BIN);c[k]=(c[k]||0)+1;});return Math.max(...Object.values(c))+2;})();
+const MODE_TXT={add:'גיוס עובד',del:'עזיבת עובד',mod:'שינוי שכר'};
+const raised=()=>state.change&&state.change.type==='mod'&&state.change.v>ORIG[state.change.i];
+const CH=[
+  {mode:'add',t:'גייסו עובד חדש בלי לשנות את השכר הממוצע.',cards:['mean'],
+   conds:[['השכר הממוצע לא השתנה',S=>same(S.mean,S0.mean)]],
+   why:'השכר של העובד החדש שווה בדיוק לשכר הממוצע, ולכן הוא לא מושך את הממוצע לשום כיוון.'},
+  {mode:'mod',t:'תנו העלאה לעובד אחד כך שהשכר החציוני יעלה.',cards:['median'],
+   conds:[['זו העלאה: השכר החדש גבוה מהקודם',()=>raised()],['השכר החציוני עלה',S=>S.median>S0.median+EPS]],
+   why:'העובד עבר מתחת לחציון אל מעליו, ולכן השכר שבאמצע הרשימה השתנה.'},
+  {mode:'mod',t:'תנו העלאה לעובד אחד כך שהשכר הממוצע יעלה, אבל השכר החציוני לא ישתנה.',cards:['mean','median'],
+   conds:[['זו העלאה: השכר החדש גבוה מהקודם',()=>raised()],['השכר הממוצע עלה',S=>S.mean>S0.mean+EPS],['השכר החציוני לא השתנה',S=>same(S.median,S0.median)]],
+   why:'הממוצע מושפע מכל שקל של העלאה. החציון תלוי רק בסדר: כל עוד אף עובד לא עבר את האמצע, החציון נשאר.'},
+  {mode:'add',t:'גייסו עובד חדש שמגדיל את פיזור השכר, בלי לשנות את הטווח.',cards:['sd','range'],
+   conds:[['פיזור השכר (סטיית התקן) גדל',S=>S.sd>S0.sd+EPS],['הטווח לא השתנה',S=>same(S.range,S0.range)]],
+   why:'השכר של העובד החדש רחוק מהממוצע, ולכן הפיזור גדל. אבל הוא בין השכר הנמוך ביותר לגבוה ביותר, ולכן הטווח לא זז.'},
+  {mode:'del',t:'עובד אחד עוזב, ופיזור השכר דווקא גדל.',cards:['sd'],
+   conds:[['פיזור השכר (סטיית התקן) גדל',S=>S.sd>S0.sd+EPS]],
+   why:'עזב עובד עם שכר קרוב לממוצע. בלעדיו נשארים יחסית יותר עובדים רחוקים מהממוצע, ולכן סטיית התקן גדלה.'}
 ];
-
-let state={cur:0,values:ORIG.slice(),tasks:TASKS.map(()=>({ans:{mean:'',median:'',range:'',sd:''},checked:false,res:null,snap:null}))};
-const KEY='measures-sim-v2';
-try{const s=JSON.parse(sessionStorage.getItem(KEY)||'null');if(s&&s.tasks&&s.tasks.length===8&&s.values&&s.values.length===30)state=s;}catch(e){}
-function save(){try{sessionStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-
+const FREE=CH.length;
+let state={ch:0,mode:'add',change:null,sel:null,done:[]};
+try{const d=JSON.parse(sessionStorage.getItem('wage-sim-done-v2')||'[]');if(Array.isArray(d))state.done=d;}catch(e){}
 const $=id=>document.getElementById(id);
 
-function changes(){
-  const out=[];
-  state.values.forEach((v,i)=>{const o=ORIG[i];
-    if(o===null&&v!==null)out.push({i,type:'add',to:v});
-    else if(o!==null&&v===null)out.push({i,type:'del',from:o});
-    else if(o!==null&&v!==o)out.push({i,type:'rep',from:o,to:v});});
+function values(){
+  const c=state.change,out=[];
+  ORIG.forEach((v,i)=>{
+    if(c&&c.type==='del'&&c.i===i)return;
+    out.push(c&&c.type==='mod'&&c.i===i?c.v:v);
+  });
+  if(c&&c.type==='add')out.push(c.v);
   return out;
 }
-function describe(c){
-  if(c.type==='add')return `הוספתם ${c.to}`;
-  if(c.type==='del')return `מחקתם ${c.from}`;
-  return `החלפתם ${c.from} ב-${c.to}`;
-}
-function validate(){
-  const T=TASKS[state.cur],ch=changes();
-  if(!ch.length)return {cls:'none',msg:'עוד לא בוצע שינוי. ערכו את רשימת הערכים לפי המשימה.'};
-  const did=ch.map(describe).join(', ');
-  const bad=m=>({cls:'warn',msg:`${did}. זה לא תואם את המשימה: ${m} אפשר לבדוק בכל זאת, אבל כדאי לחזור למצב ההתחלתי ולנסות שוב.`});
-  if(ch.length>1)return bad('צריך לבצע שינוי אחד בלבד.');
-  const c=ch[0];
-  if(T.k==='rep'){
-    if(c.type!=='rep')return bad('צריך להחליף ערך קיים, לא להוסיף או למחוק.');
-    if(!T.from(c.from))return bad(`הערך שהוחלף (${c.from}) לא עומד בתנאי: ${T.defs[0]}.`);
-    if(!T.to(c.to))return bad(`הערך החדש (${c.to}) לא עומד בתנאי: ${T.defs[1]}.`);
-  }else if(T.k==='add'){
-    if(c.type!=='add')return bad('צריך להוסיף ערך בתא הכתום בלי לשנות ערכים אחרים.');
-    if(!T.ok(c.to))return bad(`הערך ${c.to} לא עומד בתנאי: ${T.defs[0]}.`);
-  }else{
-    if(c.type!=='del')return bad('צריך למחוק ערך (✕) בלי לשנות ערכים אחרים.');
-    if(!T.ok(c.from))return bad(`הערך ${c.from} לא עומד בתנאי: ${T.defs[0]}.`);
-  }
-  return {cls:'ok',msg:`${did}. השינוי תואם את המשימה. עכשיו סמנו מה קרה לכל מדד.`};
-}
-function dir(a,b){return Math.abs(b-a)<EPS?'ללא שינוי':(b>a?'עלייה':'ירידה')}
 function fmtPair(a,b,d){
   let x=a.toFixed(d),y=b.toFixed(d),k=d;
-  while(x===y&&Math.abs(a-b)>=EPS&&k<8){k++;x=a.toFixed(k);y=b.toFixed(k);}
+  while(x===y&&Math.abs(a-b)>=EPS&&k<6){k++;x=a.toFixed(k);y=b.toFixed(k);}
   const trim=s=>s.includes('.')?s.replace(/0+$/,'').replace(/\.$/,''):s;
   return [trim(x),trim(y)];
 }
 
-function reason(k,S){
-  if(k==='mean')return `הממוצע תלוי בכל הערכים. לפני: ${S0.sum} ÷ ${S0.n} = ${f1(S0.mean)}. אחרי: ${f1(S.sum)} ÷ ${S.n} = ${f1(S.mean)}.`;
-  if(k==='median'){
-    if(S.n!==S0.n)return `מספר הערכים השתנה מ-${S0.n} ל-${S.n}, ולכן גם מקום האמצע זז. עכשיו החציון הוא ${S.n%2?`הערך ה-${(S.n+1)/2}`:`ממוצע הערכים ה-${S.n/2} וה-${S.n/2+1}`} אחרי מיון. לכן החציון יכול להשתנות גם כשהערך שנוסף או נמחק רחוק מהאמצע.`;
-    return `החציון הוא הערך ה-${(S.n+1)/2} אחרי מיון. החלפה משנה אותו רק אם היא משנה את הערך שנמצא במקום הזה.`;}
-  if(k==='range')return `הטווח תלוי רק בקצוות: מינימום ${S0.min}←${S.min}, מקסימום ${S0.max}←${S.max}.`;
-  const c=changes()[0]||{},sd=f1(S0.sd);
-  if(c.type==='add')return `סטיית התקן היא בערך המרחק הטיפוסי של הערכים מהממוצע (כאן ${sd}). ערך חדש שקרוב לממוצע יותר מזה מקטין אותה, וערך רחוק יותר מגדיל אותה.`;
-  if(c.type==='del')return `סטיית התקן היא בערך המרחק הטיפוסי של הערכים מהממוצע (כאן ${sd}). מחיקת ערך קרוב לממוצע מגדילה אותה, כי נשארים יחסית יותר ערכים רחוקים. מחיקת ערך רחוק מקטינה אותה.`;
-  return 'סטיית התקן מודדת כמה הערכים רחוקים מהממוצע. החלפת ערך בערך רחוק יותר מהממוצע מגדילה אותה, ובערך קרוב יותר מקטינה אותה.';
-}
-/* ---- rendering ---- */
-const desk=()=>!!(window.matchMedia&&window.matchMedia('(min-width:1000px)').matches);
-function renderTasks(){
-  $('tasks').innerHTML=TASKS.map((T,i)=>{
-    const t=state.tasks[i];let st='';
-    if(t.checked){const all=MKEYS.every(([k])=>t.ans[k]===t.res[k]);st=`<i class="st ${all?'ok':'part'}"></i>`;}
-    return `<button class="tbtn" aria-current="${i===state.cur}" aria-label="משימה ${i+1}: ${T.t}" title="${T.t}" data-i="${i}">${i+1}${st}</button>`;
-  }).join('');
-  $('tasks').querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>switchTask(+b.dataset.i));
-  const T=TASKS[state.cur],t=state.tasks[state.cur];
-  $('taskNum').textContent=`משימה ${state.cur+1} מתוך ${TASKS.length}`;
-  $('taskText').textContent=T.t;
-  $('taskDefs').textContent='לצורך המשימה: '+T.defs.join('; ')+'.';
-  const nb=$('nextBtn');
-  nb.textContent=state.cur<TASKS.length-1?'למשימה הבאה':'לטבלת הסיכום';
-  nb.classList.toggle('primary',t.checked);
-}
-function renderGrid(){
-  $('vals').innerHTML=state.values.map((v,i)=>{
-    const slot=i===SLOT;
-    return `<div class="cell${slot?' slot':''}" data-i="${i}"><input inputmode="decimal" aria-label="${slot?'ערך חדש':'ערך '+(i+1)}" value="${v===null?'':v}" placeholder="${slot?'+':'–'}"><button aria-label="מחיקת ערך" title="מחיקה">✕</button></div>`;
-  }).join('');
-  $('vals').querySelectorAll('.cell').forEach(c=>{
-    const i=+c.dataset.i,inp=c.querySelector('input');
-    inp.addEventListener('input',()=>{
-      const s=inp.value.trim().replace(',','.');
-      if(s===''){setVal(i,null);c.classList.remove('invalid');return;}
-      const n=Number(s);
-      if(!/^-?\d+(\.\d+)?$/.test(s)||!isFinite(n)){c.classList.add('invalid');return;}
-      c.classList.remove('invalid');setVal(i,n);
-    });
-    c.querySelector('button').onclick=()=>{inp.value='';c.classList.remove('invalid');setVal(i,null);};
+/* ---------- chart ---------- */
+let hits=[],geom=null,drag=null;
+const desk=()=>!!(window.matchMedia&&window.matchMedia('(min-width:1000px) and (min-height:640px)').matches);
+function draw(){
+  const box=$('plot'),W=Math.max(300,box.clientWidth);
+  const mL=16,mR=16,top=44,bot=44,STRIP=80;
+  let H=desk()?Math.max(250,box.clientHeight):480;
+  let base=H-bot-STRIP;
+  const x=v=>mL+(v-LO)/(HI-LO)*(W-mL-mR);
+  geom={x,inv:px=>LO+(px-mL)/(W-mL-mR)*(HI-LO),base,top};
+  const c=state.change,S=stats(values());
+  // dots: [value,kind,id]; kind: n=normal, c=changed, g=ghost
+  const dots=[];
+  ORIG.forEach((v,i)=>{
+    if(c&&c.type==='del'&&c.i===i){dots.push([v,'g',i]);return;}
+    if(c&&c.type==='mod'&&c.i===i){dots.push([c.v,'c',i]);dots.push([v,'g',i]);return;}
+    dots.push([v,'n',i]);
   });
-  paintCells();
-}
-function paintCells(){
-  $('vals').querySelectorAll('.cell').forEach(c=>{
-    const i=+c.dataset.i,v=state.values[i],o=ORIG[i];
-    c.classList.toggle('changed',v!==null&&v!==o);
-    c.classList.toggle('deleted',o!==null&&v===null);
-    c.classList.toggle('empty',v===null);
-  });
-}
-function clearCheck(t){if(t.checked){t.checked=false;t.res=null;t.snap=null;}}
-function setVal(i,v){state.values[i]=v;clearCheck(state.tasks[state.cur]);paintCells();renderLive();save();}
-function renderStatus(){const v=validate();const el=$('status');el.className='status '+v.cls;el.textContent=v.msg;}
-function renderTable(){
-  const t=state.tasks[state.cur],S=stats(state.values);
-  const rows=[['mean','ממוצע',2,1],['median','חציון',2,1],['min','מינימום',2,0],['max','מקסימום',2,0],['range','טווח',2,1],['sd','סטיית תקן',3,1],['n','מספר ערכים',0,0]];
-  $('mtable').innerHTML=rows.map(([k,l,d,ask])=>{
-    const [a,b]=S.n?fmtPair(S0[k],S[k],d):[fmtPair(S0[k],S0[k],d)[0],'—'];
-    if(!ask)return `<tr class="info"><td>${l}</td><td class="num">${a}</td><td class="num">${b}</td><td></td><td></td></tr>`;
-    const sel=`<select data-k="${k}" aria-label="מה קרה ל${l}"><option value="">בחרו…</option>${DIRS.map(x=>`<option${t.ans[k]===x?' selected':''}>${x}</option>`).join('')}</select>`;
-    let cls='',mark='',why='';
-    if(t.checked){const ok=t.ans[k]===t.res[k];cls=ok?'good':'bad';
-      mark=`<span class="mark ${cls}">${ok?'✓':'✗'}</span>`;
-      if(!ok)why=`<tr class="why bad"><td colspan="5">התשובה הנכונה: ${t.res[k]}. ${reason(k,S)}</td></tr>`;}
-    return `<tr class="${cls}"><td>${l}</td><td class="num">${a}</td><td class="num">${b}</td><td>${sel}</td><td>${mark}</td></tr>${why}`;
-  }).join('');
-  $('mtable').querySelectorAll('select').forEach(s=>s.onchange=()=>{
-    t.ans[s.dataset.k]=s.value;clearCheck(t);renderTable();renderTasks();renderSummary();save();
-  });
-  const fb=$('feedback');
-  if(t.checked){const n=MKEYS.filter(([k])=>t.ans[k]===t.res[k]).length;
-    fb.textContent=(n===4?'כל ארבעת המדדים נכונים.':`${n} מתוך 4 נכונים. ההסבר מופיע מתחת לכל מדד שסומן לא נכון.`)+(state.cur<TASKS.length-1?' כשתעברו למשימה הבאה, הנתונים יחזרו למצב ההתחלתי.':'');}
-  else fb.textContent='';
-}
-function renderSummary(){
-  let tot=0,ok=0;
-  $('summary').innerHTML=TASKS.map((T,i)=>{
-    const t=state.tasks[i];
-    const cells=MKEYS.map(([k])=>{
-      const a=t.ans[k]||'—';
-      if(!t.checked)return `<td>${a}</td>`;
-      tot++;const g=t.ans[k]===t.res[k];if(g)ok++;
-      return `<td class="${g?'good':'bad'}">${a}</td>`;
-    }).join('');
-    return `<tr class="${i===state.cur?'cur':''}"><td>${i+1}. ${T.t}</td>${cells}</tr>`;
-  }).join('');
-  $('score').textContent=tot?`נכון: ${ok} מתוך ${tot} תשובות שנבדקו.`:'עוד לא נבדקו משימות.';
-}
-function renderPlot(){
-  const box=$('plot'),D=desk(),W=Math.max(300,box.clientWidth),S=stats(state.values);
-  const cur=state.values.filter(v=>v!==null);
-  const ghosts=[];state.values.forEach((v,i)=>{const o=ORIG[i];if(o!==null&&v!==o)ghosts.push(o);});
-  const all=cur.concat(ghosts);
-  let lo=Math.min(55,...all.map(x=>x-5)),hi=Math.max(100,...all.map(x=>x+5));
-  const span=hi-lo,step5=[5,10,20,50,100,200,500,1000,2000,5000,10000,20000,50000,100000,1e6,1e7].find(t=>span/t<=16)||Math.pow(10,Math.ceil(Math.log10(span/10)));
-  lo=Math.floor(lo/step5)*step5;hi=Math.ceil(hi/step5)*step5;
-  const mL=D?66:58,mR=18;
-  const x=v=>mL+(v-lo)/(hi-lo)*(W-mL-mR);
-  const stack={},dots=[];
-  [...cur].sort((a,b)=>a-b).forEach(v=>{stack[v]=(stack[v]||0)+1;dots.push({v,k:stack[v],g:false});});
-  ghosts.sort((a,b)=>a-b).forEach(v=>{stack[v]=(stack[v]||0)+1;dots.push({v,k:stack[v],g:true});});
-  const maxK=Math.max(4,...Object.values(stack));
-  const rg=D?30:28, below=42+3*rg+16;
-  let r,gap,axisY,H;
-  if(D){
-    const avail=Math.max(220,box.clientHeight);
-    const slotW=(W-mL-mR)/((hi-lo)/5);
-    gap=Math.max(10,Math.min(30,(avail-below-16)/maxK,slotW));
-    r=Math.min(gap/2-1,12);
-    axisY=Math.max(12+maxK*gap+2,avail-below);H=axisY+below;
-  }else{r=W<480?5.5:7;gap=2*r+2;axisY=12+maxK*gap+2;H=axisY+below;}
-  const rowY=[0,1,2,3].map(j=>axisY+42+j*rg);
-  const fs=D?13:12;
-  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="גרף נקודות של הערכים" style="direction:ltr;display:block">`;
-  for(let t=lo;t<=hi;t+=step5){s+=`<line x1="${x(t)}" x2="${x(t)}" y1="6" y2="${axisY}" stroke="var(--grid)"/>`;s+=`<text x="${x(t)}" y="${axisY+18}" font-size="${fs}" text-anchor="middle" fill="var(--muted)">${t}</text>`;}
-  s+=`<line x1="${mL}" x2="${W-mR}" y1="${axisY}" y2="${axisY}" stroke="var(--ink)" stroke-width="1.5"/>`;
-  const changedCount={};state.values.forEach((v,i)=>{if(v!==null&&v!==ORIG[i])changedCount[v]=(changedCount[v]||0)+1;});
-  const curCount={};cur.forEach(v=>curCount[v]=(curCount[v]||0)+1);
-  dots.forEach(d=>{
-    const cy=axisY-r-2-(d.k-1)*gap;
-    if(d.g){s+=`<circle cx="${x(d.v)}" cy="${cy}" r="${r}" fill="none" stroke="var(--ghost)" stroke-width="1.5" stroke-dasharray="3 2"/>`;return;}
-    const isOr=changedCount[d.v]&&d.k>curCount[d.v]-changedCount[d.v];
-    s+=`<circle cx="${x(d.v)}" cy="${cy}" r="${r}" fill="${isOr?'var(--orange)':'var(--yellow)'}" stroke="var(--ink)" stroke-width="1.2"/>`;
-  });
-  const tri=(cx,cy,c,f)=>`<path d="M${cx} ${cy-7} L${cx+7} ${cy+5} L${cx-7} ${cy+5} Z" fill="${f?c:'none'}" stroke="${c}" stroke-width="1.5"/>`;
-  const dia=(cx,cy,c,f)=>`<path d="M${cx} ${cy-7} L${cx+7} ${cy} L${cx} ${cy+7} L${cx-7} ${cy} Z" fill="${f?c:'none'}" stroke="${c}" stroke-width="1.5"/>`;
-  const seg=(a,b,y,c,w)=>`<line x1="${x(a)}" x2="${x(b)}" y1="${y}" y2="${y}" stroke="${c}" stroke-width="${w}"/><line x1="${x(a)}" x2="${x(a)}" y1="${y-6}" y2="${y+6}" stroke="${c}" stroke-width="${w}"/><line x1="${x(b)}" x2="${x(b)}" y1="${y-6}" y2="${y+6}" stroke="${c}" stroke-width="${w}"/>`;
-  const labs=[['ממוצע','var(--accent)'],['חציון','var(--median)'],['½± ס״ת','var(--accent)'],['טווח','var(--ink)']];
-  labs.forEach(([t,c],j)=>{s+=`<text x="${mL-10}" y="${rowY[j]+4}" font-size="${fs}" font-weight="700" text-anchor="end" fill="${c}">${t}</text>`;
-    s+=`<line x1="${mL}" x2="${W-mR}" y1="${rowY[j]}" y2="${rowY[j]}" stroke="var(--grid)" stroke-dasharray="2 4"/>`;});
-  s+=tri(x(S0.mean),rowY[0],'var(--ghost)',false)+dia(x(S0.median),rowY[1],'var(--ghost)',false);
-  s+=seg(S0.mean-S0.sd/2,S0.mean+S0.sd/2,rowY[2]-4,'var(--ghost)',1.5);
-  s+=seg(S0.min,S0.max,rowY[3]-4,'var(--ghost)',1.5);
-  if(S.n){
-    s+=tri(x(S.mean),rowY[0],'var(--accent)',true)+dia(x(S.median),rowY[1],'var(--median)',true);
-    s+=seg(S.mean-S.sd/2,S.mean+S.sd/2,rowY[2]+4,'var(--accent)',2.5);
-    s+=seg(S.min,S.max,rowY[3]+4,'var(--ink)',2.5);
+  if(c&&c.type==='add')dots.push([c.v,'c','new']);
+  const col=v=>Math.floor((v-LO)/BIN);
+  const order={n:0,c:1,g:2};
+  dots.sort((a,b)=>col(a[0])-col(b[0])||order[a[1]]-order[b[1]]);
+  const cnt={},stk=dots.map(d=>{const k=col(d[0]);cnt[k]=(cnt[k]||0)+1;return cnt[k];});
+  // fixed scale: based on the original data plus headroom, so the chart never rescales while dragging
+  const maxStack=MAXS;
+  const colW=(W-mL-mR)/((HI-LO)/BIN);
+  const r=Math.max(2.5,Math.min(colW/2-0.6,((base-top-8)/maxStack)/2-0.6,11));
+  const gap=2*r+1.2;
+  if(!desk()){H=Math.round(top+bot+STRIP+maxStack*gap+40);base=H-bot-STRIP;geom.base=base;}
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="direction:ltr;display:block" role="img" aria-label="תרשים נקודות של השכר לשעה. ממוצע ${S.mean.toFixed(1)}, חציון ${S.median}">`;
+  s+=`<rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/>`;
+  for(let t=LO;t<=HI;t+=10)s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${base}" stroke="var(--grid)"/>`;
+  // band now
+  s+=`<rect x="${x(S.mean-S.sd)}" y="${top}" width="${x(S.mean+S.sd)-x(S.mean-S.sd)}" height="${base-top}" fill="var(--band)"/>`;
+  // original markers (gray)
+  if(c){
+    s+=`<line x1="${x(S0.mean-S0.sd)}" x2="${x(S0.mean-S0.sd)}" y1="${top}" y2="${base}" stroke="var(--ghost)" stroke-width="1.5" stroke-dasharray="2 4"/>`;
+    s+=`<line x1="${x(S0.mean+S0.sd)}" x2="${x(S0.mean+S0.sd)}" y1="${top}" y2="${base}" stroke="var(--ghost)" stroke-width="1.5" stroke-dasharray="2 4"/>`;
+    s+=`<line x1="${x(S0.mean)}" x2="${x(S0.mean)}" y1="${top}" y2="${base}" stroke="var(--ghost)" stroke-width="2"/>`;
+    s+=`<line x1="${x(S0.median)}" x2="${x(S0.median)}" y1="${top}" y2="${base}" stroke="var(--ghost)" stroke-width="2" stroke-dasharray="6 4"/>`;
   }
+  // dots
+  hits=[];
+  dots.forEach((d,j)=>{
+    const [v,k,id]=d,cx=x(v),cy=base-r-2-(stk[j]-1)*gap;
+    if(k==='g'){s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--ghost)" stroke-width="1.6" stroke-dasharray="3 2"/>`;}
+    else{
+      const selected=state.mode==='mod'&&state.sel===id;
+      s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${k==='c'||selected?'var(--new)':'var(--dot)'}" ${selected||k==='c'?'stroke="var(--ink)" stroke-width="2"':'stroke="var(--paper)" stroke-width="1"'}/>`;
+    }
+    hits.push({cx,cy,r,id,kind:k,v});
+  });
+  // lines now
+  s+=`<line x1="${x(S.mean)}" x2="${x(S.mean)}" y1="${top}" y2="${base}" stroke="var(--accent)" stroke-width="2.5"/>`;
+  s+=`<line x1="${x(S.median)}" x2="${x(S.median)}" y1="${top}" y2="${base}" stroke="var(--median)" stroke-width="2.5" stroke-dasharray="7 5"/>`;
+  const lab=(px,y,t,colr,anchor)=>`<text x="${px}" y="${y}" text-anchor="${anchor}" font-size="13" font-weight="700" fill="${colr}" stroke="var(--paper)" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${t}</text>`;
+  const mLeft=S.mean<S.median;
+  s+=lab(x(S.mean)+(mLeft?-6:6),top-8,'ממוצע',`var(--accent)`,mLeft?'end':'start');
+  const mx=x(S.median)+(mLeft?6:-6),man=mLeft?'start':'end',halo='stroke="var(--paper)" stroke-width="4" paint-order="stroke" stroke-linejoin="round"';
+  s+=lab(mx,top-26,'חציון',`var(--median)`,man);
+  const medChanged=Math.abs(S.median-S0.median)>EPS;
+  s+=`<text x="${mx}" y="${top-8}" text-anchor="${man}" direction="ltr" style="direction:ltr;unicode-bidi:bidi-override" font-size="13" font-weight="700" ${halo}>`+
+     (medChanged?`<tspan fill="var(--ghost)">${S0.median}</tspan><tspan fill="var(--median)"> → ${S.median}</tspan>`:`<tspan fill="var(--median)">${S.median}</tspan>`)+`</text>`;
+  // value bubble on the changed / selected dot
+  const act=hits.find(h=>h.kind==='c')||(state.mode==='mod'&&state.sel!==null?hits.find(h=>h.id===state.sel&&h.kind==='n'):null);
+  if(act){const bx=Math.min(W-34,Math.max(34,act.cx)),by=act.cy-r-10;
+    s+=`<g pointer-events="none"><rect x="${bx-30}" y="${by-18}" width="60" height="22" rx="6" fill="var(--ink)"/><text x="${bx}" y="${by-2}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--paper)">${act.v} ₪</text></g>`;}
+  // axis
+  s+=`<line x1="${mL}" x2="${W-mR}" y1="${base}" y2="${base}" stroke="var(--ink)" stroke-width="1.5"/>`;
+  for(let t=LO;t<=HI;t+=10)s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${base}" y2="${base+5}" stroke="var(--ink)"/><text x="${x(t)}" y="${base+19}" text-anchor="middle" font-size="12" fill="var(--muted)">${t}</text>`;
+  s+=`<text x="${W/2}" y="${base+36}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--muted)" direction="rtl">שכר לשעה (₪)</text>`;
+  // ordered strip: every employee as a bar, sorted from lowest to highest wage
+  const row=[];
+  ORIG.forEach((v,i)=>{if(c&&c.type==='del'&&c.i===i)return;row.push({v:c&&c.type==='mod'&&c.i===i?c.v:v,k:(c&&c.type==='mod'&&c.i===i)||(state.mode==='mod'&&state.sel===i)?'c':'n'});});
+  if(c&&c.type==='add')row.push({v:c.v,k:'c'});
+  row.sort((a,b)=>a.v-b.v||(a.k==='c')-(b.k==='c'));
+  const nn=row.length,midIdx=nn%2?[(nn-1)/2]:[nn/2-1,nn/2];
+  const sTop=base+bot+10,sBot=H-6,bw=(W-mL-mR)/nn,bh=v=>Math.max(2,v/HI*(sBot-sTop-30));
+  s+=`<line x1="${mL}" x2="${W-mR}" y1="${base+bot-2}" y2="${base+bot-2}" stroke="var(--grid)"/>`;
+  s+=`<text x="${W-mR}" y="${sTop+6}" text-anchor="start" font-size="12" font-weight="700" fill="var(--ink)" direction="rtl">כל העובדים בשורה, לפי סדר השכר (מהנמוך לגבוה)</text>`;
+  row.forEach((e,j)=>{const isMid=midIdx.includes(j),h=bh(e.v);
+    s+=`<rect x="${mL+j*bw+0.5}" y="${sBot-h}" width="${Math.max(1,bw-1)}" height="${h}" fill="${isMid?'var(--median)':e.k==='c'?'var(--new)':'var(--dot)'}" opacity="${isMid||e.k==='c'?1:.45}"/>`;});
+  const mxs=mL+(midIdx[0]+midIdx.length/2)*bw,mtop=sBot-bh(row[midIdx[midIdx.length-1]].v)-8;
+  s+=`<path d="M${mxs} ${mtop} l-5 -7 h10 Z" fill="var(--median)"/>`;
+  const mt=nn%2?`באמצע: העובד ה-${midIdx[0]+1} מתוך ${nn} (${row[midIdx[0]].v} ₪). זה החציון.`
+    :`באמצע: העובד ה-${midIdx[0]+1} (${row[midIdx[0]].v} ₪) והעובד ה-${midIdx[1]+1} (${row[midIdx[1]].v} ₪). החציון הוא הממוצע שלהם.`;
+  const mtShort=nn%2?`באמצע: ה-${midIdx[0]+1} מתוך ${nn} (${row[midIdx[0]].v} ₪)`:`באמצע: ה-${midIdx[0]+1} (${row[midIdx[0]].v} ₪) וה-${midIdx[1]+1} (${row[midIdx[1]].v} ₪)`;
+  s+=`<text x="${mxs}" y="${mtop-11}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--median)" direction="rtl" stroke="var(--paper)" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${W<600?mtShort:mt}</text>`;
   s+='</svg>';box.innerHTML=s;
 }
-function renderLive(){renderPlot();renderTable();renderStatus();renderTasks();renderSummary();}
-function renderAll(){renderGrid();renderLive();}
-function switchTask(i){
-  state.cur=i;const t=state.tasks[i];
-  state.values=(t.checked&&t.snap)?t.snap.slice():ORIG.slice();
-  renderAll();save();
+function nearest(px,py,filter){
+  let best=null,bd=1e9;
+  hits.forEach(h=>{if(!filter(h))return;const d=Math.hypot(h.cx-px,h.cy-py);if(d<bd){bd=d;best=h;}});
+  return best&&bd<=Math.max(best.r*1.8,14)?best:null;
 }
-function openSummary(o){$('sumov').classList.toggle('open',o);if(o&&!desk())$('sumov').scrollIntoView({block:'start'});}
-$('resetBtn').onclick=()=>{state.values=ORIG.slice();clearCheck(state.tasks[state.cur]);renderAll();save();};
-$('nextBtn').onclick=()=>{if(state.cur<TASKS.length-1)switchTask(state.cur+1);else openSummary(true);};
-$('sumBtn').onclick=()=>openSummary(!$('sumov').classList.contains('open'));
-$('sumClose').onclick=()=>openSummary(false);
-$('checkBtn').onclick=()=>{
-  const t=state.tasks[state.cur],fb=$('feedback');
-  if(!changes().length){fb.textContent='בצעו קודם את השינוי ברשימת הערכים.';return;}
-  const S=stats(state.values);
-  if(!S.n){fb.textContent='לא נשארו ערכים לחישוב.';return;}
-  if(MKEYS.some(([k])=>!t.ans[k])){fb.textContent='סמנו תשובה לכל ארבעת המדדים.';return;}
-  t.res={};MKEYS.forEach(([k])=>t.res[k]=dir(S0[k],S[k]));
-  t.checked=true;t.snap=state.values.slice();
-  renderLive();save();
-};
-$('resetAll').onclick=()=>{
-  if(!confirm('למחוק את כל התשובות ולהתחיל מחדש?'))return;
-  state={cur:0,values:ORIG.slice(),tasks:TASKS.map(()=>({ans:{mean:'',median:'',range:'',sd:''},checked:false,res:null,snap:null}))};
-  renderAll();save();
-};
-let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(renderPlot,120);});
-renderAll();
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(renderPlot);
+function clampV(v){return Math.max(LO,Math.min(HI,Math.round(v)));}
+function local(e){const rc=$('plot').getBoundingClientRect();return [e.clientX-rc.left,e.clientY-rc.top];}
+$('plot').addEventListener('pointerdown',e=>{
+  if(!geom)return;const [px,py]=local(e),m=state.mode;
+  if(m==='add'){
+    if(py>geom.base+22)return;
+    setAdd(clampV(geom.inv(px)));drag='add';
+  }else if(m==='del'){
+    const h=nearest(px,py,h=>h.kind!=='c');
+    if(!h)return;
+    state.change=(h.kind==='g')?null:{type:'del',i:h.id};update();return;
+  }else{
+    const h=nearest(px,py,h=>h.kind==='n'||h.kind==='c');
+    if(h){
+      if(state.sel!==h.id){state.sel=h.id;state.change=null;}
+      drag='mod';update();
+    }else if(state.sel!==null){setMod(clampV(geom.inv(px)));drag='mod';}
+    else return;
+  }
+  try{$('plot').setPointerCapture(e.pointerId);}catch(_){}
+  e.preventDefault();
+});
+$('plot').addEventListener('pointermove',e=>{
+  if(!drag)return;const [px]=local(e),v=clampV(geom.inv(px));
+  if(drag==='add')setAdd(v);else setMod(v);
+});
+['pointerup','pointercancel'].forEach(t=>$('plot').addEventListener(t,()=>{drag=null;}));
+function setAdd(v){
+  if(state.change&&state.change.type==='add'&&state.change.v===v)return;
+  state.change={type:'add',v};update();
+}
+function setMod(v){
+  if(state.sel===null)return;const i=state.sel;
+  const cur=state.change&&state.change.type==='mod'?state.change.v:ORIG[i];
+  if(cur===v&&state.change)return;
+  state.change=v===ORIG[i]?null:{type:'mod',i,v};update();
+}
+
+/* ---------- side panels ---------- */
+function renderNav(){
+  const b=CH.map((c,i)=>`<button class="nb" data-i="${i}" aria-current="${state.ch===i}" aria-label="אתגר ${i+1}: ${c.t}" title="${c.t}">${i+1}${state.done.includes(i)?'<i class="ok" aria-hidden="true">✓</i>':''}</button>`).join('');
+  $('nav').innerHTML=b+`<button class="nb" data-i="${FREE}" aria-current="${state.ch===FREE}">חופשי</button>`;
+  $('nav').querySelectorAll('.nb').forEach(x=>x.onclick=()=>goCh(+x.dataset.i));
+}
+function renderTask(S){
+  const free=state.ch===FREE,C=CH[state.ch];
+  $('tag').textContent=free?'ניסוי חופשי':`אתגר ${state.ch+1} מתוך ${CH.length} · ${MODE_TXT[C.mode]}`;
+  $('ctext').textContent=free?'בחרו סוג שינוי ושנו עובד אחד. שימו לב אילו מדדים זזים ואילו לא.':C.t;
+  $('modes').hidden=!free;
+  const HOW={add:'גררו את המחוון שמתחת לתרשים, או לחצו על התרשים במקום השכר של העובד החדש. הנקודה הכתומה היא העובד החדש.',
+    del:'לחצו על נקודה בתרשים, והעובד הזה עוזב. לחיצה על נקודה אחרת מחליפה את העובד שעוזב.',
+    mod:'לחצו על נקודה בתרשים כדי לבחור עובד. אחר כך גררו את הנקודה, או הזיזו את המחוון שמתחת לתרשים.'};
+  $('howto').innerHTML='<b>איך עושים:</b> '+HOW[state.mode];
+  $('modes').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===state.mode));
+  let all=false;
+  if(free){$('conds').innerHTML='';}
+  else{
+    const res=C.conds.map(([l,f])=>[l,!!state.change&&f(S)]);
+    all=res.every(r=>r[1]);
+    $('conds').innerHTML=res.map(([l,ok])=>`<li class="${ok?'on':''}"><i aria-hidden="true">${ok?'✓':''}</i>${l}</li>`).join('');
+    if(all&&!state.done.includes(state.ch)){state.done.push(state.ch);try{sessionStorage.setItem('wage-sim-done-v2',JSON.stringify(state.done));}catch(e){}}
+  }
+  $('success').innerHTML=all?`<b>הצלחתם!</b> ${C.why}`:'';
+  const nx=$('next');
+  nx.textContent=state.ch<CH.length-1?'לאתגר הבא':(state.ch===CH.length-1?'לניסוי חופשי':'לאתגר הראשון');
+  nx.classList.toggle('primary',all);
+}
+function renderCards(S){
+  const focus=state.ch===FREE?[]:CH[state.ch].cards;
+  const defs=[['mean','שכר ממוצע',1],['median','שכר חציוני',1],['range','טווח',1],['sd','סטיית תקן',1]];
+  $('cards').innerHTML=defs.map(([k,l,d])=>{
+    const [a,b]=fmtPair(S0[k],S[k],d),diff=S[k]-S0[k];
+    const cls=Math.abs(diff)<EPS?'same':diff>0?'up':'down';
+    const arr=cls==='same'?'ללא שינוי':cls==='up'?'▲':'▼';
+    return `<div class="card ${cls}${focus.includes(k)?' focus':''}"><div class="lab">${l}</div><div class="val"><span class="num">${b} ₪</span><span class="arr">${arr}</span></div><div class="was">לפני השינוי: ${a} ₪</div></div>`;
+  }).join('');
+}
+function renderControl(){
+  const m=state.mode,c=state.change,k=$('k'),kn=$('kn');
+  $('ctl').hidden=m==='del';
+  if(m==='add'){
+    $('klabel').textContent='שכר העובד החדש';
+    k.disabled=kn.disabled=false;
+    const v=c&&c.type==='add'?c.v:null;
+    k.value=v??Math.round(S0.mean);kn.value=v??'';kn.placeholder='₪';
+  }else if(m==='del'){
+  }else{
+    const sel=state.sel;
+    $('klabel').textContent=sel===null?'שכר חדש':`שכר חדש (היה ${ORIG[sel]} ₪)`;
+    k.disabled=kn.disabled=sel===null;
+    const v=sel===null?null:(c&&c.type==='mod'?c.v:ORIG[sel]);
+    k.value=v??Math.round(S0.mean);kn.value=v??'';
+  }
+}
+function update(){const S=stats(values());draw();renderTask(S);renderCards(S);renderControl();renderNav();}
+function goCh(i){
+  state.ch=i;state.change=null;state.sel=null;drag=null;
+  if(i!==FREE)state.mode=CH[i].mode;
+  update();
+}
+$('k').addEventListener('input',e=>{const v=+e.target.value;if(state.mode==='add')setAdd(v);else setMod(v);});
+$('kn').addEventListener('change',e=>{
+  const raw=e.target.value.trim();if(raw===''){renderControl();return;}
+  const v=clampV(+raw);if(!isFinite(v)){renderControl();return;}
+  if(state.mode==='add')setAdd(v);else setMod(v);renderControl();
+});
+$('modes').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mode=b.dataset.m;state.change=null;state.sel=null;update();});
+$('reset').onclick=()=>{state.change=null;state.sel=null;update();};
+$('next').onclick=()=>goCh(state.ch<CH.length?(state.ch+1)%(CH.length+1):0);
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(draw,120);});
+goCh(0);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
 </script>
 </body>
 </html>
