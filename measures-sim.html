@@ -53,6 +53,8 @@ h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-s
 .conds li.on i{background:var(--good);border-color:var(--good);color:#fff}
 .howto{margin:-4px 0 10px;font-size:.95rem;background:var(--bg);border-radius:8px;padding:8px 10px}
 .howto b{font-weight:700}
+.fb{background:var(--warnbg);border-radius:10px;padding:10px 12px;margin:0 0 10px}
+.fb:empty{display:none}
 .success{background:var(--goodbg);border-radius:10px;padding:10px 12px;margin:0 0 10px}
 .success b{color:var(--good)}
 .success:empty{display:none}
@@ -137,6 +139,7 @@ input:disabled{opacity:.45}
     </section>
     <section class="panel resp" aria-live="polite">
       <ul class="conds" id="conds"></ul>
+      <div class="fb" id="fb"></div>
       <div class="success" id="success"></div>
       <div class="row">
         <button class="act" id="reset">התחלה מחדש</button>
@@ -189,7 +192,11 @@ const CH=[
    why:'השכר של העובד החדש שווה בדיוק לשכר הממוצע, ולכן הוא לא מושך את הממוצע לשום כיוון.'},
   {mode:'mod',t:'תנו העלאה לעובד אחד כך שהשכר החציוני יעלה.',cards:['median'],
    conds:[['זו העלאה: השכר החדש גבוה מהקודם',()=>raised()],['השכר החציוני עלה',S=>S.median>S0.median+EPS]],
-   why:'העובד עבר מתחת לחציון אל מעליו, ולכן השכר שבאמצע הרשימה השתנה.'},
+   why:'העובד עבר מתחת לחציון אל מעליו, ולכן השכר שבאמצע הרשימה השתנה.',
+   // tells the student why an attempt did not move the median
+   fb:S=>{const c=state.change;if(!c||c.type!=='mod'||c.v<=ORIG[c.i]||S.median>S0.median+EPS)return '';
+     return ORIG[c.i]>S0.median?'העובד הזה הרוויח יותר מהחציון כבר לפני ההעלאה, ולכן ההעלאה לא שינתה את מי שנמצא באמצע השורה. נסו עובד שמרוויח פחות מהחציון, כלומר נקודה משמאל לקו הסגול.'
+       :`העובד הזה עדיין מרוויח פחות מהחציון (${S0.median} ₪). העלו את השכר שלו עוד, עד שהנקודה תעבור את הקו הסגול.`;}},
   {mode:'mod',t:'תנו העלאה לעובד אחד כך שהשכר הממוצע יעלה, אבל השכר החציוני לא ישתנה.',cards:['mean','median'],
    conds:[['זו העלאה: השכר החדש גבוה מהקודם',()=>raised()],['השכר הממוצע עלה',S=>S.mean>S0.mean+EPS],['השכר החציוני לא השתנה',S=>same(S.median,S0.median)]],
    why:'הממוצע מושפע מכל שקל של העלאה. החציון תלוי רק בסדר: כל עוד אף עובד לא עבר את האמצע, החציון נשאר.'},
@@ -379,6 +386,7 @@ function renderTask(S){
     if(all&&!state.done.includes(state.ch)){state.done.push(state.ch);try{sessionStorage.setItem('wage-sim-done-v2',JSON.stringify(state.done));}catch(e){}}
   }
   $('success').innerHTML=all?`<b>הצלחתם!</b> ${C.why}`:'';
+  $('fb').textContent=!free&&!all&&C.fb?C.fb(S):'';
   const nx=$('next');
   nx.textContent=state.ch<CH.length-1?'לאתגר הבא':(state.ch===CH.length-1?'לניסוי חופשי':'לאתגר הראשון');
   nx.classList.toggle('primary',all);
