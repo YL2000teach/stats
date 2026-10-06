@@ -135,6 +135,7 @@ input:disabled{opacity:.45}
         <button data-m="add">גיוס עובד</button>
         <button data-m="del">עזיבת עובד</button>
         <button data-m="mod">שינוי שכר</button>
+        <button data-m="floor">שכר מינימום</button>
       </div>
     </section>
     <section class="panel resp" aria-live="polite">
@@ -183,8 +184,9 @@ function stats(v){
   return {n,mean,median,range:s[n-1]-s[0],sd,min:s[0],max:s[n-1]};
 }
 const S0=stats(ORIG);
+const FLO=30,FHI=70;
 const MAXS=(()=>{const c={};ORIG.forEach(v=>{const k=Math.floor((v-LO)/BIN);c[k]=(c[k]||0)+1;});return Math.max(...Object.values(c))+2;})();
-const MODE_TXT={add:'גיוס עובד',del:'עזיבת עובד',mod:'שינוי שכר'};
+const MODE_TXT={add:'גיוס עובד',del:'עזיבת עובד',mod:'שינוי שכר',floor:'שכר מינימום'};
 const raised=()=>state.change&&state.change.type==='mod'&&state.change.v>ORIG[state.change.i];
 const CH=[
   {mode:'add',t:'גייסו עובד חדש בלי לשנות את השכר הממוצע.',cards:['mean'],
@@ -197,6 +199,11 @@ const CH=[
    fb:S=>{const c=state.change;if(!c||c.type!=='mod'||c.v<=ORIG[c.i]||S.median>S0.median+EPS)return '';
      return ORIG[c.i]>S0.median?'העובד הזה הרוויח יותר מהחציון כבר לפני ההעלאה, ולכן ההעלאה לא שינתה את מי שנמצא באמצע השורה. נסו עובד שמרוויח פחות מהחציון, כלומר נקודה משמאל לקו הסגול.'
        :`העובד הזה עדיין מרוויח פחות מהחציון (${S0.median} ₪). העלו את השכר שלו עוד, עד שהנקודה תעבור את הקו הסגול.`;}},
+  {mode:'floor',t:'קבעו שכר מינימום ברשת: כל מי שמרוויח פחות מהסף מקבל העלאה עד הסף. מצאו סף שבו השכר החציוני עולה.',cards:['mean','median'],
+   conds:[['השכר החציוני עלה',S=>S.median>S0.median+EPS]],
+   why:'החציון עלה רק כשהסף עבר את 51.5 ₪, את האמצע של השורה. עד אז רק עובדים מתחת לאמצע קיבלו העלאה, ומי שבאמצע לא השתנה. הממוצע, לעומת זאת, עלה כבר מהסף הנמוך ביותר, כי כל שקל של העלאה מוסיף לסכום. מעכשיו, כל עוד הסף מעל 51.5 ₪, החציון שווה בדיוק לסף.',
+   fb:S=>{const c=state.change;if(!c||c.type!=='floor'||S.median>S0.median+EPS)return '';
+     return `הסף (${c.v} ₪) עדיין מתחת לחציון (${S0.median} ₪), ולכן העובדים שבאמצע השורה לא קיבלו העלאה והחציון לא זז. שימו לב שהממוצע כבר עלה. העלו את הסף עוד.`;}},
   {mode:'mod',t:'תנו העלאה לעובד אחד כך שהשכר הממוצע יעלה, אבל השכר החציוני לא ישתנה.',cards:['mean','median'],
    conds:[['זו העלאה: השכר החדש גבוה מהקודם',()=>raised()],['השכר הממוצע עלה',S=>S.mean>S0.mean+EPS],['השכר החציוני לא השתנה',S=>same(S.median,S0.median)]],
    why:'הממוצע מושפע מכל שקל של העלאה. החציון תלוי רק בסדר: כל עוד אף עובד לא עבר את האמצע, החציון נשאר.'},
@@ -209,14 +216,14 @@ const CH=[
 ];
 const FREE=CH.length;
 let state={ch:0,mode:'add',change:null,sel:null,done:[]};
-try{const d=JSON.parse(sessionStorage.getItem('wage-sim-done-v2')||'[]');if(Array.isArray(d))state.done=d;}catch(e){}
+try{const d=JSON.parse(sessionStorage.getItem('wage-sim-done-v3')||'[]');if(Array.isArray(d))state.done=d;}catch(e){}
 const $=id=>document.getElementById(id);
 
 function values(){
   const c=state.change,out=[];
   ORIG.forEach((v,i)=>{
     if(c&&c.type==='del'&&c.i===i)return;
-    out.push(c&&c.type==='mod'&&c.i===i?c.v:v);
+    out.push(c&&c.type==='mod'&&c.i===i?c.v:c&&c.type==='floor'?Math.max(v,c.v):v);
   });
   if(c&&c.type==='add')out.push(c.v);
   return out;
@@ -244,6 +251,7 @@ function draw(){
   ORIG.forEach((v,i)=>{
     if(c&&c.type==='del'&&c.i===i){dots.push([v,'g',i]);return;}
     if(c&&c.type==='mod'&&c.i===i){dots.push([c.v,'c',i]);dots.push([v,'g',i]);return;}
+    if(c&&c.type==='floor'&&v<c.v){dots.push([c.v,'c',i]);dots.push([v,'g',i]);return;}
     dots.push([v,'n',i]);
   });
   if(c&&c.type==='add')dots.push([c.v,'c','new']);
@@ -271,8 +279,10 @@ function draw(){
   }
   // dots
   hits=[];
+  const cap=Math.max(3,Math.floor((base-top-34)/gap));
   dots.forEach((d,j)=>{
     const [v,k,id]=d,cx=x(v),cy=base-r-2-(stk[j]-1)*gap;
+    if(stk[j]>cap)return;
     if(k==='g'){s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--ghost)" stroke-width="1.6" stroke-dasharray="3 2"/>`;}
     else{
       const selected=state.mode==='mod'&&state.sel===id;
@@ -292,7 +302,11 @@ function draw(){
   s+=`<text x="${mx}" y="${top-8}" text-anchor="${man}" direction="ltr" style="direction:ltr;unicode-bidi:bidi-override" font-size="13" font-weight="700" ${halo}>`+
      (medChanged?`<tspan fill="var(--ghost)">${S0.median}</tspan><tspan fill="var(--median)"> → ${S.median}</tspan>`:`<tspan fill="var(--median)">${S.median}</tspan>`)+`</text>`;
   // value bubble on the changed / selected dot
-  const act=hits.find(h=>h.kind==='c')||(state.mode==='mod'&&state.sel!==null?hits.find(h=>h.id===state.sel&&h.kind==='n'):null);
+  if(c&&c.type==='floor'){
+    const nUp=ORIG.filter(v=>v<c.v).length,colTop=Math.min(cnt[col(c.v)]||0,cap),bx=Math.min(W-86,Math.max(86,x(c.v))),by=base-r-2-(colTop-1)*gap-r-10;
+    if(nUp)s+=`<g pointer-events="none"><rect x="${bx-82}" y="${by-18}" width="164" height="22" rx="6" fill="var(--ink)"/><text x="${bx}" y="${by-2}" text-anchor="middle" direction="rtl" font-size="13" font-weight="700" fill="var(--paper)">${c.v} ₪ · ${nUp} עובדים הועלו</text></g>`;
+  }
+  const act=c&&c.type==='floor'?null:hits.find(h=>h.kind==='c')||(state.mode==='mod'&&state.sel!==null?hits.find(h=>h.id===state.sel&&h.kind==='n'):null);
   if(act){const bx=Math.min(W-34,Math.max(34,act.cx)),by=act.cy-r-10;
     s+=`<g pointer-events="none"><rect x="${bx-30}" y="${by-18}" width="60" height="22" rx="6" fill="var(--ink)"/><text x="${bx}" y="${by-2}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--paper)">${act.v} ₪</text></g>`;}
   // axis
@@ -301,7 +315,9 @@ function draw(){
   s+=`<text x="${W/2}" y="${base+36}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--muted)" direction="rtl">שכר לשעה (₪)</text>`;
   // ordered strip: every employee as a bar, sorted from lowest to highest wage
   const row=[];
-  ORIG.forEach((v,i)=>{if(c&&c.type==='del'&&c.i===i)return;row.push({v:c&&c.type==='mod'&&c.i===i?c.v:v,k:(c&&c.type==='mod'&&c.i===i)||(state.mode==='mod'&&state.sel===i)?'c':'n'});});
+  ORIG.forEach((v,i)=>{if(c&&c.type==='del'&&c.i===i)return;
+    if(c&&c.type==='floor'){row.push({v:Math.max(v,c.v),k:v<c.v?'c':'n'});return;}
+    row.push({v:c&&c.type==='mod'&&c.i===i?c.v:v,k:(c&&c.type==='mod'&&c.i===i)||(state.mode==='mod'&&state.sel===i)?'c':'n'});});
   if(c&&c.type==='add')row.push({v:c.v,k:'c'});
   row.sort((a,b)=>a.v-b.v||(a.k==='c')-(b.k==='c'));
   const nn=row.length,midIdx=nn%2?[(nn-1)/2]:[nn/2-1,nn/2];
@@ -327,9 +343,9 @@ function clampV(v){return Math.max(LO,Math.min(HI,Math.round(v)));}
 function local(e){const rc=$('plot').getBoundingClientRect();return [e.clientX-rc.left,e.clientY-rc.top];}
 $('plot').addEventListener('pointerdown',e=>{
   if(!geom)return;const [px,py]=local(e),m=state.mode;
-  if(m==='add'){
+  if(m==='add'||m==='floor'){
     if(py>geom.base+22)return;
-    setAdd(clampV(geom.inv(px)));drag='add';
+    const v=clampV(geom.inv(px));if(m==='add')setAdd(v);else setFloor(v);drag=m;
   }else if(m==='del'){
     const h=nearest(px,py,h=>h.kind!=='c');
     if(!h)return;
@@ -347,9 +363,14 @@ $('plot').addEventListener('pointerdown',e=>{
 });
 $('plot').addEventListener('pointermove',e=>{
   if(!drag)return;const [px]=local(e),v=clampV(geom.inv(px));
-  if(drag==='add')setAdd(v);else setMod(v);
+  if(drag==='add')setAdd(v);else if(drag==='floor')setFloor(v);else setMod(v);
 });
 ['pointerup','pointercancel'].forEach(t=>$('plot').addEventListener(t,()=>{drag=null;}));
+function setFloor(v){
+  v=Math.max(FLO,Math.min(FHI,v));
+  if(state.change&&state.change.type==='floor'&&state.change.v===v)return;
+  state.change=ORIG.some(w=>w<v)?{type:'floor',v}:null;state.floorV=v;update();
+}
 function setAdd(v){
   if(state.change&&state.change.type==='add'&&state.change.v===v)return;
   state.change={type:'add',v};update();
@@ -374,7 +395,8 @@ function renderTask(S){
   $('modes').hidden=!free;
   const HOW={add:'גררו את המחוון שמתחת לתרשים, או לחצו על התרשים במקום השכר של העובד החדש. הנקודה הכתומה היא העובד החדש.',
     del:'לחצו על נקודה בתרשים, והעובד הזה עוזב. לחיצה על נקודה אחרת מחליפה את העובד שעוזב.',
-    mod:'לחצו על נקודה בתרשים כדי לבחור עובד. אחר כך גררו את הנקודה, או הזיזו את המחוון שמתחת לתרשים.'};
+    mod:'לחצו על נקודה בתרשים כדי לבחור עובד. אחר כך גררו את הנקודה, או הזיזו את המחוון שמתחת לתרשים.',
+    floor:'הזיזו את המחוון שמתחת לתרשים, או לחצו על התרשים, כדי לקבוע את שכר המינימום. כל מי שמרוויח פחות עולה לשכר הזה.'};
   $('howto').innerHTML='<b>איך עושים:</b> '+HOW[state.mode];
   $('modes').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===state.mode));
   let all=false;
@@ -383,7 +405,7 @@ function renderTask(S){
     const res=C.conds.map(([l,f])=>[l,!!state.change&&f(S)]);
     all=res.every(r=>r[1]);
     $('conds').innerHTML=res.map(([l,ok])=>`<li class="${ok?'on':''}"><i aria-hidden="true">${ok?'✓':''}</i>${l}</li>`).join('');
-    if(all&&!state.done.includes(state.ch)){state.done.push(state.ch);try{sessionStorage.setItem('wage-sim-done-v2',JSON.stringify(state.done));}catch(e){}}
+    if(all&&!state.done.includes(state.ch)){state.done.push(state.ch);try{sessionStorage.setItem('wage-sim-done-v3',JSON.stringify(state.done));}catch(e){}}
   }
   $('success').innerHTML=all?`<b>הצלחתם!</b> ${C.why}`:'';
   $('fb').textContent=!free&&!all&&C.fb?C.fb(S):'';
@@ -404,11 +426,17 @@ function renderCards(S){
 function renderControl(){
   const m=state.mode,c=state.change,k=$('k'),kn=$('kn');
   $('ctl').hidden=m==='del';
+  if(m!=='floor'){k.min=kn.min=LO;k.max=kn.max=HI;}
   if(m==='add'){
     $('klabel').textContent='שכר העובד החדש';
     k.disabled=kn.disabled=false;
     const v=c&&c.type==='add'?c.v:null;
     k.value=v??Math.round(S0.mean);kn.value=v??'';kn.placeholder='₪';
+  }else if(m==='floor'){
+    $('klabel').textContent='שכר המינימום ברשת';
+    k.disabled=kn.disabled=false;k.min=kn.min=FLO;k.max=kn.max=FHI;
+    const v=c&&c.type==='floor'?c.v:(state.floorV??FLO);
+    k.value=v;kn.value=v;
   }else if(m==='del'){
   }else{
     const sel=state.sel;
@@ -420,17 +448,17 @@ function renderControl(){
 }
 function update(){const S=stats(values());draw();renderTask(S);renderCards(S);renderControl();renderNav();}
 function goCh(i){
-  state.ch=i;state.change=null;state.sel=null;drag=null;
+  state.ch=i;state.change=null;state.sel=null;state.floorV=null;drag=null;
   if(i!==FREE)state.mode=CH[i].mode;
   update();
 }
-$('k').addEventListener('input',e=>{const v=+e.target.value;if(state.mode==='add')setAdd(v);else setMod(v);});
+$('k').addEventListener('input',e=>{const v=+e.target.value;if(state.mode==='add')setAdd(v);else if(state.mode==='floor')setFloor(v);else setMod(v);});
 $('kn').addEventListener('change',e=>{
   const raw=e.target.value.trim();if(raw===''){renderControl();return;}
   const v=clampV(+raw);if(!isFinite(v)){renderControl();return;}
-  if(state.mode==='add')setAdd(v);else setMod(v);renderControl();
+  if(state.mode==='add')setAdd(v);else if(state.mode==='floor')setFloor(v);else setMod(v);renderControl();
 });
-$('modes').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mode=b.dataset.m;state.change=null;state.sel=null;update();});
+$('modes').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mode=b.dataset.m;state.change=null;state.sel=null;state.floorV=null;update();});
 $('reset').onclick=()=>{state.change=null;state.sel=null;update();};
 $('next').onclick=()=>goCh(state.ch<CH.length?(state.ch+1)%(CH.length+1):0);
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(draw,120);});
