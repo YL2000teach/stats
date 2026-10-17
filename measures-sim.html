@@ -75,7 +75,12 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--p
 .card .was{font-size:.86rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .card.up .arr,.card.down .arr{color:var(--new)}
 .card.same .arr{color:var(--muted);font-size:.9rem}
-.plotp{display:flex;flex-direction:column}
+.plotp{display:flex;flex-direction:column;position:relative}
+/* think-first veil: covers the chart until the student presses the button */
+.think{position:absolute;inset:0;z-index:5;border-radius:12px;background:rgba(128,128,128,.35);background:color-mix(in srgb,var(--paper) 72%,transparent);display:flex;align-items:flex-start;justify-content:center;padding:70px 16px 16px}
+.think[hidden]{display:none}
+.think .tbox{background:var(--paper);border:2px solid var(--accent);border-radius:12px;padding:14px 18px;max-width:360px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.think .tbox p{margin:0 0 12px;font-weight:600;line-height:1.45}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.86rem;color:var(--muted);margin:0 0 4px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{display:inline-block;width:16px;height:10px;border-radius:2px}
@@ -161,6 +166,12 @@ input:disabled{opacity:.45}
       <h2 id="plotH" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">תרשים נקודות של השכר לשעה</h2>
       <div class="cards" id="cards" aria-label="המדדים"></div>
       <div id="plot"></div>
+      <div class="think" id="think" hidden>
+        <div class="tbox">
+          <p><b>קודם חושבים.</b> קראו את האתגר ונסו לחשוב מה צריך לעשות. רק אחר כך מנסים.</p>
+          <button class="act primary" id="go">חשבתי, בואו ננסה</button>
+        </div>
+      </div>
       <div class="ctl" id="ctl">
         <label for="k" id="klabel"></label>
         <input type="range" id="k" min="30" max="130" step="1">
@@ -215,7 +226,7 @@ const CH=[
    why:'עזב עובד עם שכר קרוב לממוצע. בלעדיו נשארים יחסית יותר עובדים רחוקים מהממוצע, ולכן סטיית התקן גדלה.'}
 ];
 const FREE=CH.length;
-let state={ch:0,mode:'add',change:null,sel:null,done:[]};
+let state={ch:0,mode:'add',change:null,sel:null,done:[],locked:false};
 try{const d=JSON.parse(sessionStorage.getItem('wage-sim-done-v3')||'[]');if(Array.isArray(d))state.done=d;}catch(e){}
 const $=id=>document.getElementById(id);
 
@@ -342,7 +353,7 @@ function nearest(px,py,filter){
 function clampV(v){return Math.max(LO,Math.min(HI,Math.round(v)));}
 function local(e){const rc=$('plot').getBoundingClientRect();return [e.clientX-rc.left,e.clientY-rc.top];}
 $('plot').addEventListener('pointerdown',e=>{
-  if(!geom)return;const [px,py]=local(e),m=state.mode;
+  if(!geom||state.locked)return;const [px,py]=local(e),m=state.mode;
   if(m==='add'||m==='floor'){
     if(py>geom.base+22)return;
     const v=clampV(geom.inv(px));if(m==='add')setAdd(v);else setFloor(v);drag=m;
@@ -426,6 +437,7 @@ function renderCards(S){
 function renderControl(){
   const m=state.mode,c=state.change,k=$('k'),kn=$('kn');
   $('ctl').hidden=m==='del';
+  $('think').hidden=!state.locked;
   if(m!=='floor'){k.min=kn.min=LO;k.max=kn.max=HI;}
   if(m==='add'){
     $('klabel').textContent='שכר העובד החדש';
@@ -446,9 +458,10 @@ function renderControl(){
     k.value=v??Math.round(S0.mean);kn.value=v??'';
   }
 }
-function update(){const S=stats(values());draw();renderTask(S);renderCards(S);renderControl();renderNav();}
+function update(){const S=stats(values());draw();renderTask(S);renderCards(S);renderControl();if(state.locked)$('k').disabled=$('kn').disabled=true;renderNav();}
 function goCh(i){
   state.ch=i;state.change=null;state.sel=null;state.floorV=null;drag=null;
+  state.locked=i!==FREE; // each challenge starts with a think-first pause
   if(i!==FREE)state.mode=CH[i].mode;
   update();
 }
@@ -459,6 +472,7 @@ $('kn').addEventListener('change',e=>{
   if(state.mode==='add')setAdd(v);else if(state.mode==='floor')setFloor(v);else setMod(v);renderControl();
 });
 $('modes').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mode=b.dataset.m;state.change=null;state.sel=null;state.floorV=null;update();});
+$('go').onclick=()=>{state.locked=false;update();};
 $('reset').onclick=()=>{state.change=null;state.sel=null;update();};
 $('next').onclick=()=>goCh(state.ch<CH.length?(state.ch+1)%(CH.length+1):0);
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(draw,120);});

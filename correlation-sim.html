@@ -32,8 +32,9 @@ h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-s
 .intro .q{color:var(--accent)}
 .intro .ex{color:var(--muted);font-size:.93rem}
 @media (min-width:900px){.intro{grid-template-columns:1fr 1fr}.intro .ex{grid-column:1/-1}}
-.pair{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
-@media (min-width:760px){.pair{grid-template-columns:1fr 1fr}}
+.one{display:grid;gap:12px 20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.one{grid-template-columns:minmax(0,440px) minmax(0,1fr)}}
+.side{display:flex;flex-direction:column;gap:10px}
 .panel{background:var(--paper);border:1px solid var(--grid);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;min-height:0}
 .phead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .pname{font-family:"Secular One","Assistant",Arial,sans-serif;font-size:1.15rem}
@@ -48,7 +49,14 @@ svg text{font-family:"Assistant",Arial,sans-serif}
 .ctl label{font-weight:700}
 .ctl output{direction:ltr;font-weight:700;min-width:44px;text-align:left;font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;direction:ltr}
-.mean{min-height:9.6em;margin-top:8px;border-top:1px solid var(--grid);padding-top:8px;display:grid;gap:6px}
+.mean{min-height:9.6em;display:grid;gap:6px;align-content:start}
+.rbtns{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.rbtns .lbl{font-weight:700}
+.rbtns button{font:inherit;font-weight:700;border:1.5px solid var(--grid);border-radius:999px;padding:3px 12px;background:var(--paper);color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums}
+.rbtns button[aria-pressed="true"]{background:var(--A);border-color:var(--A);color:var(--paper)}
+.lim{color:var(--muted);font-size:.86rem;line-height:1.3;margin:4px 0 0;min-height:3.9em}
+.notes{font-size:.9rem;color:var(--muted);border-top:1px solid var(--grid);padding-top:8px;display:grid;gap:6px}
+.notes p{margin:0}.notes b{color:var(--ink)}
 .mean p{margin:0;line-height:1.4}
 .mean .h{font-weight:700}
 .mean .ch{background:var(--warnbg);border-radius:8px;padding:6px 8px}
@@ -61,7 +69,7 @@ input[type=range]{width:100%;direction:ltr}
 </head>
 <body>
 <div class="app">
-  <p class="mnote">מומלץ לעבוד במחשב: שם שני התרשימים נראים זה לצד זה.</p>
+  <p class="mnote">מומלץ לעבוד במחשב: שם התרשים וההסברים נראים יחד.</p>
   <a class="back" href="index.html">→ כל הסימולציות</a>
   <h1>קשר חזק לא אומר קו תלול</h1>
   <p class="lead">כמה דקות תלמידים מתרגלים ביום, ואיזה ציון הם מקבלים במבחן. כל נקודה היא תלמיד.</p>
@@ -70,20 +78,24 @@ input[type=range]{width:100%;direction:ltr}
     <p><b class="q">חוזק הקשר (r) עונה על השאלה "כמה בטוח?"</b> עד כמה כל התלמידים מתנהגים לפי אותו כלל? קשר חזק: אם יודעים כמה תלמיד תרגל, אפשר לנחש את הציון שלו די בדיוק. קשר חלש: הניחוש יכול לטעות בהרבה.</p>
     <p class="ex">דוגמה: אם כל 10 דקות תרגול מוסיפות לכל תלמיד בדיוק 3 נקודות, ההשפעה קטנה (שיפוע קטן) אבל הקשר מושלם (r = 1). אם בממוצע הן מוסיפות 12 נקודות, אבל יש תלמידים שתרגלו הרבה וקיבלו ציון נמוך, ההשפעה גדולה (שיפוע גדול) אבל הקשר חלש.</p>
   </section>
-  <div class="pair">
-    <section class="panel" aria-labelledby="nA">
-      <div class="phead"><span class="pname" id="nA" style="color:var(--A)">משנים רק את השיפוע</span><span class="chips" id="chA"></span></div>
-      <div class="plot" id="plotA"></div>
-      <div class="ctl"><label for="sA">שיפוע</label><input type="range" id="sA" min="0.1" max="1.2" step="0.05" style="accent-color:var(--A)"><output id="oA"></output></div>
-      <div class="mean" id="mA" aria-live="polite"></div>
-    </section>
-    <section class="panel" aria-labelledby="nB">
-      <div class="phead"><span class="pname" id="nB" style="color:var(--B)">משנים רק את הפיזור</span><span class="chips" id="chB"></span></div>
-      <div class="plot" id="plotB"></div>
-      <div class="ctl"><label for="sB">r</label><input type="range" id="sB" min="0.3" max="1" step="0.05" style="accent-color:var(--B)"><output id="oB"></output></div>
-      <div class="mean" id="mB" aria-live="polite"></div>
-    </section>
-  </div>
+  <section class="panel" aria-labelledby="nA">
+    <div class="phead"><span class="pname" id="nA" style="color:var(--A)">משנים את השיפוע, בוחרים את חוזק הקשר</span><span class="chips" id="chA"></span></div>
+    <div class="one">
+      <div>
+        <div class="plot" id="plotA"></div>
+        <div class="ctl"><label for="sA">שיפוע</label><input type="range" id="sA" min="0.02" max="1.2" step="0.01" style="accent-color:var(--A)"><output id="oA"></output></div>
+        <div class="rbtns" role="group" aria-label="חוזק הקשר"><span class="lbl"><bdi dir="ltr">r =</bdi></span><span id="rb"></span></div>
+        <p class="lim" id="lim" aria-live="polite"></p>
+      </div>
+      <div class="side">
+        <div class="mean" id="mA" aria-live="polite"></div>
+        <div class="notes">
+          <p><b>חלש, בינוני, חזק:</b> לפי מוסכמה מקובלת, r של 0.1 נחשב חלש, 0.3 בינוני ו-0.5 ומעלה חזק. זו לא הגדרה מחייבת, וזה תלוי בתחום: במחקרים על התנהגות של בני אדם, מקדם של 0.3 נחשב כבר גבוה יחסית.</p>
+          <p><b>מובהקות:</b> גם כשאין שום קשר אמיתי, במדגם אפשר לקבל במקרה r שונה מ-0. מובהקות בודקת אם הקשר שמצאנו יכול היה להיווצר במקרה. היא תלויה גם בגודל המדגם, ולא רק בגודל r: במדגם גדול, גם r קטן יכול להיות מובהק.</p>
+        </div>
+      </div>
+    </div>
+  </section>
   <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
   <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
   <!-- ===== סוף קרדיט ===== -->
@@ -95,19 +107,22 @@ let E=[1.3515,1.1203,0.8723,0.1367,0.7939,-1.7362,0.6719,0.4823,-1.844,-0.3017,0
 (function norm(){const n=X.length,m=a=>a.reduce((s,v)=>s+v,0)/n,sd=a=>{const mu=m(a);return Math.sqrt(a.reduce((s,v)=>s+(v-mu)**2,0)/n)};
   let mx=m(X);X=X.map(v=>v-mx);const s=sd(X);X=X.map(v=>v/s);
   let me=m(E);E=E.map(v=>v-me);const p=E.reduce((a,v,i)=>a+v*X[i],0)/X.reduce((a,v)=>a+v*v,0);E=E.map((v,i)=>v-p*X[i]);const se=sd(E);E=E.map(v=>v/se);})();
-const SX=10, CX=50, CY=62;           // practice minutes: mean 50, SD 10. Grades centred at 62.
-const R_FIXED=0.85, B_FIXED=0.5;     // graph A keeps r, graph B keeps the slope
-let st={bA:0.3,rB:0.6};
+const SX=10, CX=50, CY=55;           // practice minutes: mean 50, SD 10. Grades centred at 55.
+const R_OPTS=[0.1,0.3,0.5,0.85];
+// slope = r*SDy/SDx. Grades must stay in 0-100, so SDy is capped at 19 and the largest slope depends on r
+const SY_MAX=19, B_MAX=1.2;
+const bMax=r=>Math.min(B_MAX,Math.floor(r*SY_MAX/SX*100+1e-9)/100);
+let st={bA:0.3,r:0.85};
 function model(r,b){
   const sy=b*SX/r,q=Math.sqrt(Math.max(0,1-r*r));
   return {pts:X.map((x,i)=>[CX+SX*x,CY+sy*(r*x+q*E[i])]),slope:b,err:sy*q};
 }
 const f=(x,d)=>(Math.round(x*10**d)/10**d).toFixed(d);
 const tf=(x,d)=>String(+f(x,d));
-function strength(r){return r>=0.99?'קשר מושלם':r>=0.8?'קשר חזק':r>=0.5?'קשר בינוני':'קשר חלש';}
+function strength(r){return r>=0.99?'קשר מושלם':r>=0.5?'קשר חזק':r>=0.3?'קשר בינוני':'קשר חלש';}
 function plotSize(id){
   // fixed size (not tied to the height of the text below), so the plots never resize while sliding
-  return Math.min(document.getElementById(id).clientWidth,400);
+  return Math.min(document.getElementById(id).clientWidth,440);
 }
 function draw(k,m,col){
   const S=plotSize('plot'+k),pad=38,bot=36,inner=S-pad-bot+26,sx=v=>pad+v/100*(S-pad-10),sy=v=>10+(inner-10)*(1-v/100);
@@ -126,26 +141,27 @@ function draw(k,m,col){
   s+='</g></svg>';
   document.getElementById('plot'+k).innerHTML=s;
 }
-const chip=(t,v,live)=>`<span class="chip ${live?'live':'fixed'}">${t} <bdi>${v}</bdi>${live?'':' · קבוע'}</span>`;
+const chip=(t,v,live)=>`<span class="chip ${live?'live':'fixed'}">${t?t+' ':''}<bdi dir="ltr">${v}</bdi>${live?'':' · קבוע'}</span>`;
 function render(){
-  const A=model(R_FIXED,st.bA),B=model(st.rB,B_FIXED);
-  draw('A',A,'var(--A)');draw('B',B,'var(--B)');
-  document.getElementById('chA').innerHTML=chip('שיפוע',f(st.bA,2),true)+chip('r =',f(R_FIXED,2),false);
-  document.getElementById('chB').innerHTML=chip('r =',f(st.rB,2),true)+chip('שיפוע',f(B_FIXED,2),false);
-  document.getElementById('sA').value=st.bA;document.getElementById('oA').textContent=f(st.bA,2);
-  document.getElementById('sB').value=st.rB;document.getElementById('oB').textContent=f(st.rB,2);
-  const p10A=st.bA*10;
+  const mx=bMax(st.r);if(st.bA>mx)st.bA=mx;
+  const A=model(st.r,st.bA);
+  draw('A',A,'var(--A)');
+  document.getElementById('chA').innerHTML=chip('שיפוע',f(st.bA,2),true)+chip('','r = '+f(st.r,2),true);
+  const sl=document.getElementById('sA');sl.max=mx;sl.value=st.bA;document.getElementById('oA').textContent=f(st.bA,2);
+  document.getElementById('rb').innerHTML=R_OPTS.map(r=>`<button data-r="${r}" aria-pressed="${r===st.r}">${r}</button>`).join(' ');
+  document.getElementById('rb').querySelectorAll('button').forEach(x=>x.onclick=()=>{st.r=+x.dataset.r;render();});
+  document.getElementById('lim').innerHTML=mx<B_MAX?`כשהקשר חלש יותר, הנקודות מפוזרות יותר סביב הקו. כאן השיפוע מוגבל עד <bdi dir="ltr">${f(mx,2)}</bdi>, אחרת חלק מהציונים היו יוצאים מהטווח 0 עד 100.`:'';
+  const p10=st.bA*10,r=st.r;
   document.getElementById('mA').innerHTML=
-    `<p class="ch"><span class="h">בכמה? </span>כל 10 דקות תרגול נוספות מעלות את הציון בממוצע ב-${tf(p10A,1)} נקודות. ${p10A<3?'ההשפעה של התרגול קטנה.':p10A<8?'ההשפעה של התרגול בינונית.':'ההשפעה של התרגול גדולה.'}</p>`+
-    `<p class="st"><span class="h">כמה בטוח? </span>לא משתנה: r = ${f(R_FIXED,2)}, ${strength(R_FIXED)}. כשהקו תלול יותר, גם הציונים מתפרסים על טווח רחב יותר, כך שביחס לקו התלמידים קרובים אליו באותה מידה. השיפוע משנה את גודל ההשפעה, לא את החוזק.</p>`;
-  document.getElementById('mB').innerHTML=
-    `<p class="st"><span class="h">בכמה? </span>לא משתנה: כל 10 דקות תרגול נוספות מעלות את הציון בממוצע ב-${tf(B_FIXED*10,1)} נקודות.</p>`+
-    `<p class="ch"><span class="h">כמה בטוח? </span>r = ${f(st.rB,2)}, ${strength(st.rB)}. `+
-    (B.err<0.05?'כל התלמידים בדיוק על הקו: אם יודעים כמה תלמיד תרגל, יודעים בדיוק מה הציון שלו.'
-      :`אם יודעים כמה דקות תלמיד תרגל, אפשר לנחש את הציון שלו בטעות טיפוסית של כ-${f(B.err,0)} נקודות. ${st.rB>=0.8?'רוב התלמידים קרובים לקו.':st.rB>=0.5?'חלק מהתלמידים רחוקים מהקו.':'הרבה תלמידים רחוקים מהקו: יש מי שתרגלו הרבה וקיבלו ציון נמוך, ולהפך.'}`)+`</p>`;
+    `<p class="ch"><span class="h">בכמה? </span>כל 10 דקות תרגול נוספות מעלות את הציון בממוצע ב-${tf(p10,1)} נקודות. ${p10<3?'ההשפעה של התרגול קטנה.':p10<8?'ההשפעה של התרגול בינונית.':'ההשפעה של התרגול גדולה.'}</p>`+
+    `<p class="ch"><span class="h">כמה בטוח? </span><bdi dir="ltr">r = ${f(r,2)}</bdi>, ${strength(r)}. `+
+    (r>=0.8?'רוב התלמידים קרובים לקו: אם יודעים כמה תלמיד תרגל, אפשר לנחש את הציון שלו די טוב.'
+      :r>=0.5?'חלק מהתלמידים רחוקים מהקו: הניחוש לפי זמן התרגול כבר פחות מדויק.'
+      :r>=0.3?'הרבה תלמידים רחוקים מהקו: יש מי שתרגלו הרבה וקיבלו ציון נמוך, ולהפך.'
+      :'הנקודות כמעט לא מסודרות סביב הקו: לפי זמן התרגול כמעט אי אפשר לנחש את הציון.')+`</p>`+
+    `<p class="st"><span class="h">שימו לב: </span>הזזת השיפוע לא משנה את r. כשהקו תלול יותר, גם הציונים מתפרסים על טווח רחב יותר, כך שביחס לקו התלמידים קרובים אליו באותה מידה. השיפוע אומר כמה גדולה ההשפעה, ו-r אומר כמה התלמידים צמודים לקו.</p>`;
 }
 document.getElementById('sA').oninput=e=>{st.bA=+e.target.value;render();};
-document.getElementById('sB').oninput=e=>{st.rB=+e.target.value;render();};
 render();
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,120);});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);
