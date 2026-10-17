@@ -63,23 +63,28 @@ h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-s
 .tabs button[aria-selected="true"]{background:var(--accent);color:var(--paper)}
 .bname{font-weight:700;font-size:1.1rem;margin:0 0 4px}
 .story{margin:0 0 10px}
-.tip{font-size:.88rem;color:var(--muted);margin:0 0 8px}
-.tip i{font-style:normal;display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;align-items:center;justify-content:center;vertical-align:-3px;margin:0 2px}
+.tip{font-size:1rem;font-weight:700;color:var(--ink);background:var(--warnbg);border-radius:10px;padding:8px 12px;margin:0 0 16px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px 10px}
+@media (max-width:520px){.tip{grid-template-columns:auto 1fr}.tip .sc{grid-column:2}}
+.tip i{font-style:normal;display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--warn);color:#1B2540;font-size:.95rem;font-weight:700;align-items:center;justify-content:center;border:2px solid var(--paper)}
+.tip .sc{font-weight:600;color:var(--muted);font-size:.9rem}
 
 /* figure + hotspots + balloon */
 .figwrap{position:relative;margin:4px 0 12px}
 .fig{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
 .blk{position:relative;flex:1 1 240px;background:var(--bg);border-radius:12px;padding:12px 14px 12px}
-.blk h4{margin:0 0 8px;font-size:.98rem;padding-left:26px}
-.hs{position:absolute;top:-9px;left:-9px;z-index:35;width:30px;height:30px;border-radius:50%;border:2px solid var(--paper);background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0}
-.hs::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:pulse 2s infinite}
-.hs.seen{background:var(--muted)}
+.blk h4{margin:0 0 8px;font-size:.98rem;padding-right:24px}
+.hs{position:absolute;top:-12px;right:-12px;z-index:35;width:36px;height:36px;border-radius:50%;border:3px solid var(--paper);background:var(--warn);color:#1B2540;font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.3);padding:0}
+.hs::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:3px solid var(--warn);opacity:0;animation:pulse 1.6s infinite}
+.hs:hover{transform:scale(1.08)}
+.hs.seen{background:var(--mid);color:var(--ink)}
 .hs.seen::after{animation:none}
-.hs[aria-expanded="true"]{background:var(--warn)}
-.hs.in{position:relative;z-index:35;top:auto;left:auto;display:inline-flex;vertical-align:middle;width:26px;height:26px;font-size:.85rem;margin:0 4px}
-@keyframes pulse{0%{opacity:.7;transform:scale(.85)}70%{opacity:0;transform:scale(1.25)}100%{opacity:0}}
+.hs[aria-expanded="true"]{background:var(--accent);color:#fff}
+.hs[aria-expanded="true"]::after{animation:none}
+.hs.in{position:relative;top:auto;right:auto;z-index:35;display:inline-flex;vertical-align:middle;width:32px;height:32px;font-size:1rem;margin:0 4px}
+@keyframes pulse{0%{opacity:.8;transform:scale(.85)}70%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.hs::after{animation:none}}
-.balloon{position:absolute;z-index:30;width:min(320px,calc(100% - 16px));background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px 11px 34px;font-size:.97rem;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.balloon .nx{display:block;margin-top:8px;font:inherit;font-weight:700;font-size:.92rem;background:var(--warn);color:#1B2540;border:0;border-radius:8px;padding:4px 12px;cursor:pointer}
+.balloon{position:absolute;z-index:50;width:min(320px,calc(100% - 16px));background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px 11px 34px;font-size:.97rem;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.28)}
 .balloon[hidden]{display:none}
 .balloon::before{content:"";position:absolute;width:14px;height:14px;background:var(--ink);transform:rotate(45deg);left:var(--ax,50%);margin-left:-7px}
 .balloon.below::before{top:-6px}
@@ -249,16 +254,14 @@ function figSurv(){
   idx.slice(0,40).forEach(i=>red.add(i));idx.slice(0,34).forEach(i=>gone.add(i));idx.slice(40,46).forEach(i=>gone.add(i));
   let d='';for(let i=0;i<100;i++)d+=`<i class="dot ${red.has(i)?'r':'g'}${gone.has(i)?' gone':''}"></i>`;
   return `<div class="fig">
-    <div class="blk">${H(2)}<h4>לפני שנתיים: 100 לקוחות חדשים התחילו להגיע</h4>
-      <div class="dots d100" role="img" aria-label="100 לקוחות: 60 היו מרוצים ו-40 לא. 40 הפסיקו להגיע, ו-34 מהם לא היו מרוצים. 60 נשארו לקוחות קבועים, ו-54 מהם מרוצים">${d}</div>
-      <div class="leg"><span><i class="dot g"></i>מרוצים</span><span><i class="dot r"></i>לא מרוצים</span><span><i class="dot g gone"></i><i class="dot r gone"></i>הפסיקו להגיע</span></div>
-    </div>
     <div class="blk"><h4>המודעה שנועה רואה</h4>
-      <div class="ad"><div class="big">"9 מתוך 10 לקוחות ממליצים עלינו!"</div><div class="fine">*סקר בין הלקוחות הקבועים שלנו ${Hin(1)}</div></div>
-      <div class="calc">
-        <div>הלקוחות הקבועים: <b>54</b> מרוצים מתוך <b>60</b>, כלומר <b>90%</b> ${Hin(3)}</div>
-        <div>כל מי שהתחיל להגיע: <b>60</b> מרוצים מתוך <b>100</b>, כלומר <b>60%</b> ${Hin(4)}</div>
-      </div>
+      <div class="ad"><div class="big">"9 מתוך 10 לקוחות מרוצים מאיתנו!"</div><div class="fine">*סקר בין הלקוחות הקבועים שלנו ${Hin(1)}</div></div>
+      <div class="calc"><div>הלקוחות הקבועים: <b>54</b> מרוצים מתוך <b>60</b>, כלומר <b>90%</b> ${Hin(2)}</div></div>
+    </div>
+    <div class="blk"><h4>לפני שנתיים: 100 לקוחות חדשים התחילו להגיע</h4>
+      <div class="dots d100" role="img" aria-label="100 לקוחות: 60 היו מרוצים ו-40 לא. 40 הפסיקו להגיע, ו-34 מהם לא היו מרוצים. 60 נשארו לקוחות קבועים, ו-54 מהם מרוצים">${d}</div>
+      <div class="leg"><span><i class="dot g"></i>מרוצים</span><span><i class="dot r"></i>לא מרוצים</span><span><i class="dot g gone"></i><i class="dot r gone"></i>הפסיקו להגיע ${Hin(3)}</span></div>
+      <div class="calc"><div>כל מי שהתחיל להגיע: <b>60</b> מרוצים מתוך <b>100</b>, כלומר <b>60%</b> ${Hin(4)}</div></div>
     </div></div>`;
 }
 /* station 2: measurement */
@@ -290,7 +293,7 @@ function figMeasure(){
 /* station 3b: Simpson */
 function figSimp(){
   const p=(a,n)=>`${Math.round(a/n*100)}%<span class="cnt">${a} מתוך ${n}</span>`;
-  return `<div class="fig"><div class="blk" style="flex-basis:100%">${H(4)}<h4>שני סניפים של אותה רשת: כמה מהסועדים היו מרוצים?</h4>
+  return `<div class="fig"><div class="blk" style="flex-basis:100%"><h4>שני סניפים של אותה רשת: כמה מהסועדים היו מרוצים?</h4>
     <table class="simp">
       <thead><tr><th></th><th>סניף א'</th><th>סניף ב'</th></tr></thead>
       <tbody>
@@ -298,7 +301,7 @@ function figSimp(){
         <tr><td class="rl">${Hin(2)}בערב</td><td class="win">${p(48,80)}</td><td>${p(11,20)}</td></tr>
         <tr class="tot"><td class="rl">${Hin(3)}סך הכול</td><td>${p(67,100)}</td><td class="win">${p(83,100)}</td></tr>
       </tbody></table>
-    <p class="tip" style="margin:8px 0 0">מרוצים: נתנו 4 או 5 כוכבים.</p>
+    <div class="app-mean" style="margin-top:10px">איך זה ייתכן? ${Hin(4)}</div><p class="note" style="margin:6px 0 0">מרוצים: נתנו 4 או 5 כוכבים.</p>
   </div></div>`;
 }
 /* station 4a: reverse direction */
@@ -313,9 +316,10 @@ function figRev(){
   s+=`<text transform="translate(10 ${(Hh-34)/2}) rotate(-90)" font-size="12" font-weight="700" text-anchor="middle" fill="var(--muted)" direction="rtl">דירוג</text></svg>`;
   return `<div class="fig">
     <div class="blk">${H(1)}<h4>12 מסעדות בעיר</h4>${s}</div>
-    <div class="blk">${H(4)}<h4>שני הסברים לאותו קשר</h4>
+    <div class="blk"><h4>שני הסברים לאותו קשר</h4>
       <div class="chain no"><span class="bx">הרבה ביקורות</span><span class="ar">←</span><span class="bx">דירוג גבוה</span>${Hin(2)}</div>
       <div class="chain"><span class="bx">אוכל טוב</span><span class="ar">←</span><span class="bx">הרבה סועדים</span><span class="ar">←</span><span class="bx">הרבה ביקורות</span>${Hin(3)}</div>
+      <div class="app-mean">אז מה גורם למה? ${Hin(4)}</div>
     </div></div>`;
 }
 /* station 5b: confounder */
@@ -331,12 +335,13 @@ function figConf(){
   s+=`<text x="${(34+W-10)/2}" y="${top+2*rowH+40}" font-size="11.5" font-weight="700" text-anchor="middle" fill="var(--muted)" direction="rtl">חודש</text></svg>`;
   return `<div class="fig">
     <div class="blk">${H(1)}<h4>לפי חודשים, במסעדה אחת</h4>${s}</div>
-    <div class="blk">${H(4)}<h4>מה עוד משתנה במהלך השנה?</h4>
+    <div class="blk"><h4>מה עוד משתנה במהלך השנה?</h4>
       <div class="tri">
         <div class="bx top">הקיץ: הרבה יותר סועדים ${Hin(2)}</div>
         <div class="ar">↓</div><div></div><div class="ar">↓</div>
         <div class="bx">מוכרים יותר גלידה</div><div class="mid">${Hin(3)}<br>הקשר שרואים</div><div class="bx">יותר עומס והמתנה</div>
       </div>
+      <div class="app-mean" style="margin-top:10px">אז הגלידה אשמה? ${Hin(4)}</div>
     </div></div>`;
 }
 /* confirmation bias */
@@ -368,10 +373,10 @@ const ST=[
        3:'הביקורות באפליקציה מתארות את <b>מי שבחר לכתוב</b>, לא את כל הסועדים. בסקר ביציאה רואים שרובם חשבו שהיה בסדר.'},
     what:'מי שבחר להשתתף שונה ממי שלא השתתף. הנתונים מתארים את מי שענה, לא את כל מי שרצינו לתאר.',
     avoid:['לשאול: מי בחר לענות, ומי לא?','לפנות לכולם, או לבחור באקראי את מי שואלים, במקום לחכות למי שמתנדב. כך עשתה המסעדה בסקר ביציאה.']},
-   {tab:'שרידות',name:'הטיית שרידות',story:'נועה רואה באפליקציה מודעה של "גריל הנמל": "9 מתוך 10 לקוחות ממליצים עלינו!". נשמע מצוין למי שמגיעה בפעם הראשונה.',fig:figSurv,
+   {tab:'שרידות',name:'הטיית שרידות',story:'נועה רואה באפליקציה מודעה של "גריל הנמל": "9 מתוך 10 לקוחות מרוצים מאיתנו!". נשמע מצוין למי שמגיעה בפעם הראשונה.',fig:figSurv,
     b:{1:'נשאלו רק הלקוחות הקבועים, כלומר מי <b>שעדיין</b> מגיע. מי שהתאכזב, כבר לא לקוח קבוע.',
-       2:'34 מתוך 40 הלקוחות שהפסיקו להגיע לא היו מרוצים. הם נעלמו מהנתונים <b>בגלל החוויה עצמה</b>.',
-       3:'ה-90% במודעה נכונים, אבל רק לגבי מי ששרד: 54 מתוך 60 הלקוחות הקבועים.',
+       2:'ה-90% במודעה נכונים, אבל רק לגבי מי ששרד: 54 מתוך 60 הלקוחות הקבועים.',
+       3:'34 מתוך 40 הלקוחות שהפסיקו להגיע לא היו מרוצים. הם נעלמו מהנתונים <b>בגלל החוויה עצמה</b>.',
        4:'נועה תגיע בפעם הראשונה. המספר שרלוונטי לה הוא איך יוצאים לקוחות <b>חדשים</b>: 60%, לא 90%.'},
     what:'הנתונים כוללים רק את מי ש"שרד" עד היום. מי שנעלם בדרך, נעלם בגלל התוצאה עצמה (כאן: לא היה מרוצה), ולכן התמונה נראית טובה ממה שהיא.',
     avoid:['לשאול: מי נעלם בדרך, ולמה?','לבדוק את כל מי שהתחיל, כולל מי שעזב, למשל לשאול לקוחות אחרי הביקור הראשון שלהם.'],
@@ -431,9 +436,8 @@ function go(s,i,push){
   const nb=Object.keys(it.b).length,key=s+'-'+i,sn=(seen[key]||new Set());
   $('panel').innerHTML=`<div class="ph"><h2>${S.title}</h2></div><p class="ask">השאלה לשאול כאן: ${S.ask}</p>${tabs}
     <p class="bname">${it.name}</p><p class="story">${it.story}</p>
-    <p class="tip">לחצו על העיגולים הממוספרים <i>1</i> באיור.</p>
+    <p class="tip"><i>1</i><span>לחצו על העיגולים הכתומים באיור, לפי הסדר.</span><span class="sc" id="sc"></span></p>
     <div class="figwrap" id="fw">${it.fig()}<div class="balloon" id="bl" role="dialog" aria-modal="false" hidden><button class="x" aria-label="סגירה">✕</button><div id="blt"></div></div></div>
-    <p class="seen-count" id="sc"></p>
     <div class="expl"><div><h5>מה קרה כאן?</h5><p>${it.what}</p></div><div><h5>איך נמנעים?</h5><ul>${it.avoid.map(a=>`<li>${a}</li>`).join('')}</ul></div></div>
     ${it.note?`<p class="note">${it.note}</p>`:''}`;
   $('panel').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>go(s,+b.dataset.i,true));
@@ -443,7 +447,7 @@ function go(s,i,push){
   if(push){try{history.replaceState(null,'','#'+S.id+(i?'-'+(i+1):''));}catch(e){}}
 }
 function count(){const it=ST[cur.s].items[cur.i],nb=Object.keys(it.b).length,sn=seen[cur.s+'-'+cur.i]||new Set();
-  $('sc').textContent=sn.size?`פתחתם ${sn.size} מתוך ${nb} הסברים.`:'';}
+  $('sc').textContent=`פתחתם ${sn.size} מתוך ${nb}`;}
 let openK=null;
 function openB(h){
   const k=h.dataset.k,it=ST[cur.s].items[cur.i],bl=$('bl'),fw=$('fw');
@@ -451,25 +455,30 @@ function openB(h){
   document.querySelectorAll('.hs[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));
   h.setAttribute('aria-expanded','true');h.classList.add('seen');openK=k;
   const key=cur.s+'-'+cur.i;(seen[key]=seen[key]||new Set()).add(k);count();
-  $('blt').innerHTML=it.b[k];bl.hidden=false;
+  const nb=Object.keys(it.b).length,nk=+k+1;
+  $('blt').innerHTML=it.b[k]+(nk<=nb?`<button class="nx" data-n="${nk}">להסבר ${nk} ←</button>`:'');bl.hidden=false;
+  const nxb=$('blt').querySelector('.nx');if(nxb)nxb.onclick=e=>{e.stopPropagation();const t=fw.querySelector(`.hs[data-k="${nk}"]`);if(t){t.scrollIntoView({block:'nearest'});openB(t);}};
   const fr=fw.getBoundingClientRect(),hr=h.getBoundingClientRect(),bw=bl.offsetWidth,bh=bl.offsetHeight;
   const cx=hr.left+hr.width/2-fr.left;
   let left=Math.max(8,Math.min(fr.width-bw-8,cx-bw/2));
-  const cy=hr.top+hr.height/2-fr.top,cxl=hr.left-fr.left,cxr=hr.right-fr.left;
-  const others=[...fw.querySelectorAll('.hs')].filter(x=>x!==h).map(x=>{const r=x.getBoundingClientRect();return [r.left-fr.left-4,r.top-fr.top-4,r.right-fr.left+4,r.bottom-fr.top+4];});
-  const clampX=v=>Math.max(8,Math.min(fr.width-bw-8,v));
-  const cand=[
-    ['side',cxl-12-bw,Math.max(0,cy-22),cxl-12-bw>=0],
-    ['side-r',cxr+12,Math.max(0,cy-22),cxr+12+bw<=fr.width],
-    ['below',clampX(cx-bw/2),hr.bottom-fr.top+10,true],
-    ['above',clampX(cx-bw/2),hr.top-fr.top-10-bh,hr.top-fr.top-10-bh>=0]];
-  // choose the first allowed position that covers the fewest other hotspots
+  const cy=hr.top+hr.height/2-fr.top,cxl=hr.left-fr.left,cxr=hr.right-fr.left,ht=hr.top-fr.top,hb=hr.bottom-fr.top;
+  const others=[...fw.querySelectorAll('.hs')].filter(x=>x!==h).map(x=>{const r=x.getBoundingClientRect();return [r.left-fr.left-6,r.top-fr.top-6,r.right-fr.left+6,r.bottom-fr.top+6];});
+  const W=fr.width,pageTop=-(fr.top+scrollY)+4;
+  // candidate positions: [mode, left, top]; the first one that covers no other hotspot wins
+  const xs=[cx-bw/2,cxr-bw+8,cxl-8],cand=[];
+  xs.forEach(x=>cand.push(['below',x,hb+10]));
+  xs.forEach(x=>cand.push(['above',x,ht-10-bh]));
+  [cy-22,cy-bh+22,cy-bh/2].forEach(t=>{cand.push(['side',cxl-12-bw,t]);cand.push(['side-r',cxr+12,t]);});
   let best=null;
-  cand.forEach(([m,l,t,ok],i)=>{if(!ok)return;
+  cand.forEach(([m,l,t],i)=>{
+    if(m==='below'||m==='above')l=Math.max(4,Math.min(W-bw-4,l));
+    if(l<4||l+bw>W-4||t<pageTop)return;
     const hit=others.filter(([x1,y1,x2,y2])=>x2>l&&x1<l+bw&&y2>t&&y1<t+bh).length;
-    if(!best||hit<best.hit)best={m,l,t,hit};});
+    const sc=hit*1000+i;
+    if(!best||sc<best.sc)best={m,l,t,sc};});
+  if(!best)best={m:'below',l:Math.max(4,Math.min(W-bw-4,cx-bw/2)),t:hb+10};
   const mode=best.m;left=best.l;const top=best.t;
-  if(mode==='side'||mode==='side-r')bl.style.setProperty('--ay',(cy-top)+'px');
+  if(mode==='side'||mode==='side-r')bl.style.setProperty('--ay',Math.max(14,Math.min(bh-14,cy-top))+'px');
   else bl.style.setProperty('--ax',Math.max(16,Math.min(bw-16,cx-left))+'px');
   ['side','side-r','above','below'].forEach(c=>bl.classList.toggle(c,c===mode));
   bl.style.left=left+'px';bl.style.top=top+'px';

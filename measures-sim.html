@@ -45,7 +45,7 @@ h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-s
 .taskp .howto{margin-bottom:0}.taskp .modes{margin:10px 0 0}
 .modes[hidden]{display:none}
 .tag{font-size:.85rem;font-weight:700;color:var(--muted);margin:0 0 2px}
-.ctext{font-size:1.2rem;font-weight:700;line-height:1.3;margin:0 0 10px}
+.ctext{font-size:1.3rem;font-weight:700;line-height:1.3;margin:2px 0 10px;background:var(--warnbg);border-right:5px solid var(--accent);border-radius:8px;padding:8px 12px}
 .conds{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}
 .conds li{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--muted)}
 .conds li i{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--grid);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
@@ -81,6 +81,8 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--p
 .think[hidden]{display:none}
 .think .tbox{background:var(--paper);border:2px solid var(--accent);border-radius:12px;padding:14px 18px;max-width:360px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.15)}
 .think .tbox p{margin:0 0 12px;font-weight:600;line-height:1.45}
+.think .tbox .ttask{font-size:1.15rem;font-weight:700;color:var(--ink);background:var(--warnbg);border-radius:8px;padding:8px 10px}
+.think .tbox .ttask span{display:block;font-size:.85rem;color:var(--muted);margin-bottom:2px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.86rem;color:var(--muted);margin:0 0 4px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{display:inline-block;width:16px;height:10px;border-radius:2px}
@@ -126,7 +128,7 @@ input:disabled{opacity:.45}
     <div>
       <a class="back" href="index.html">→ כל הסימולציות</a>
       <h1>שכר לשעה: מה קורה למדדים?</h1>
-      <p class="lead">השכר לשעה של 80 עובדים ברשת חנויות. בכל אתגר משנים עובד אחד: מגייסים עובד, עובד עוזב, או משנים שכר. המדדים מתעדכנים מיד.</p>
+      <p class="lead">השכר לשעה של 80 עובדים ברשת חנויות. בכל אתגר עושים שינוי אחד: מגייסים עובד, עובד עוזב, משנים שכר או קובעים שכר מינימום. המדדים מתעדכנים מיד.</p>
     </div>
     <nav class="nav" aria-label="אתגרים"><span class="lbl">אתגרים:</span><span id="nav" class="nav"></span></nav>
   </header>
@@ -168,7 +170,8 @@ input:disabled{opacity:.45}
       <div id="plot"></div>
       <div class="think" id="think" hidden>
         <div class="tbox">
-          <p><b>קודם חושבים.</b> קראו את האתגר ונסו לחשוב מה צריך לעשות. רק אחר כך מנסים.</p>
+          <p class="ttask"><span id="ttag">האתגר</span><span id="ttext" style="display:inline;font-size:inherit;color:inherit"></span></p>
+          <p><b>קודם חושבים:</b> מה צריך לעשות? רק אחר כך מנסים.</p>
           <button class="act primary" id="go">חשבתי, בואו ננסה</button>
         </div>
       </div>
@@ -212,7 +215,7 @@ const CH=[
        :`העובד הזה עדיין מרוויח פחות מהחציון (${S0.median} ₪). העלו את השכר שלו עוד, עד שהנקודה תעבור את הקו הסגול.`;}},
   {mode:'floor',t:'קבעו שכר מינימום ברשת: כל מי שמרוויח פחות מהסף מקבל העלאה עד הסף. מצאו סף שבו השכר החציוני עולה.',cards:['mean','median'],
    conds:[['השכר החציוני עלה',S=>S.median>S0.median+EPS]],
-   why:'החציון עלה רק כשהסף עבר את 51.5 ₪, את האמצע של השורה. עד אז רק עובדים מתחת לאמצע קיבלו העלאה, ומי שבאמצע לא השתנה. הממוצע, לעומת זאת, עלה כבר מהסף הנמוך ביותר, כי כל שקל של העלאה מוסיף לסכום. מעכשיו, כל עוד הסף מעל 51.5 ₪, החציון שווה בדיוק לסף.',
+   why:'החציון עלה רק כשהסף עבר את 51.5 ₪, את האמצע של השורה. עד אז רק עובדים מתחת לאמצע קיבלו העלאה, ומי שבאמצע לא השתנה. הממוצע, לעומת זאת, עלה ברגע שהסף עבר את השכר הנמוך ביותר (34 ₪), כי כל שקל של העלאה מוסיף לסכום. מעכשיו, כל עוד הסף מעל 51.5 ₪, החציון שווה בדיוק לסף.',
    fb:S=>{const c=state.change;if(!c||c.type!=='floor'||S.median>S0.median+EPS)return '';
      return `הסף (${c.v} ₪) עדיין מתחת לחציון (${S0.median} ₪), ולכן העובדים שבאמצע השורה לא קיבלו העלאה והחציון לא זז. שימו לב שהממוצע כבר עלה. העלו את הסף עוד.`;}},
   {mode:'mod',t:'תנו העלאה לעובד אחד כך שהשכר הממוצע יעלה, אבל השכר החציוני לא ישתנה.',cards:['mean','median'],
@@ -220,10 +223,10 @@ const CH=[
    why:'הממוצע מושפע מכל שקל של העלאה. החציון תלוי רק בסדר: כל עוד אף עובד לא עבר את האמצע, החציון נשאר.'},
   {mode:'add',t:'גייסו עובד חדש שמגדיל את פיזור השכר, בלי לשנות את הטווח.',cards:['sd','range'],
    conds:[['פיזור השכר (סטיית התקן) גדל',S=>S.sd>S0.sd+EPS],['הטווח לא השתנה',S=>same(S.range,S0.range)]],
-   why:'השכר של העובד החדש רחוק מהממוצע, ולכן הפיזור גדל. אבל הוא בין השכר הנמוך ביותר לגבוה ביותר, ולכן הטווח לא זז.'},
+   why:'השכר של העובד החדש רחוק מהממוצע יותר מסטיית תקן אחת (בערך), ולכן הפיזור גדל. אבל הוא בין השכר הנמוך ביותר לגבוה ביותר, ולכן הטווח לא זז.'},
   {mode:'del',t:'עובד אחד עוזב, ופיזור השכר דווקא גדל.',cards:['sd'],
    conds:[['פיזור השכר (סטיית התקן) גדל',S=>S.sd>S0.sd+EPS]],
-   why:'עזב עובד עם שכר קרוב לממוצע. בלעדיו נשארים יחסית יותר עובדים רחוקים מהממוצע, ולכן סטיית התקן גדלה.'}
+   why:'עזב עובד עם שכר קרוב לממוצע, במרחק של פחות מסטיית תקן אחת (בערך). בלעדיו נשארים יחסית יותר עובדים רחוקים מהממוצע, ולכן סטיית התקן גדלה.'}
 ];
 const FREE=CH.length;
 let state={ch:0,mode:'add',change:null,sel:null,done:[],locked:false};
@@ -438,6 +441,7 @@ function renderControl(){
   const m=state.mode,c=state.change,k=$('k'),kn=$('kn');
   $('ctl').hidden=m==='del';
   $('think').hidden=!state.locked;
+  if(state.locked){$('ttag').textContent=`אתגר ${state.ch+1}`;$('ttext').textContent=CH[state.ch].t;}
   if(m!=='floor'){k.min=kn.min=LO;k.max=kn.max=HI;}
   if(m==='add'){
     $('klabel').textContent='שכר העובד החדש';

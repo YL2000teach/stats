@@ -80,6 +80,8 @@ svg text{font-family:"Assistant",Arial,sans-serif}
 .credit a{color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media (max-width:999px){.card .val{flex-wrap:wrap}.card{height:120px;overflow:hidden}}
+/* narrow laptops: let the change label drop to a second line, with a fixed card height so nothing jumps */
+@media (min-width:1000px) and (max-width:1300px){.card .val{flex-wrap:wrap;row-gap:0}.card{height:108px;overflow:hidden}.card .num{font-size:1.12rem}}
 @media (min-width:1000px){
   .mnote{display:none}
   .grid{grid-template-columns:minmax(380px,460px) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"task plot" "ctrl plot"}
