@@ -49,12 +49,18 @@ svg text{font-family:"Assistant",Arial,sans-serif}
 .ctl label{font-weight:700}
 .ctl output{direction:ltr;font-weight:700;min-width:44px;text-align:left;font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;direction:ltr}
+/* custom slider: fixed range; the part not allowed for the chosen r is hatched */
+input.sl{-webkit-appearance:none;appearance:none;height:24px;background:transparent;margin:0}
+input.sl::-webkit-slider-runnable-track{height:10px;border-radius:5px;background:var(--trk)}
+input.sl::-moz-range-track{height:10px;border-radius:5px;background:var(--trk)}
+input.sl::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--A);border:3px solid var(--paper);box-shadow:0 0 0 1.5px var(--A);margin-top:-6px;cursor:pointer}
+input.sl::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--A);border:3px solid var(--paper);box-shadow:0 0 0 1.5px var(--A);cursor:pointer}
 .mean{min-height:9.6em;display:grid;gap:6px;align-content:start}
 .rbtns{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .rbtns .lbl{font-weight:700}
 .rbtns button{font:inherit;font-weight:700;border:1.5px solid var(--grid);border-radius:999px;padding:3px 12px;background:var(--paper);color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums}
 .rbtns button[aria-pressed="true"]{background:var(--A);border-color:var(--A);color:var(--paper)}
-.lim{color:var(--muted);font-size:.86rem;line-height:1.3;margin:4px 0 0;min-height:3.9em}
+.lim{color:var(--muted);font-size:.86rem;line-height:1.3;margin:4px 0 0;min-height:5.2em}
 .notes{font-size:.9rem;color:var(--muted);border-top:1px solid var(--grid);padding-top:8px;display:grid;gap:6px}
 .notes p{margin:0}.notes b{color:var(--ink)}
 .mean p{margin:0;line-height:1.4}
@@ -83,8 +89,8 @@ input[type=range]{width:100%;direction:ltr}
     <div class="one">
       <div>
         <div class="plot" id="plotA"></div>
-        <div class="ctl"><label for="sA">שיפוע</label><input type="range" id="sA" min="0.02" max="1.2" step="0.01" style="accent-color:var(--A)"><output id="oA"></output></div>
-        <div class="rbtns" role="group" aria-label="חוזק הקשר"><span class="lbl"><bdi dir="ltr">r =</bdi></span><span id="rb"></span></div>
+        <div class="ctl"><label for="sA">שיפוע</label><input type="range" class="sl" id="sA" min="0.02" max="1.2" step="0.01" aria-describedby="lim"><output id="oA"></output></div>
+        <div class="rbtns" role="group" aria-label="חוזק הקשר"><span class="lbl">חוזק הקשר (r):</span><span id="rb"></span></div>
         <p class="lim" id="lim" aria-live="polite"></p>
       </div>
       <div class="side">
@@ -112,7 +118,7 @@ const R_OPTS=[0.1,0.3,0.5,0.85];
 // slope = r*SDy/SDx. Grades must stay in 0-100, so SDy is capped at 19 and the largest slope depends on r
 const SY_MAX=19, B_MAX=1.2;
 const bMax=r=>Math.min(B_MAX,Math.floor(r*SY_MAX/SX*100+1e-9)/100);
-let st={bA:0.3,r:0.85};
+let st={bA:0.3,r:0.85},jumped=false;
 function model(r,b){
   const sy=b*SX/r,q=Math.sqrt(Math.max(0,1-r*r));
   return {pts:X.map((x,i)=>[CX+SX*x,CY+sy*(r*x+q*E[i])]),slope:b,err:sy*q};
@@ -143,14 +149,17 @@ function draw(k,m,col){
 }
 const chip=(t,v,live)=>`<span class="chip ${live?'live':'fixed'}">${t?t+' ':''}<bdi dir="ltr">${v}</bdi>${live?'':' · קבוע'}</span>`;
 function render(){
-  const mx=bMax(st.r);if(st.bA>mx)st.bA=mx;
+  const mx=bMax(st.r);if(st.bA>mx+1e-9){st.bA=mx;jumped=true;}
   const A=model(st.r,st.bA);
   draw('A',A,'var(--A)');
   document.getElementById('chA').innerHTML=chip('שיפוע',f(st.bA,2),true)+chip('','r = '+f(st.r,2),true);
-  const sl=document.getElementById('sA');sl.max=mx;sl.value=st.bA;document.getElementById('oA').textContent=f(st.bA,2);
+  const sl=document.getElementById('sA');sl.value=st.bA;
+  const pct=v=>(v-0.02)/(B_MAX-0.02)*100,pv=pct(st.bA),pm=pct(mx);
+  sl.style.setProperty('--trk',`linear-gradient(to right,var(--A) 0 ${pv}%,var(--grid) ${pv}% ${pm}%,transparent ${pm}% 100%),repeating-linear-gradient(135deg,var(--muted) 0 3px,var(--paper) 3px 7px)`);document.getElementById('oA').textContent=f(st.bA,2);
   document.getElementById('rb').innerHTML=R_OPTS.map(r=>`<button data-r="${r}" aria-pressed="${r===st.r}">${r}</button>`).join(' ');
   document.getElementById('rb').querySelectorAll('button').forEach(x=>x.onclick=()=>{st.r=+x.dataset.r;render();});
-  document.getElementById('lim').innerHTML=mx<B_MAX?`כשהקשר חלש יותר, הנקודות מפוזרות יותר סביב הקו. כאן השיפוע מוגבל עד <bdi dir="ltr">${f(mx,2)}</bdi>, אחרת חלק מהציונים היו יוצאים מהטווח 0 עד 100.`:'';
+  document.getElementById('lim').innerHTML=mx<B_MAX?`עם קשר חלש כזה, הנקודות מפוזרות מאוד סביב הקו. כדי שהציונים יישארו בין 0 ל-100, השיפוע כאן יכול להגיע רק עד <bdi dir="ltr">${f(mx,2)}</bdi> (החלק המקווקו במחוון חסום).${jumped?` לכן השיפוע ירד ל-<bdi dir="ltr">${f(mx,2)}</bdi>.`:''}`:'';
+  jumped=false;
   const p10=st.bA*10,r=st.r;
   document.getElementById('mA').innerHTML=
     `<p class="ch"><span class="h">בכמה? </span>כל 10 דקות תרגול נוספות מעלות את הציון בממוצע ב-${tf(p10,1)} נקודות. ${p10<3?'ההשפעה של התרגול קטנה.':p10<8?'ההשפעה של התרגול בינונית.':'ההשפעה של התרגול גדולה.'}</p>`+
@@ -161,7 +170,7 @@ function render(){
       :'הנקודות כמעט לא מסודרות סביב הקו: לפי זמן התרגול כמעט אי אפשר לנחש את הציון.')+`</p>`+
     `<p class="st"><span class="h">שימו לב: </span>הזזת השיפוע לא משנה את r. כשהקו תלול יותר, גם הציונים מתפרסים על טווח רחב יותר, כך שביחס לקו התלמידים קרובים אליו באותה מידה. השיפוע אומר כמה גדולה ההשפעה, ו-r אומר כמה התלמידים צמודים לקו.</p>`;
 }
-document.getElementById('sA').oninput=e=>{st.bA=+e.target.value;render();};
+document.getElementById('sA').oninput=e=>{st.bA=Math.min(+e.target.value,bMax(st.r));render();};
 render();
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,120);});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);

@@ -33,21 +33,20 @@ h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-s
 .lead .how{color:var(--muted);font-size:.93rem;display:block;margin-top:4px}
 
 /* the path of stations */
-.path{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:8px}
-.path::before{content:"";position:absolute;top:30px;right:12%;left:12%;height:3px;background:var(--grid);z-index:0}
+.path{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.path::before{content:"";position:absolute;top:30px;right:10%;left:10%;height:3px;background:var(--grid);z-index:0}
 .st{position:relative;z-index:1;font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--grid);border-radius:12px;padding:10px 10px 10px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
 .st .n{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:1.05rem;margin-top:-2px}
 .st .t{font-weight:700;font-size:1.02rem;line-height:1.2}
 .st .q{font-size:.85rem;color:var(--muted);line-height:1.25}
 .st[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
 .st[aria-current="true"] .n{background:var(--accent);color:var(--paper)}
-.band{font:inherit;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:var(--confbg);color:var(--ink);border:2px dashed var(--conf);border-radius:12px;padding:7px 12px;cursor:pointer;margin-bottom:14px}
-.band b{color:var(--conf)}
-.band span{font-size:.9rem;color:var(--muted)}
-.band[aria-current="true"]{border-style:solid;box-shadow:0 0 0 1.5px var(--conf)}
-@media (max-width:640px){
-  .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){
+  .path{grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+  .path .st{grid-column:span 2}
+  .path .st:nth-child(4){grid-column:2/span 2}
   .path::before{display:none}
+  .st .t{font-size:.95rem}.st .q{font-size:.78rem}
 }
 
 /* station panel */
@@ -56,10 +55,12 @@ h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-s
 .ph h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.3rem;margin:0}
 .ask{margin:0 0 10px;font-weight:600}
 .ask b{color:var(--accent)}
-.panel.conf .ask b{color:var(--conf)}
-.tabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--bg);border-radius:10px;padding:3px;margin:0 0 12px;width:fit-content;max-width:100%}
-.tabs button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:6px 14px;background:transparent;color:var(--ink);cursor:pointer}
-.tabs button[aria-selected="true"]{background:var(--paper);box-shadow:0 0 0 1.5px var(--accent);color:var(--accent)}
+.tabrow{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;margin:0 0 14px;background:var(--soft);border-radius:12px;padding:8px 12px}
+.tabrow .tl{font-weight:700}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:700;font-size:1.05rem;border:2px solid var(--accent);border-radius:10px;padding:7px 18px;background:var(--paper);color:var(--accent);cursor:pointer}
+.tabs button:hover{background:var(--bg)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--paper)}
 .bname{font-weight:700;font-size:1.1rem;margin:0 0 4px}
 .story{margin:0 0 10px}
 .tip{font-size:.88rem;color:var(--muted);margin:0 0 8px}
@@ -170,6 +171,16 @@ table.simp{border-collapse:separate;border-spacing:0;width:100%;font-variant-num
 .revs .rev{margin:0}
 @media (max-width:520px){.revs{grid-template-columns:minmax(0,1fr)}}
 svg text{font-family:"Assistant",Arial,sans-serif}
+.dots.d100{grid-template-columns:repeat(10,13px);gap:5px}
+.dots.d100 .dot{width:13px;height:13px}
+.dot.gone{opacity:.28}
+.leg .dot.gone{opacity:.35}
+.ad{background:var(--paper);border:2px solid var(--star);border-radius:12px;padding:10px 12px;text-align:center;position:relative}
+.ad .big{font-family:"Secular One","Assistant",Arial,sans-serif;font-size:1.25rem;line-height:1.2}
+.ad .fine{font-size:.78rem;color:var(--muted);margin-top:4px;position:relative;display:inline-block;padding-left:4px}
+.calc{display:grid;gap:6px;margin-top:10px}
+.calc div{background:var(--paper);border-radius:8px;padding:6px 10px;font-weight:600;position:relative}
+.calc b{font-variant-numeric:tabular-nums}
 
 .sum{margin-top:14px;background:var(--paper);border:1px solid var(--grid);border-radius:14px;padding:12px 16px}
 .sum h3{margin:0 0 6px;font-size:1.08rem}
@@ -184,23 +195,22 @@ svg text{font-family:"Assistant",Arial,sans-serif}
 <div class="app">
   <a class="back" href="index.html">→ כל הסימולציות</a>
   <h1>איפה נכנסת ההטיה?</h1>
-  <p class="lead">נועה מחפשת מסעדה ליום ההולדת שלה. היא פותחת אפליקציית ביקורות ורואה דירוגים, ממוצעים ומסקנות. כל מספר שהיא רואה עבר דרך: מי כתב, מה נמדד, איך סיכמו ומה הסיקו. בכל תחנה בדרך משהו יכול להטות את התמונה.
+  <p class="lead">נועה מחפשת מסעדה ליום ההולדת שלה. היא פותחת אפליקציית ביקורות ורואה דירוגים, ממוצעים ומסקנות. כל מסקנה שלה עוברת דרך: מה חיפשו, מי כתב, מה נמדד, איך סיכמו ומה הסיקו. בכל תחנה בדרך משהו יכול להטות את התמונה.
     <span class="how">בחרו תחנה. באיור, לחצו על העיגולים הממוספרים כדי לפתוח הסברים.</span></p>
 
   <nav class="path" id="path" aria-label="התחנות בדרך מהנתונים למסקנה"></nav>
-  <button class="band" id="band" data-s="c"><b>לאורך כל הדרך: הטיית אישוש</b><span>יכולה להשפיע על כל אחת מהתחנות</span></button>
 
   <section class="panel" id="panel" aria-live="polite"></section>
 
   <section class="sum" aria-labelledby="sumH">
-    <h3 id="sumH">ארבע שאלות לשאול על כל נתון</h3>
+    <h3 id="sumH">חמש שאלות לשאול על כל נתון</h3>
     <ol>
+      <li><b>מה חיפשו?</b> האם חיפשתי גם נתונים שסותרים את מה שאני כבר חושב?</li>
       <li><b>מי כתב?</b> מי לא מופיע בנתונים, ולמה?</li>
       <li><b>מה נמדד?</b> האם המספר מודד את מה שרצינו לדעת, ובאותו אופן אצל כולם?</li>
       <li><b>איך סיכמו?</b> האם המדד מתאר נכון את הנתונים? האם יש קבוצות שכדאי לבדוק בנפרד?</li>
       <li><b>מה הסיקו?</b> האם יש הסבר אחר לקשר שרואים?</li>
     </ol>
-    <p class="note"><span class="c">ובכל שלב:</span> האם חיפשתי גם נתונים שסותרים את מה שאני כבר חושב?</p>
   </section>
 
   <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
@@ -213,7 +223,7 @@ const H=(k)=>`<button class="hs" data-k="${k}" aria-expanded="false" aria-label=
 const Hin=(k)=>`<button class="hs in" data-k="${k}" aria-expanded="false" aria-label="הסבר ${k}">${k}</button>`;
 const stars=n=>`<span class="stars" aria-label="${n} כוכבים">${'★'.repeat(n)}<span class="e">${'★'.repeat(5-n)}</span></span>`;
 
-/* station 1a: who writes reviews */
+/* station 2a: who writes reviews */
 function figSelf(){
   const red=[3,17,26,38,44,57],green=[1,8,12,21,29,33,40,49,52,58];
   const wrote=[3,17,26,44,57,1,12,29,40,49,58,35];
@@ -221,28 +231,34 @@ function figSelf(){
   const rows=[[5,6],[4,0],[3,1],[2,0],[1,5]];
   const bars=rows.map(([s,c])=>`<div class="bar"><span class="lab">${s} ★</span><span class="tr"><span class="fl" style="width:${c/6*100}%;display:block"></span></span><span class="c">${c}</span></div>`).join('');
   return `<div class="fig">
-    <div class="blk">${H(1)}<h4>60 סועדים אכלו במסעדה השבוע</h4>
-      <div class="dots" role="img" aria-label="60 סועדים: 10 התלהבו, 44 חשבו שהיה בסדר, 6 התאכזבו. 12 כתבו ביקורת">${d}</div>
-      <div class="leg"><span><i class="dot g"></i>התלהבו</span><span><i class="dot"></i>היה בסדר</span><span><i class="dot r"></i>התאכזבו</span><span><i class="dot w"></i>כתבו ביקורת ${Hin(2)}</span></div>
+    <div class="blk">${H(1)}<h4>סקר ביציאה: כל 60 הסועדים השבוע</h4>
+      <div class="dots" role="img" aria-label="סקר ביציאה בין 60 סועדים: 10 התלהבו, 44 חשבו שהיה בסדר, 6 התאכזבו. 12 מהם כתבו ביקורת באפליקציה">${d}</div>
+      <div class="leg"><span><i class="dot g"></i>התלהבו</span><span><i class="dot"></i>היה בסדר</span><span><i class="dot r"></i>התאכזבו</span><span><i class="dot w"></i>כתבו ביקורת באפליקציה ${Hin(2)}</span></div>
     </div>
     <div class="blk">${H(3)}<h4>מה נועה רואה באפליקציה: 12 ביקורות</h4>
       <div class="bars" style="direction:rtl">${bars}</div>
       <div class="app-mean">רוב הביקורות: 5 כוכבים או כוכב אחד</div>
     </div></div>`;
 }
-/* station 1b: survivorship */
+/* station 2b: survivorship */
 function figSurv(){
-  const L=[[2.1,0],[4.4,1],[2.6,0],[1.9,0],[4.1,1],[3.0,0],[4.6,1],[2.4,0],[2.8,0],[4.3,1]];
-  const s=L.map(([r,o])=>`<div class="shop${o?'':' x'}">★ ${r.toFixed(1)}<small>${o?'פתוחה':'נסגרה'}</small></div>`).join('');
-  const open=L.filter(x=>x[1]).map(x=>x[0]).sort((a,b)=>b-a);
+  // 100 customers who started coming two years ago: 60 satisfied, 40 not.
+  // 40 stopped coming: 34 of the unsatisfied and 6 of the satisfied. 60 regulars remain: 54 satisfied, 6 not.
+  const red=new Set(),gone=new Set();let a=7;const rnd=()=>(a=(a*1103515245+12345)%2147483648)/2147483648;
+  const idx=[...Array(100).keys()];for(let i=99;i>0;i--){const j=Math.floor(rnd()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}
+  idx.slice(0,40).forEach(i=>red.add(i));idx.slice(0,34).forEach(i=>gone.add(i));idx.slice(40,46).forEach(i=>gone.add(i));
+  let d='';for(let i=0;i<100;i++)d+=`<i class="dot ${red.has(i)?'r':'g'}${gone.has(i)?' gone':''}"></i>`;
   return `<div class="fig">
-    <div class="blk">${H(1)}<h4>לפני חמש שנים נפתחו בשכונה 10 מסעדות</h4>
-      <div class="shops" role="img" aria-label="10 מסעדות, 6 נסגרו ודירוגן היה נמוך, 4 פתוחות ודירוגן מעל 4">${s}</div>
-      <div class="leg" style="margin-top:8px"><span>הדירוג שהיה לכל מסעדה</span>${Hin(2)}</div>
+    <div class="blk">${H(2)}<h4>לפני שנתיים: 100 לקוחות חדשים התחילו להגיע</h4>
+      <div class="dots d100" role="img" aria-label="100 לקוחות: 60 היו מרוצים ו-40 לא. 40 הפסיקו להגיע, ו-34 מהם לא היו מרוצים. 60 נשארו לקוחות קבועים, ו-54 מהם מרוצים">${d}</div>
+      <div class="leg"><span><i class="dot g"></i>מרוצים</span><span><i class="dot r"></i>לא מרוצים</span><span><i class="dot g gone"></i><i class="dot r gone"></i>הפסיקו להגיע</span></div>
     </div>
-    <div class="blk">${H(3)}<h4>מה נועה רואה באפליקציה היום</h4>
-      <div class="list">${open.map((r,i)=>`<div><span>מסעדה ${['א','ב','ג','ד'][i]}'</span><span>★ ${r.toFixed(1)}</span></div>`).join('')}</div>
-      <div class="app-mean">"כל המסעדות בשכונה מדורגות מעל 4!"</div>
+    <div class="blk"><h4>המודעה שנועה רואה</h4>
+      <div class="ad"><div class="big">"9 מתוך 10 לקוחות ממליצים עלינו!"</div><div class="fine">*סקר בין הלקוחות הקבועים שלנו ${Hin(1)}</div></div>
+      <div class="calc">
+        <div>הלקוחות הקבועים: <b>54</b> מרוצים מתוך <b>60</b>, כלומר <b>90%</b> ${Hin(3)}</div>
+        <div>כל מי שהתחיל להגיע: <b>60</b> מרוצים מתוך <b>100</b>, כלומר <b>60%</b> ${Hin(4)}</div>
+      </div>
     </div></div>`;
 }
 /* station 2: measurement */
@@ -302,18 +318,24 @@ function figRev(){
       <div class="chain"><span class="bx">אוכל טוב</span><span class="ar">←</span><span class="bx">הרבה סועדים</span><span class="ar">←</span><span class="bx">הרבה ביקורות</span>${Hin(3)}</div>
     </div></div>`;
 }
-/* station 4b: confounder */
+/* station 5b: confounder */
 function figConf(){
+  const ice=[20,22,30,45,70,95,120,125,90,55,30,22],cmp=[3,4,4,6,9,12,15,16,11,7,4,3];
+  const W=300,rowH=58,top=8,x=i=>34+i*((W-44)/12),bw=(W-44)/12-4;
+  const row=(v,mx,y0,col,lab)=>{let s=`<text x="${W-6}" y="${y0+10}" font-size="11.5" font-weight="700" text-anchor="start" fill="var(--muted)" direction="rtl">${lab}</text>`;
+    v.forEach((u,i)=>{const h=u/mx*(rowH-18);s+=`<rect x="${x(i)}" y="${y0+rowH-h}" width="${bw}" height="${h}" rx="2" fill="${col}"/>`;});
+    return s+`<line x1="30" x2="${W-6}" y1="${y0+rowH}" y2="${y0+rowH}" stroke="var(--ink)"/>`;};
+  let s=`<svg viewBox="0 0 ${W} ${top+2*rowH+44}" width="100%" style="max-width:360px;display:block;margin:0 auto;direction:ltr" role="img" aria-label="לפי חודשים: מכירות הגלידה והתלונות על המתנה עולות שתיהן בקיץ">`;
+  s+=row(ice,125,top,'var(--star)','גלידות שנמכרו')+row(cmp,16,top+rowH+10,'var(--bad)','תלונות על המתנה');
+  for(let i=0;i<12;i++)s+=`<text x="${x(i)+bw/2}" y="${top+2*rowH+24}" font-size="10.5" text-anchor="middle" fill="var(--muted)">${i+1}</text>`;
+  s+=`<text x="${(34+W-10)/2}" y="${top+2*rowH+40}" font-size="11.5" font-weight="700" text-anchor="middle" fill="var(--muted)" direction="rtl">חודש</text></svg>`;
   return `<div class="fig">
-    <div class="blk">${H(1)}<h4>דירוג ממוצע באפליקציה</h4>
-      <div class="scores"><div>ליד הים: ★ 4.5</div><div>במרכז העיר: ★ 3.9</div></div>
-      <div class="app-mean">"האוכל ליד הים טעים יותר?"</div>
-    </div>
-    <div class="blk">${H(4)}<h4>מה עוד שונה בין הסועדים?</h4>
+    <div class="blk">${H(1)}<h4>לפי חודשים, במסעדה אחת</h4>${s}</div>
+    <div class="blk">${H(4)}<h4>מה עוד משתנה במהלך השנה?</h4>
       <div class="tri">
-        <div class="bx top">סועדים בחופשה, במצב רוח טוב ${Hin(2)}</div>
+        <div class="bx top">הקיץ: הרבה יותר סועדים ${Hin(2)}</div>
         <div class="ar">↓</div><div></div><div class="ar">↓</div>
-        <div class="bx">אוכלים ליד הים</div><div class="mid">${Hin(3)}<br>הקשר שרואים</div><div class="bx">נותנים דירוג נדיב</div>
+        <div class="bx">מוכרים יותר גלידה</div><div class="mid">${Hin(3)}<br>הקשר שרואים</div><div class="bx">יותר עומס והמתנה</div>
       </div>
     </div></div>`;
 }
@@ -329,22 +351,32 @@ function figConfirm(){
 
 /* ---------- content ---------- */
 const ST=[
- {id:'s1',n:1,t:'מי כתב?',q:'המדגם',title:'תחנה 1: מי כתב את הביקורות?',ask:'מי <b>לא</b> מופיע בנתונים, ולמה?',
+ {id:'s1',n:1,t:'מה חיפשו?',q:'מה בוחרים לראות',title:'תחנה 1: מה נועה חיפשה?',ask:'האם חיפשתי גם נתונים <b>שסותרים</b> את מה שאני כבר חושב?',
   items:[
-   {tab:'בחירה עצמית',name:'הטיית בחירה עצמית',story:'באפליקציה נראה שהמסעדה "שנויה במחלוקת": חצי מהביקורות מתלהבות, וחצי כועסות.',fig:figSelf,
-    b:{1:'רוב הסועדים (44 מתוך 60) חשבו שהיה <b>בסדר</b>. רובם לא טרחו לכתוב ביקורת.',
-       2:'כתבו בעיקר מי שהתלהב מאוד או התאכזב מאוד: 11 מתוך 12 הכותבים.',
-       3:'הביקורות מתארות את <b>מי שבחר לכתוב</b>, לא את כל הסועדים. בפועל, רוב הסועדים חשבו שהיה בסדר.'},
+   {tab:'הטיית אישוש',name:'הטיית אישוש',story:'נועה כבר החליטה שהיא רוצה את "גריל הנמל". עכשיו היא "רק בודקת".',fig:figConfirm,
+    b:{1:'כבר החיפוש מוטה: "גריל הנמל הכי טוב בעיר" מביא בעיקר תוצאות שמסכימות איתה.',
+       2:'את הביקורות שמסכימות איתה נועה קוראת וזוכרת.',
+       3:'ביקורות שלא מתאימות היא מסבירה כ"סתם מתלוננים" ומדלגת עליהן. חצי מהביקורות לא נספרו.'},
+    what:'מחפשים, קוראים וזוכרים בעיקר נתונים שמאשרים את מה שכבר חשבנו. הנתונים עצמם קיימים, אבל מי שמסתכל בוחר מה לראות.',
+    avoid:['להחליט מראש לפי מה בוחרים, לפני שמסתכלים בנתונים. למשל: "דירוג אוכל מעל 4, לפחות 50 ביקורות".','לחפש בכוונה נתונים שיכולים להפריך את מה שחושבים.'],
+    note:'ההבדל מבחירה עצמית (תחנה 2): שם הנתונים עצמם חסרים, כי חלק מהסועדים לא כתבו. כאן הביקורות קיימות, ונועה היא שבוחרת לא לקרוא אותן.'}]},
+ {id:'s2',n:2,t:'מי כתב?',q:'המדגם',title:'תחנה 2: מי כתב את הביקורות?',ask:'מי <b>לא</b> מופיע בנתונים, ולמה?',
+  items:[
+   {tab:'בחירה עצמית',name:'הטיית בחירה עצמית',story:'באפליקציה נראה שהמסעדה "שנויה במחלוקת": חצי מהביקורות מתלהבות, וחצי כועסות. אבל המסעדה גם שאלה את כל הסועדים ביציאה שאלה אחת: "איך היה?".',fig:figSelf,
+    b:{1:'בסקר ביציאה, שבו נשאלו <b>כל</b> הסועדים, 44 מתוך 60 ענו שהיה <b>בסדר</b>. רובם לא כתבו ביקורת באפליקציה.',
+       2:'באפליקציה כתבו בעיקר מי שהתלהב מאוד או התאכזב מאוד: 11 מתוך 12 הכותבים.',
+       3:'הביקורות באפליקציה מתארות את <b>מי שבחר לכתוב</b>, לא את כל הסועדים. בסקר ביציאה רואים שרובם חשבו שהיה בסדר.'},
     what:'מי שבחר להשתתף שונה ממי שלא השתתף. הנתונים מתארים את מי שענה, לא את כל מי שרצינו לתאר.',
-    avoid:['לשאול: מי בחר לענות, ומי לא?','לפנות לכולם, או לבחור באקראי את מי שואלים, במקום לחכות למי שמתנדב.']},
-   {tab:'שרידות',name:'הטיית שרידות',story:'באפליקציה כל המסעדות בשכונה מדורגות מעל 4. נראה ששכונה כזו היא גן עדן לאוכל.',fig:figSurv,
-    b:{1:'לפני חמש שנים נפתחו 10 מסעדות. 6 מהן, בדרך כלל אלה עם הדירוג הנמוך, נסגרו.',
-       2:'מסעדה שנסגרה נמחקת מהאפליקציה, ואיתה כל הביקורות הנמוכות שלה.',
-       3:'נועה רואה רק את <b>השורדות</b>. המסקנה "כל המסעדות כאן מצוינות" מבוססת רק על מי שהצליח.'},
-    what:'הנתונים כוללים רק את מי ש"שרד" עד היום. מי שנכשל, נסגר או עזב נעלם מהנתונים, ולכן התמונה נראית טובה ממה שהייתה.',
-    avoid:['לשאול: מי נעלם בדרך?','לחפש נתונים גם על מי שלא שרד, למשל רשימה של כל המסעדות שנפתחו.'],
-    note:'הטיית שרידות היא מקרה פרטי של הטיה בבחירת המדגם: המדגם "נבחר" לפי מי ששרד.'}]},
- {id:'s2',n:2,t:'מה נמדד?',q:'המדידה',title:'תחנה 2: מה בעצם מודדים הכוכבים?',ask:'האם המספר מודד את מה שרצינו לדעת, <b>ובאותו אופן אצל כולם</b>?',
+    avoid:['לשאול: מי בחר לענות, ומי לא?','לפנות לכולם, או לבחור באקראי את מי שואלים, במקום לחכות למי שמתנדב. כך עשתה המסעדה בסקר ביציאה.']},
+   {tab:'שרידות',name:'הטיית שרידות',story:'נועה רואה באפליקציה מודעה של "גריל הנמל": "9 מתוך 10 לקוחות ממליצים עלינו!". נשמע מצוין למי שמגיעה בפעם הראשונה.',fig:figSurv,
+    b:{1:'נשאלו רק הלקוחות הקבועים, כלומר מי <b>שעדיין</b> מגיע. מי שהתאכזב, כבר לא לקוח קבוע.',
+       2:'34 מתוך 40 הלקוחות שהפסיקו להגיע לא היו מרוצים. הם נעלמו מהנתונים <b>בגלל החוויה עצמה</b>.',
+       3:'ה-90% במודעה נכונים, אבל רק לגבי מי ששרד: 54 מתוך 60 הלקוחות הקבועים.',
+       4:'נועה תגיע בפעם הראשונה. המספר שרלוונטי לה הוא איך יוצאים לקוחות <b>חדשים</b>: 60%, לא 90%.'},
+    what:'הנתונים כוללים רק את מי ש"שרד" עד היום. מי שנעלם בדרך, נעלם בגלל התוצאה עצמה (כאן: לא היה מרוצה), ולכן התמונה נראית טובה ממה שהיא.',
+    avoid:['לשאול: מי נעלם בדרך, ולמה?','לבדוק את כל מי שהתחיל, כולל מי שעזב, למשל לשאול לקוחות אחרי הביקור הראשון שלהם.'],
+    note:'ההבדל מבחירה עצמית: שם אנשים בחרו לא לענות. כאן אף אחד לא סירב לענות, הלא מרוצים פשוט כבר לא שם. הטיית שרידות היא מקרה פרטי של הטיה בבחירת המדגם.'}]},
+ {id:'s3',n:3,t:'מה נמדד?',q:'המדידה',title:'תחנה 3: מה בעצם מודדים הכוכבים?',ask:'האם המספר מודד את מה שרצינו לדעת, <b>ובאותו אופן אצל כולם</b>?',
   items:[
    {tab:'הטיה במדידה',name:'הטיה במדידה',story:'נועה רוצה לדעת אם האוכל טעים. הכוכבים באפליקציה אמורים לענות על זה.',fig:figMeas,
     b:{1:'דנה ויוסי כתבו בדיוק אותו דבר, אבל נתנו מספר כוכבים שונה. לכל אחד יש "סרגל" משלו: אצל דנה "בסדר" זה 5, אצל יוסי זה 3.',
@@ -352,7 +384,7 @@ const ST=[
        3:'בסוף מופיע מספר אחד, שמערבב אוכל, המתנה ומחיר. נועה רצתה לדעת על האוכל, ומהמספר הזה <b>אי אפשר לדעת</b>.'},
     what:'המדד לא מודד בדיוק את מה שרצינו לדעת, ואנשים שונים משתמשים בו באופן שונה. גם אם המדגם מושלם, המספרים יכולים להטעות.',
     avoid:['להגדיר מראש מה בדיוק מודדים, למשל דירוג נפרד לאוכל, לשירות ולמחיר.','לנסח שאלה ברורה ("כמה האוכל היה טעים?") ולתת דוגמה למה כל ציון אומר.']}]},
- {id:'s3',n:3,t:'איך סיכמו?',q:'המדד והסיכום',title:'תחנה 3: איך סיכמו את הביקורות?',ask:'האם המספר שמסכם מתאר נכון את הנתונים? האם יש <b>קבוצות</b> שכדאי לבדוק בנפרד?',
+ {id:'s4',n:4,t:'איך סיכמו?',q:'המדד והסיכום',title:'תחנה 4: איך סיכמו את הביקורות?',ask:'האם המספר שמסכם מתאר נכון את הנתונים? האם יש <b>קבוצות</b> שכדאי לבדוק בנפרד?',
   items:[
    {tab:'מדד לא מתאים',name:'בחירה במדד לא מתאים',story:'שתי מסעדות מקבלות באפליקציה בדיוק אותו ממוצע: 3 כוכבים. אז הן אותו דבר?',fig:figMeasure,
     b:{1:'הממוצע של "הפינה של רותי" הוא 3.0 כוכבים.',
@@ -368,7 +400,7 @@ const ST=[
        4:'הסיבה: בערב יש עומס והמתנה, וקשה יותר לרצות סועדים. 80 מתוך 100 הביקורות של סניף א\' הן מהערב, ו-80 מתוך 100 של סניף ב\' מהצהריים. בסיכום הכללי, משווים בעיקר ערב של א\' לצהריים של ב\'.'},
     what:'מגמה שמופיעה בכל קבוצה בנפרד מתהפכת כשמאחדים את הקבוצות. זה קורה כשיש משתנה שלישי (כאן: שעת הארוחה) שמשפיע על התוצאה, והקבוצות מחולקות לפיו בצורה לא שווה.',
     avoid:['לשאול: האם יש משתנה שלישי שמחלק את הנתונים לקבוצות?','להשוות בתוך כל קבוצה, ולבדוק אם הקבוצות בגדלים שונים.']}]},
- {id:'s4',n:4,t:'מה הסיקו?',q:'מתאם וסיבתיות',title:'תחנה 4: מה הסיקו מהנתונים?',ask:'האם יש <b>הסבר אחר</b> לקשר שרואים?',
+ {id:'s5',n:5,t:'מה הסיקו?',q:'מתאם וסיבתיות',title:'תחנה 5: מה הסיקו מהנתונים?',ask:'האם יש <b>הסבר אחר</b> לקשר שרואים?',
   items:[
    {tab:'כיוון הפוך',name:'מתאם וסיבתיות: כיוון הפוך',story:'בעל מסעדה קורא כתבה: "למסעדות עם יותר ביקורות יש דירוג גבוה יותר". הוא מחליט לבקש מכל סועד לכתוב ביקורת, כדי שהדירוג יעלה.',fig:figRev,
     b:{1:'בנתונים יש קשר אמיתי: ככל שיש למסעדה יותר ביקורות, הדירוג שלה גבוה יותר.',
@@ -377,37 +409,26 @@ const ST=[
        4:'אותו קשר בנתונים יכול להתאים לשני הסברים. הנתונים לבדם לא מכריעים מה גורם למה.'},
     what:'קשר בין שני משתנים לא אומר מי גורם למי. לפעמים התוצאה היא בעצם הסיבה.',
     avoid:['לשאול: האם ייתכן שהכיוון הפוך?','כדי לבדוק סיבתיות צריך ניסוי: לשנות דבר אחד ולראות מה קורה, לא רק להסתכל על נתונים קיימים.']},
-   {tab:'משתנה מתערב',name:'מתאם וסיבתיות: משתנה מתערב',story:'מסעדות ליד הים מקבלות דירוג גבוה יותר ממסעדות במרכז העיר. האם האוכל שם טעים יותר?',fig:figConf,
-    b:{1:'ההבדל בדירוג אמיתי: 4.5 ליד הים, לעומת 3.9 במרכז העיר.',
-       2:'אבל מי אוכל ליד הים? הרבה פעמים אנשים בחופשה, במצב רוח טוב, עם נוף יפה.',
-       3:'מצב הרוח משפיע גם על הבחירה לאכול ליד הים וגם על הדירוג. לכן יש קשר בין המיקום לדירוג, גם אם האוכל עצמו לא טעים יותר.',
-       4:'משתנה שלישי שלא מופיע בנתונים יוצר קשר בין שני משתנים אחרים.'},
+   {tab:'משתנה מתערב',name:'מתאם וסיבתיות: משתנה מתערב',story:'בעל המסעדה שם לב: בחודשים שבהם המסעדה מוכרת הכי הרבה גלידה, יש גם הכי הרבה ביקורות שמתלוננות על המתנה. הוא שוקל להוריד את הגלידה מהתפריט, כדי שהמטבח יהיה מהיר יותר.',fig:figConf,
+    b:{1:'הקשר בנתונים אמיתי: בחודשי הקיץ עולות גם מכירות הגלידה וגם התלונות על המתנה.',
+       2:'בקיץ מגיעים למסעדה הרבה יותר סועדים.',
+       3:'יותר סועדים פירושו גם יותר גלידה וגם יותר עומס. הגלידה לא מעכבת את המטבח: שתיהן תוצאה של הקיץ.',
+       4:'משתנה שלישי שלא מופיע בנתונים יוצר קשר בין שני משתנים אחרים. אם יורידו את הגלידה, ההמתנה כנראה לא תתקצר.'},
     what:'קשר בין שני משתנים יכול לנבוע ממשתנה שלישי שמשפיע על שניהם. הוא נקרא משתנה מתערב.',
-    avoid:['לשאול: מה עוד שונה בין הקבוצות?','להשוות בין דומים, למשל רק סועדים שאינם בחופשה, או רק ארוחות באמצע השבוע.']}]},
- {id:'c',n:'',t:'הטיית אישוש',title:'לאורך כל הדרך: הטיית אישוש',ask:'האם חיפשתי גם נתונים <b>שסותרים</b> את מה שאני כבר חושב?',conf:true,
-  items:[
-   {tab:'הטיית אישוש',name:'הטיית אישוש',story:'נועה כבר החליטה שהיא רוצה את "גריל הנמל". עכשיו היא "רק בודקת".',fig:figConfirm,
-    b:{1:'כבר החיפוש מוטה: "גריל הנמל הכי טוב בעיר" מביא בעיקר תוצאות שמסכימות איתה.',
-       2:'את הביקורות שמסכימות איתה נועה קוראת וזוכרת.',
-       3:'ביקורות שלא מתאימות היא מסבירה כ"סתם מתלוננים" ומדלגת עליהן. חצי מהביקורות לא נספרו.'},
-    what:'מחפשים, קוראים וזוכרים בעיקר נתונים שמאשרים את מה שכבר חשבנו. זה יכול לקרות בכל תחנה: את מי שואלים, מה מודדים, איזה מדד מציגים ואיזו מסקנה מסיקים.',
-    avoid:['להחליט מראש לפי מה בוחרים, לפני שמסתכלים בנתונים. למשל: "דירוג אוכל מעל 4, לפחות 50 ביקורות".','לחפש בכוונה נתונים שיכולים להפריך את מה שחושבים.']}]}
+    avoid:['לשאול: מה עוד משתנה יחד עם שני המשתנים?','להשוות בין דומים, למשל רק ימים עם אותו מספר סועדים: האם גם אז, כשנמכרת יותר גלידה, יש יותר המתנה?']}]}
 ];
 
 /* ---------- rendering ---------- */
 const $=id=>document.getElementById(id);
 let cur={s:0,i:0},seen={};
-$('path').innerHTML=ST.slice(0,4).map((s,k)=>`<button class="st" data-s="${k}"><span class="n">${s.n}</span><span class="t">${s.t}</span><span class="q">${s.q}</span></button>`).join('');
+$('path').innerHTML=ST.map((s,k)=>`<button class="st" data-s="${k}"><span class="n">${s.n}</span><span class="t">${s.t}</span><span class="q">${s.q}</span></button>`).join('');
 document.querySelectorAll('.st').forEach(b=>b.onclick=()=>go(+b.dataset.s,0,true));
-$('band').onclick=()=>go(4,0,true);
 
 function go(s,i,push){
   cur={s,i};const S=ST[s],it=S.items[i];
   document.querySelectorAll('.st').forEach(b=>b.setAttribute('aria-current',+b.dataset.s===s));
-  $('band').setAttribute('aria-current',s===4);
-  const tabs=S.items.length>1?`<div class="tabs" role="tablist">${S.items.map((x,k)=>`<button role="tab" data-i="${k}" aria-selected="${k===i}">${x.tab}</button>`).join('')}</div>`:'';
+  const tabs=S.items.length>1?`<div class="tabrow"><span class="tl">בתחנה הזו ${S.items.length} הטיות:</span><div class="tabs" role="tablist">${S.items.map((x,k)=>`<button role="tab" data-i="${k}" aria-selected="${k===i}">${x.tab}</button>`).join('')}</div></div>`:'';
   const nb=Object.keys(it.b).length,key=s+'-'+i,sn=(seen[key]||new Set());
-  $('panel').className='panel'+(S.conf?' conf':'');
   $('panel').innerHTML=`<div class="ph"><h2>${S.title}</h2></div><p class="ask">השאלה לשאול כאן: ${S.ask}</p>${tabs}
     <p class="bname">${it.name}</p><p class="story">${it.story}</p>
     <p class="tip">לחצו על העיגולים הממוספרים <i>1</i> באיור.</p>
@@ -460,8 +481,8 @@ document.addEventListener('click',e=>{const bl=$('bl');if(bl&&!bl.hidden&&!bl.co
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeB();});
 addEventListener('resize',closeB);
 
-/* direct links: #s1 .. #s4, #s1-2 for the second tab, #c for confirmation bias */
-function fromHash(){const m=(location.hash||'').match(/^#(s[1-4]|c)(?:-(\d))?$/);
+/* direct links: #s1 .. #s5, #s2-2 for the second tab */
+function fromHash(){const m=(location.hash||'').match(/^#(s[1-5])(?:-(\d))?$/);
   if(!m)return go(0,0,false);const s=ST.findIndex(x=>x.id===m[1]),i=Math.min((+m[2]||1)-1,ST[s].items.length-1);go(s,i,false);}
 fromHash();
 </script>
