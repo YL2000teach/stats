@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>איפה נכנסת ההטיה?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1; --soft:#EEF2F8;
+  --accent:#2F5BD3; --good:#1E8E5A; --goodbg:#E3F4EA; --bad:#D64545; --badbg:#FBE6E6; --mid:#A7B1C6;
+  --warn:#E0891A; --warnbg:#FFF4E0; --conf:#8A4FC8; --confbg:#F1E8FB; --star:#E8A317;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --soft:#222B3F;
+  --accent:#7C9BFF; --good:#4CC38A; --goodbg:#183A2A; --bad:#F07575; --badbg:#3E2026; --mid:#5D6884;
+  --warn:#F2A54B; --warnbg:#3A2E1A; --conf:#B98AF0; --confbg:#2E2340; --star:#F2C14E;}}
+:root[data-theme="dark"]{
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --soft:#222B3F;
+  --accent:#7C9BFF; --good:#4CC38A; --goodbg:#183A2A; --bad:#F07575; --badbg:#3E2026; --mid:#5D6884;
+  --warn:#F2A54B; --warnbg:#3A2E1A; --conf:#B98AF0; --confbg:#2E2340; --star:#F2C14E;}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.5}
+.app{max-width:1100px;margin:0 auto;padding:14px 14px 30px}
+.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.back:hover{color:var(--accent);text-decoration:underline}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.4rem,3.6vw,1.9rem);line-height:1.15;margin:0}
+.lead{margin:6px 0 14px;max-width:760px}
+.lead .how{color:var(--muted);font-size:.93rem;display:block;margin-top:4px}
+
+/* the path of stations */
+.path{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:8px}
+.path::before{content:"";position:absolute;top:30px;right:12%;left:12%;height:3px;background:var(--grid);z-index:0}
+.st{position:relative;z-index:1;font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--grid);border-radius:12px;padding:10px 10px 10px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.st .n{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:1.05rem;margin-top:-2px}
+.st .t{font-weight:700;font-size:1.02rem;line-height:1.2}
+.st .q{font-size:.85rem;color:var(--muted);line-height:1.25}
+.st[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+.st[aria-current="true"] .n{background:var(--accent);color:var(--paper)}
+.band{font:inherit;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:var(--confbg);color:var(--ink);border:2px dashed var(--conf);border-radius:12px;padding:7px 12px;cursor:pointer;margin-bottom:14px}
+.band b{color:var(--conf)}
+.band span{font-size:.9rem;color:var(--muted)}
+.band[aria-current="true"]{border-style:solid;box-shadow:0 0 0 1.5px var(--conf)}
+@media (max-width:640px){
+  .path{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .path::before{display:none}
+}
+
+/* station panel */
+.panel{background:var(--paper);border:1px solid var(--grid);border-radius:14px;padding:14px 16px}
+.ph{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.ph h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.3rem;margin:0}
+.ask{margin:0 0 10px;font-weight:600}
+.ask b{color:var(--accent)}
+.panel.conf .ask b{color:var(--conf)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--bg);border-radius:10px;padding:3px;margin:0 0 12px;width:fit-content;max-width:100%}
+.tabs button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:6px 14px;background:transparent;color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--paper);box-shadow:0 0 0 1.5px var(--accent);color:var(--accent)}
+.bname{font-weight:700;font-size:1.1rem;margin:0 0 4px}
+.story{margin:0 0 10px}
+.tip{font-size:.88rem;color:var(--muted);margin:0 0 8px}
+.tip i{font-style:normal;display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;align-items:center;justify-content:center;vertical-align:-3px;margin:0 2px}
+
+/* figure + hotspots + balloon */
+.figwrap{position:relative;margin:4px 0 12px}
+.fig{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+.blk{position:relative;flex:1 1 240px;background:var(--bg);border-radius:12px;padding:12px 14px 12px}
+.blk h4{margin:0 0 8px;font-size:.98rem;padding-left:26px}
+.hs{position:absolute;top:-9px;left:-9px;z-index:35;width:30px;height:30px;border-radius:50%;border:2px solid var(--paper);background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0}
+.hs::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:pulse 2s infinite}
+.hs.seen{background:var(--muted)}
+.hs.seen::after{animation:none}
+.hs[aria-expanded="true"]{background:var(--warn)}
+.hs.in{position:relative;z-index:35;top:auto;left:auto;display:inline-flex;vertical-align:middle;width:26px;height:26px;font-size:.85rem;margin:0 4px}
+@keyframes pulse{0%{opacity:.7;transform:scale(.85)}70%{opacity:0;transform:scale(1.25)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hs::after{animation:none}}
+.balloon{position:absolute;z-index:30;width:min(320px,calc(100% - 16px));background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px 11px 34px;font-size:.97rem;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.balloon[hidden]{display:none}
+.balloon::before{content:"";position:absolute;width:14px;height:14px;background:var(--ink);transform:rotate(45deg);left:var(--ax,50%);margin-left:-7px}
+.balloon.below::before{top:-6px}
+.balloon.above::before{bottom:-6px}
+.balloon.side::before{right:-6px;left:auto;top:var(--ay,20px);margin-left:0;margin-top:-7px}
+.balloon.side-r::before{left:-6px;top:var(--ay,20px);margin-left:0;margin-top:-7px}
+.balloon .x{position:absolute;top:6px;left:6px;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:var(--paper);font:inherit;font-size:1rem;cursor:pointer;opacity:.8}
+.balloon .x:hover{opacity:1;background:rgba(255,255,255,.12)}
+.balloon b{color:var(--star)}
+.seen-count{font-size:.85rem;color:var(--muted);margin:-4px 0 10px}
+
+/* text under the figure */
+.expl{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.expl{grid-template-columns:1fr 1fr}}
+.expl div{background:var(--soft);border-radius:10px;padding:10px 12px}
+.expl h5{margin:0 0 4px;font-size:.98rem}
+.expl p{margin:0}
+.expl ul{margin:0;padding-inline-start:18px}
+.note{font-size:.9rem;color:var(--muted);margin:10px 0 0}
+
+/* figure pieces */
+.dots{display:grid;grid-template-columns:repeat(10,16px);gap:7px;direction:ltr;justify-content:center;margin:4px 0 10px}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--mid)}
+.dot.g{background:var(--good)}.dot.r{background:var(--bad)}
+.dot.w{outline:3px solid var(--ink);outline-offset:2px}
+.leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.86rem;color:var(--muted);align-items:center}
+.leg span{display:inline-flex;align-items:center;gap:5px}
+.leg .dot{width:11px;height:11px}
+.leg .dot.w{outline-width:2px;outline-offset:1.5px;background:transparent}
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:44px 1fr 22px;align-items:center;gap:8px;font-weight:700;font-size:.92rem}
+.bar .lab{color:var(--star);white-space:nowrap}
+.bar .tr{height:14px;background:var(--paper);border-radius:7px;overflow:hidden}
+.bar .fl{height:100%;background:var(--star);border-radius:7px}
+.bar .c{color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.app-mean{margin-top:10px;font-weight:700}
+.shops{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.shop{background:var(--paper);border:1.5px solid var(--grid);border-radius:9px;padding:6px 2px;text-align:center;font-weight:700;font-size:.9rem;line-height:1.25}
+.shop small{display:block;font-weight:600;font-size:.72rem;color:var(--muted)}
+.shop.x{opacity:.45;border-style:dashed;text-decoration:line-through;text-decoration-color:var(--bad)}
+.shop.x small{color:var(--bad);text-decoration:none}
+.list{display:grid;gap:6px}
+.list div{display:flex;justify-content:space-between;background:var(--paper);border-radius:8px;padding:5px 10px;font-weight:600}
+.rev{background:var(--paper);border-radius:10px;padding:8px 10px;margin-bottom:8px;position:relative}
+.rev:last-child{margin-bottom:0}
+.rev .who{font-weight:700;font-size:.9rem;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.rev .q{margin:2px 0 0;font-size:.95rem}
+.stars{color:var(--star);letter-spacing:1px;white-space:nowrap;font-size:1rem}
+.stars .e{color:var(--grid)}
+.split{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.92rem;margin-top:6px}
+.split .k{color:var(--muted);font-weight:600}
+.hist{display:flex;align-items:flex-end;gap:10px;height:120px;direction:ltr;justify-content:center;border-bottom:2px solid var(--ink);padding:0 6px;margin:6px 0 0}
+.hist .col{width:30px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative}
+.hist .col span{font-size:.8rem;font-weight:700;color:var(--muted)}
+.hist .col i{display:block;width:100%;background:var(--star);border-radius:5px 5px 0 0}
+.hx{display:flex;gap:10px;direction:ltr;justify-content:center;padding:0 6px;font-size:.8rem;font-weight:700;color:var(--muted)}
+.hx span{width:30px;text-align:center}
+.msum{margin-top:8px;display:grid;gap:2px;font-weight:600}
+.msum b{font-variant-numeric:tabular-nums}
+table.simp{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums;background:var(--paper);border-radius:10px;overflow:hidden}
+.simp th,.simp td{padding:8px 8px;text-align:center;border-bottom:1px solid var(--grid)}
+.simp th{font-size:.9rem;background:var(--soft)}
+.simp td.rl{text-align:right;font-weight:700;white-space:nowrap}
+.simp tr.tot td{border-bottom:0;background:var(--warnbg);font-weight:700}
+.simp td.win{color:var(--good);font-weight:700}
+.simp .cnt{display:block;font-size:.78rem;color:var(--muted);font-weight:600}
+.simp tr.tot .cnt{color:var(--muted)}
+.chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chain .bx{background:var(--paper);border:1.5px solid var(--grid);border-radius:8px;padding:4px 10px;font-weight:700;font-size:.93rem}
+.chain .ar{font-weight:700;color:var(--muted)}
+.chain.no .bx{border-style:dashed}
+.chain .tag{font-size:.82rem;font-weight:700;border-radius:999px;padding:1px 9px}
+.tag.bad{background:var(--badbg);color:var(--bad)}.tag.good{background:var(--goodbg);color:var(--good)}
+.tri{display:grid;grid-template-columns:1fr auto 1fr;gap:6px 8px;align-items:center;text-align:center}
+.tri .bx{background:var(--paper);border:1.5px solid var(--grid);border-radius:10px;padding:8px 8px;font-weight:700;font-size:.93rem}
+.tri .top{grid-column:1/-1;justify-self:center;border-color:var(--warn);background:var(--warnbg);max-width:280px}
+.tri .ar{font-weight:700;color:var(--warn);font-size:1.3rem;line-height:1}
+.tri .mid{color:var(--muted);font-weight:700;font-size:.85rem;border-top:2px dashed var(--mid);padding-top:2px;min-width:70px}
+.scores{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.scores div{background:var(--paper);border-radius:8px;padding:5px 12px;font-weight:700}
+.search{background:var(--paper);border:1.5px solid var(--grid);border-radius:999px;padding:6px 14px;font-weight:600;margin-bottom:10px;position:relative}
+.search::before{content:"⌕";margin-left:8px;color:var(--muted);font-weight:700}
+.rev.read{box-shadow:0 0 0 2px var(--conf)}
+.rev.skip>*:not(.hs){opacity:.5}
+.rev .lbl{font-size:.75rem;font-weight:700;border-radius:999px;padding:0 8px}
+.rev.read .lbl{background:var(--confbg);color:var(--conf)}
+.rev.skip .lbl{background:var(--soft);color:var(--muted)}
+.revs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.revs .rev{margin:0}
+@media (max-width:520px){.revs{grid-template-columns:minmax(0,1fr)}}
+svg text{font-family:"Assistant",Arial,sans-serif}
+
+.sum{margin-top:14px;background:var(--paper);border:1px solid var(--grid);border-radius:14px;padding:12px 16px}
+.sum h3{margin:0 0 6px;font-size:1.08rem}
+.sum ol{margin:0;padding-inline-start:20px;display:grid;gap:3px}
+.sum .c{color:var(--conf);font-weight:700}
+.credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
+.credit a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="back" href="index.html">→ כל הסימולציות</a>
+  <h1>איפה נכנסת ההטיה?</h1>
+  <p class="lead">נועה מחפשת מסעדה ליום ההולדת שלה. היא פותחת אפליקציית ביקורות ורואה דירוגים, ממוצעים ומסקנות. כל מספר שהיא רואה עבר דרך: מי כתב, מה נמדד, איך סיכמו ומה הסיקו. בכל תחנה בדרך משהו יכול להטות את התמונה.
+    <span class="how">בחרו תחנה. באיור, לחצו על העיגולים הממוספרים כדי לפתוח הסברים.</span></p>
+
+  <nav class="path" id="path" aria-label="התחנות בדרך מהנתונים למסקנה"></nav>
+  <button class="band" id="band" data-s="c"><b>לאורך כל הדרך: הטיית אישוש</b><span>יכולה להשפיע על כל אחת מהתחנות</span></button>
+
+  <section class="panel" id="panel" aria-live="polite"></section>
+
+  <section class="sum" aria-labelledby="sumH">
+    <h3 id="sumH">ארבע שאלות לשאול על כל נתון</h3>
+    <ol>
+      <li><b>מי כתב?</b> מי לא מופיע בנתונים, ולמה?</li>
+      <li><b>מה נמדד?</b> האם המספר מודד את מה שרצינו לדעת, ובאותו אופן אצל כולם?</li>
+      <li><b>איך סיכמו?</b> האם המדד מתאר נכון את הנתונים? האם יש קבוצות שכדאי לבדוק בנפרד?</li>
+      <li><b>מה הסיקו?</b> האם יש הסבר אחר לקשר שרואים?</li>
+    </ol>
+    <p class="note"><span class="c">ובכל שלב:</span> האם חיפשתי גם נתונים שסותרים את מה שאני כבר חושב?</p>
+  </section>
+
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+<script>
+/* ---------- helpers for the figures ---------- */
+const H=(k)=>`<button class="hs" data-k="${k}" aria-expanded="false" aria-label="הסבר ${k}">${k}</button>`;
+const Hin=(k)=>`<button class="hs in" data-k="${k}" aria-expanded="false" aria-label="הסבר ${k}">${k}</button>`;
+const stars=n=>`<span class="stars" aria-label="${n} כוכבים">${'★'.repeat(n)}<span class="e">${'★'.repeat(5-n)}</span></span>`;
+
+/* station 1a: who writes reviews */
+function figSelf(){
+  const red=[3,17,26,38,44,57],green=[1,8,12,21,29,33,40,49,52,58];
+  const wrote=[3,17,26,44,57,1,12,29,40,49,58,35];
+  let d='';for(let i=0;i<60;i++){const c=red.includes(i)?'r':green.includes(i)?'g':'';d+=`<i class="dot ${c}${wrote.includes(i)?' w':''}"></i>`;}
+  const rows=[[5,6],[4,0],[3,1],[2,0],[1,5]];
+  const bars=rows.map(([s,c])=>`<div class="bar"><span class="lab">${s} ★</span><span class="tr"><span class="fl" style="width:${c/6*100}%;display:block"></span></span><span class="c">${c}</span></div>`).join('');
+  return `<div class="fig">
+    <div class="blk">${H(1)}<h4>60 סועדים אכלו במסעדה השבוע</h4>
+      <div class="dots" role="img" aria-label="60 סועדים: 10 התלהבו, 44 חשבו שהיה בסדר, 6 התאכזבו. 12 כתבו ביקורת">${d}</div>
+      <div class="leg"><span><i class="dot g"></i>התלהבו</span><span><i class="dot"></i>היה בסדר</span><span><i class="dot r"></i>התאכזבו</span><span><i class="dot w"></i>כתבו ביקורת ${Hin(2)}</span></div>
+    </div>
+    <div class="blk">${H(3)}<h4>מה נועה רואה באפליקציה: 12 ביקורות</h4>
+      <div class="bars" style="direction:rtl">${bars}</div>
+      <div class="app-mean">רוב הביקורות: 5 כוכבים או כוכב אחד</div>
+    </div></div>`;
+}
+/* station 1b: survivorship */
+function figSurv(){
+  const L=[[2.1,0],[4.4,1],[2.6,0],[1.9,0],[4.1,1],[3.0,0],[4.6,1],[2.4,0],[2.8,0],[4.3,1]];
+  const s=L.map(([r,o])=>`<div class="shop${o?'':' x'}">★ ${r.toFixed(1)}<small>${o?'פתוחה':'נסגרה'}</small></div>`).join('');
+  const open=L.filter(x=>x[1]).map(x=>x[0]).sort((a,b)=>b-a);
+  return `<div class="fig">
+    <div class="blk">${H(1)}<h4>לפני חמש שנים נפתחו בשכונה 10 מסעדות</h4>
+      <div class="shops" role="img" aria-label="10 מסעדות, 6 נסגרו ודירוגן היה נמוך, 4 פתוחות ודירוגן מעל 4">${s}</div>
+      <div class="leg" style="margin-top:8px"><span>הדירוג שהיה לכל מסעדה</span>${Hin(2)}</div>
+    </div>
+    <div class="blk">${H(3)}<h4>מה נועה רואה באפליקציה היום</h4>
+      <div class="list">${open.map((r,i)=>`<div><span>מסעדה ${['א','ב','ג','ד'][i]}'</span><span>★ ${r.toFixed(1)}</span></div>`).join('')}</div>
+      <div class="app-mean">"כל המסעדות בשכונה מדורגות מעל 4!"</div>
+    </div></div>`;
+}
+/* station 2: measurement */
+function figMeas(){
+  return `<div class="fig">
+    <div class="blk">${H(1)}<h4>אותה ארוחה, שני דירוגים</h4>
+      <div class="rev"><div class="who"><span>דנה</span>${stars(5)}</div><p class="q">"היה טוב, בדיוק כמו שציפיתי."</p></div>
+      <div class="rev"><div class="who"><span>יוסי</span>${stars(3)}</div><p class="q">"היה טוב, בדיוק כמו שציפיתי."</p></div>
+    </div>
+    <div class="blk">${H(2)}<h4>מה בעצם נמדד?</h4>
+      <div class="rev"><div class="who"><span>מיכל</span>${stars(2)}</div><p class="q">"האוכל מעולה! אבל חיכינו שעה לשולחן, והיה יקר."</p></div>
+      <div class="split"><span class="k">אוכל</span><span>${stars(5)}</span><span class="k">המתנה</span><span>${stars(1)}</span><span class="k">מחיר</span><span>${stars(2)}</span></div>
+      <div class="app-mean">באפליקציה: מספר אחד, ${stars(2)} ${Hin(3)}</div>
+    </div></div>`;
+}
+/* station 3a: unsuitable measure */
+function histo(c){const mx=Math.max(...c);
+  return `<div class="hist">${c.map(v=>`<div class="col"><span>${v||''}</span><i style="height:${v/mx*88}%"></i></div>`).join('')}</div><div class="hx">${[1,2,3,4,5].map(s=>`<span>${s}★</span>`).join('')}</div>`;}
+function figMeasure(){
+  return `<div class="fig">
+    <div class="blk">${H(1)}<h4>"הפינה של רותי": 20 ביקורות</h4>${histo([10,0,0,0,10])}
+      <div class="msum"><span>ממוצע: <b>3.0</b> ★</span><span>סטיית תקן: <b>2.0</b> ${Hin(3)}</span></div>
+      <span style="position:absolute;top:58px;left:50%;margin-left:-15px">${Hin(2)}</span>
+    </div>
+    <div class="blk">${H(4)}<h4>"גריל הנמל": 20 ביקורות</h4>${histo([0,0,20,0,0])}
+      <div class="msum"><span>ממוצע: <b>3.0</b> ★</span><span>סטיית תקן: <b>0</b></span></div>
+    </div></div>`;
+}
+/* station 3b: Simpson */
+function figSimp(){
+  const p=(a,n)=>`${Math.round(a/n*100)}%<span class="cnt">${a} מתוך ${n}</span>`;
+  return `<div class="fig"><div class="blk" style="flex-basis:100%">${H(4)}<h4>שני סניפים של אותה רשת: כמה מהסועדים היו מרוצים?</h4>
+    <table class="simp">
+      <thead><tr><th></th><th>סניף א'</th><th>סניף ב'</th></tr></thead>
+      <tbody>
+        <tr><td class="rl">${Hin(1)}בצהריים</td><td class="win">${p(19,20)}</td><td>${p(72,80)}</td></tr>
+        <tr><td class="rl">${Hin(2)}בערב</td><td class="win">${p(48,80)}</td><td>${p(11,20)}</td></tr>
+        <tr class="tot"><td class="rl">${Hin(3)}סך הכול</td><td>${p(67,100)}</td><td class="win">${p(83,100)}</td></tr>
+      </tbody></table>
+    <p class="tip" style="margin:8px 0 0">מרוצים: נתנו 4 או 5 כוכבים.</p>
+  </div></div>`;
+}
+/* station 4a: reverse direction */
+function figRev(){
+  const P=[[12,3.4],[20,3.1],[35,3.9],[48,3.6],[60,4.0],[80,3.8],[95,4.2],[120,4.1],[150,4.4],[170,4.3],[200,4.6],[230,4.5]];
+  const W=280,Hh=170,x=v=>36+v/250*(W-50),y=v=>12+(5-v)/2.2*(Hh-46);
+  let s=`<svg viewBox="0 0 ${W} ${Hh}" width="100%" style="max-width:340px;display:block;margin:0 auto;direction:ltr" role="img" aria-label="תרשים פיזור: ככל שיש למסעדה יותר ביקורות, הדירוג שלה גבוה יותר">`;
+  [3,3.5,4,4.5,5].forEach(t=>{s+=`<line x1="36" x2="${W-14}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)"/><text x="30" y="${y(t)+4}" font-size="11" text-anchor="end" fill="var(--muted)">${t}</text>`;});
+  s+=`<line x1="36" x2="${W-14}" y1="${Hh-34}" y2="${Hh-34}" stroke="var(--ink)"/>`;
+  P.forEach(([a,b])=>{s+=`<circle cx="${x(a)}" cy="${y(b)}" r="5" fill="var(--accent)" fill-opacity=".85"/>`;});
+  s+=`<text x="${(36+W-14)/2}" y="${Hh-14}" font-size="12" font-weight="700" text-anchor="middle" fill="var(--muted)" direction="rtl">מספר הביקורות</text>`;
+  s+=`<text transform="translate(10 ${(Hh-34)/2}) rotate(-90)" font-size="12" font-weight="700" text-anchor="middle" fill="var(--muted)" direction="rtl">דירוג</text></svg>`;
+  return `<div class="fig">
+    <div class="blk">${H(1)}<h4>12 מסעדות בעיר</h4>${s}</div>
+    <div class="blk">${H(4)}<h4>שני הסברים לאותו קשר</h4>
+      <div class="chain no"><span class="bx">הרבה ביקורות</span><span class="ar">←</span><span class="bx">דירוג גבוה</span>${Hin(2)}</div>
+      <div class="chain"><span class="bx">אוכל טוב</span><span class="ar">←</span><span class="bx">הרבה סועדים</span><span class="ar">←</span><span class="bx">הרבה ביקורות</span>${Hin(3)}</div>
+    </div></div>`;
+}
+/* station 4b: confounder */
+function figConf(){
+  return `<div class="fig">
+    <div class="blk">${H(1)}<h4>דירוג ממוצע באפליקציה</h4>
+      <div class="scores"><div>ליד הים: ★ 4.5</div><div>במרכז העיר: ★ 3.9</div></div>
+      <div class="app-mean">"האוכל ליד הים טעים יותר?"</div>
+    </div>
+    <div class="blk">${H(4)}<h4>מה עוד שונה בין הסועדים?</h4>
+      <div class="tri">
+        <div class="bx top">סועדים בחופשה, במצב רוח טוב ${Hin(2)}</div>
+        <div class="ar">↓</div><div></div><div class="ar">↓</div>
+        <div class="bx">אוכלים ליד הים</div><div class="mid">${Hin(3)}<br>הקשר שרואים</div><div class="bx">נותנים דירוג נדיב</div>
+      </div>
+    </div></div>`;
+}
+/* confirmation bias */
+function figConfirm(){
+  const R=[[5,'הכי טוב בעיר!',1],[1,'חיכינו שעה, והאוכל הגיע קר.',0],[5,'מושלם, נחזור.',1],[2,'יקר מאוד ביחס לגודל המנות.',0],[5,'שירות מדהים.',1],[1,'רועש מאוד, אי אפשר לדבר.',0]];
+  const cards=R.map(([n,t,r],i)=>`<div class="rev ${r?'read':'skip'}"><div class="who">${stars(n)}<span class="lbl">${r?'נקרא':'"סתם מתלוננים"'}</span></div><p class="q">"${t}"</p>${i===0?H(2):i===3?H(3):''}</div>`).join('');
+  return `<div class="fig"><div class="blk" style="flex-basis:100%"><h4 style="padding-left:0">נועה כבר החליטה שהיא רוצה את "גריל הנמל"</h4>
+    <div class="search">${H(1)}גריל הנמל הכי טוב בעיר</div>
+    <div class="revs">${cards}</div>
+  </div></div>`;
+}
+
+/* ---------- content ---------- */
+const ST=[
+ {id:'s1',n:1,t:'מי כתב?',q:'המדגם',title:'תחנה 1: מי כתב את הביקורות?',ask:'מי <b>לא</b> מופיע בנתונים, ולמה?',
+  items:[
+   {tab:'בחירה עצמית',name:'הטיית בחירה עצמית',story:'באפליקציה נראה שהמסעדה "שנויה במחלוקת": חצי מהביקורות מתלהבות, וחצי כועסות.',fig:figSelf,
+    b:{1:'רוב הסועדים (44 מתוך 60) חשבו שהיה <b>בסדר</b>. רובם לא טרחו לכתוב ביקורת.',
+       2:'כתבו בעיקר מי שהתלהב מאוד או התאכזב מאוד: 11 מתוך 12 הכותבים.',
+       3:'הביקורות מתארות את <b>מי שבחר לכתוב</b>, לא את כל הסועדים. בפועל, רוב הסועדים חשבו שהיה בסדר.'},
+    what:'מי שבחר להשתתף שונה ממי שלא השתתף. הנתונים מתארים את מי שענה, לא את כל מי שרצינו לתאר.',
+    avoid:['לשאול: מי בחר לענות, ומי לא?','לפנות לכולם, או לבחור באקראי את מי שואלים, במקום לחכות למי שמתנדב.']},
+   {tab:'שרידות',name:'הטיית שרידות',story:'באפליקציה כל המסעדות בשכונה מדורגות מעל 4. נראה ששכונה כזו היא גן עדן לאוכל.',fig:figSurv,
+    b:{1:'לפני חמש שנים נפתחו 10 מסעדות. 6 מהן, בדרך כלל אלה עם הדירוג הנמוך, נסגרו.',
+       2:'מסעדה שנסגרה נמחקת מהאפליקציה, ואיתה כל הביקורות הנמוכות שלה.',
+       3:'נועה רואה רק את <b>השורדות</b>. המסקנה "כל המסעדות כאן מצוינות" מבוססת רק על מי שהצליח.'},
+    what:'הנתונים כוללים רק את מי ש"שרד" עד היום. מי שנכשל, נסגר או עזב נעלם מהנתונים, ולכן התמונה נראית טובה ממה שהייתה.',
+    avoid:['לשאול: מי נעלם בדרך?','לחפש נתונים גם על מי שלא שרד, למשל רשימה של כל המסעדות שנפתחו.'],
+    note:'הטיית שרידות היא מקרה פרטי של הטיה בבחירת המדגם: המדגם "נבחר" לפי מי ששרד.'}]},
+ {id:'s2',n:2,t:'מה נמדד?',q:'המדידה',title:'תחנה 2: מה בעצם מודדים הכוכבים?',ask:'האם המספר מודד את מה שרצינו לדעת, <b>ובאותו אופן אצל כולם</b>?',
+  items:[
+   {tab:'הטיה במדידה',name:'הטיה במדידה',story:'נועה רוצה לדעת אם האוכל טעים. הכוכבים באפליקציה אמורים לענות על זה.',fig:figMeas,
+    b:{1:'דנה ויוסי כתבו בדיוק אותו דבר, אבל נתנו מספר כוכבים שונה. לכל אחד יש "סרגל" משלו: אצל דנה "בסדר" זה 5, אצל יוסי זה 3.',
+       2:'מיכל אהבה מאוד את האוכל, אבל נתנה 2 כוכבים בגלל ההמתנה והמחיר.',
+       3:'בסוף מופיע מספר אחד, שמערבב אוכל, המתנה ומחיר. נועה רצתה לדעת על האוכל, ומהמספר הזה <b>אי אפשר לדעת</b>.'},
+    what:'המדד לא מודד בדיוק את מה שרצינו לדעת, ואנשים שונים משתמשים בו באופן שונה. גם אם המדגם מושלם, המספרים יכולים להטעות.',
+    avoid:['להגדיר מראש מה בדיוק מודדים, למשל דירוג נפרד לאוכל, לשירות ולמחיר.','לנסח שאלה ברורה ("כמה האוכל היה טעים?") ולתת דוגמה למה כל ציון אומר.']}]},
+ {id:'s3',n:3,t:'איך סיכמו?',q:'המדד והסיכום',title:'תחנה 3: איך סיכמו את הביקורות?',ask:'האם המספר שמסכם מתאר נכון את הנתונים? האם יש <b>קבוצות</b> שכדאי לבדוק בנפרד?',
+  items:[
+   {tab:'מדד לא מתאים',name:'בחירה במדד לא מתאים',story:'שתי מסעדות מקבלות באפליקציה בדיוק אותו ממוצע: 3 כוכבים. אז הן אותו דבר?',fig:figMeasure,
+    b:{1:'הממוצע של "הפינה של רותי" הוא 3.0 כוכבים.',
+       2:'אבל <b>אף אחד</b> לא נתן לרותי 3 כוכבים. חצי נתנו כוכב אחד, וחצי נתנו 5. הממוצע לא מתאר אף סועד.',
+       3:'סטיית התקן (2.0) מגלה שהדירוגים רחוקים מאוד מהממוצע.',
+       4:'ב"גריל הנמל" כולם נתנו 3. אותו ממוצע, חוויה אחרת לגמרי: בינונית וצפויה. ברותי: או חוויה מצוינת, או אכזבה.'},
+    what:'מספר אחד לא תמיד מתאר נכון את הנתונים. ממוצע מסתיר התפלגות עם שתי "גבעות", ומושפע מערכים קיצוניים.',
+    avoid:['להסתכל על ההתפלגות (היסטוגרמה) לפני שמסכמים במספר אחד.','להוסיף מדד פיזור, ולבחור את מדד המרכז שמתאים לצורת ההתפלגות.']},
+   {tab:'פרדוקס סימפסון',name:'פרדוקס סימפסון',story:'נועה בודקת שני סניפים של אותה רשת. בסך הכול, בסניף ב\' יותר סועדים מרוצים. אז ללכת לסניף ב\'?',fig:figSimp,
+    b:{1:'בצהריים, סניף א\' טוב יותר: 95% מרוצים, לעומת 90% בסניף ב\'.',
+       2:'גם בערב, סניף א\' טוב יותר: 60% מרוצים, לעומת 55%.',
+       3:'אבל בסך הכול, סניף ב\' נראה טוב יותר: 83% לעומת 67%!',
+       4:'הסיבה: בערב יש עומס והמתנה, וקשה יותר לרצות סועדים. 80 מתוך 100 הביקורות של סניף א\' הן מהערב, ו-80 מתוך 100 של סניף ב\' מהצהריים. בסיכום הכללי, משווים בעיקר ערב של א\' לצהריים של ב\'.'},
+    what:'מגמה שמופיעה בכל קבוצה בנפרד מתהפכת כשמאחדים את הקבוצות. זה קורה כשיש משתנה שלישי (כאן: שעת הארוחה) שמשפיע על התוצאה, והקבוצות מחולקות לפיו בצורה לא שווה.',
+    avoid:['לשאול: האם יש משתנה שלישי שמחלק את הנתונים לקבוצות?','להשוות בתוך כל קבוצה, ולבדוק אם הקבוצות בגדלים שונים.']}]},
+ {id:'s4',n:4,t:'מה הסיקו?',q:'מתאם וסיבתיות',title:'תחנה 4: מה הסיקו מהנתונים?',ask:'האם יש <b>הסבר אחר</b> לקשר שרואים?',
+  items:[
+   {tab:'כיוון הפוך',name:'מתאם וסיבתיות: כיוון הפוך',story:'בעל מסעדה קורא כתבה: "למסעדות עם יותר ביקורות יש דירוג גבוה יותר". הוא מחליט לבקש מכל סועד לכתוב ביקורת, כדי שהדירוג יעלה.',fig:figRev,
+    b:{1:'בנתונים יש קשר אמיתי: ככל שיש למסעדה יותר ביקורות, הדירוג שלה גבוה יותר.',
+       2:'המסקנה של בעל המסעדה: הביקורות "מרימות" את הדירוג. אבל הנתונים לא מראים את זה.',
+       3:'כנראה הכיוון הפוך: מסעדה טובה מושכת יותר סועדים, ולכן נכתבות עליה יותר ביקורות. אם האוכל לא ישתפר, עוד ביקורות לא יעזרו.',
+       4:'אותו קשר בנתונים יכול להתאים לשני הסברים. הנתונים לבדם לא מכריעים מה גורם למה.'},
+    what:'קשר בין שני משתנים לא אומר מי גורם למי. לפעמים התוצאה היא בעצם הסיבה.',
+    avoid:['לשאול: האם ייתכן שהכיוון הפוך?','כדי לבדוק סיבתיות צריך ניסוי: לשנות דבר אחד ולראות מה קורה, לא רק להסתכל על נתונים קיימים.']},
+   {tab:'משתנה מתערב',name:'מתאם וסיבתיות: משתנה מתערב',story:'מסעדות ליד הים מקבלות דירוג גבוה יותר ממסעדות במרכז העיר. האם האוכל שם טעים יותר?',fig:figConf,
+    b:{1:'ההבדל בדירוג אמיתי: 4.5 ליד הים, לעומת 3.9 במרכז העיר.',
+       2:'אבל מי אוכל ליד הים? הרבה פעמים אנשים בחופשה, במצב רוח טוב, עם נוף יפה.',
+       3:'מצב הרוח משפיע גם על הבחירה לאכול ליד הים וגם על הדירוג. לכן יש קשר בין המיקום לדירוג, גם אם האוכל עצמו לא טעים יותר.',
+       4:'משתנה שלישי שלא מופיע בנתונים יוצר קשר בין שני משתנים אחרים.'},
+    what:'קשר בין שני משתנים יכול לנבוע ממשתנה שלישי שמשפיע על שניהם. הוא נקרא משתנה מתערב.',
+    avoid:['לשאול: מה עוד שונה בין הקבוצות?','להשוות בין דומים, למשל רק סועדים שאינם בחופשה, או רק ארוחות באמצע השבוע.']}]},
+ {id:'c',n:'',t:'הטיית אישוש',title:'לאורך כל הדרך: הטיית אישוש',ask:'האם חיפשתי גם נתונים <b>שסותרים</b> את מה שאני כבר חושב?',conf:true,
+  items:[
+   {tab:'הטיית אישוש',name:'הטיית אישוש',story:'נועה כבר החליטה שהיא רוצה את "גריל הנמל". עכשיו היא "רק בודקת".',fig:figConfirm,
+    b:{1:'כבר החיפוש מוטה: "גריל הנמל הכי טוב בעיר" מביא בעיקר תוצאות שמסכימות איתה.',
+       2:'את הביקורות שמסכימות איתה נועה קוראת וזוכרת.',
+       3:'ביקורות שלא מתאימות היא מסבירה כ"סתם מתלוננים" ומדלגת עליהן. חצי מהביקורות לא נספרו.'},
+    what:'מחפשים, קוראים וזוכרים בעיקר נתונים שמאשרים את מה שכבר חשבנו. זה יכול לקרות בכל תחנה: את מי שואלים, מה מודדים, איזה מדד מציגים ואיזו מסקנה מסיקים.',
+    avoid:['להחליט מראש לפי מה בוחרים, לפני שמסתכלים בנתונים. למשל: "דירוג אוכל מעל 4, לפחות 50 ביקורות".','לחפש בכוונה נתונים שיכולים להפריך את מה שחושבים.']}]}
+];
+
+/* ---------- rendering ---------- */
+const $=id=>document.getElementById(id);
+let cur={s:0,i:0},seen={};
+$('path').innerHTML=ST.slice(0,4).map((s,k)=>`<button class="st" data-s="${k}"><span class="n">${s.n}</span><span class="t">${s.t}</span><span class="q">${s.q}</span></button>`).join('');
+document.querySelectorAll('.st').forEach(b=>b.onclick=()=>go(+b.dataset.s,0,true));
+$('band').onclick=()=>go(4,0,true);
+
+function go(s,i,push){
+  cur={s,i};const S=ST[s],it=S.items[i];
+  document.querySelectorAll('.st').forEach(b=>b.setAttribute('aria-current',+b.dataset.s===s));
+  $('band').setAttribute('aria-current',s===4);
+  const tabs=S.items.length>1?`<div class="tabs" role="tablist">${S.items.map((x,k)=>`<button role="tab" data-i="${k}" aria-selected="${k===i}">${x.tab}</button>`).join('')}</div>`:'';
+  const nb=Object.keys(it.b).length,key=s+'-'+i,sn=(seen[key]||new Set());
+  $('panel').className='panel'+(S.conf?' conf':'');
+  $('panel').innerHTML=`<div class="ph"><h2>${S.title}</h2></div><p class="ask">השאלה לשאול כאן: ${S.ask}</p>${tabs}
+    <p class="bname">${it.name}</p><p class="story">${it.story}</p>
+    <p class="tip">לחצו על העיגולים הממוספרים <i>1</i> באיור.</p>
+    <div class="figwrap" id="fw">${it.fig()}<div class="balloon" id="bl" role="dialog" aria-modal="false" hidden><button class="x" aria-label="סגירה">✕</button><div id="blt"></div></div></div>
+    <p class="seen-count" id="sc"></p>
+    <div class="expl"><div><h5>מה קרה כאן?</h5><p>${it.what}</p></div><div><h5>איך נמנעים?</h5><ul>${it.avoid.map(a=>`<li>${a}</li>`).join('')}</ul></div></div>
+    ${it.note?`<p class="note">${it.note}</p>`:''}`;
+  $('panel').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>go(s,+b.dataset.i,true));
+  $('panel').querySelectorAll('.hs').forEach(h=>{if(sn.has(h.dataset.k))h.classList.add('seen');h.onclick=e=>{e.stopPropagation();openB(h);};});
+  $('bl').querySelector('.x').onclick=closeB;
+  count();
+  if(push){try{history.replaceState(null,'','#'+S.id+(i?'-'+(i+1):''));}catch(e){}}
+}
+function count(){const it=ST[cur.s].items[cur.i],nb=Object.keys(it.b).length,sn=seen[cur.s+'-'+cur.i]||new Set();
+  $('sc').textContent=sn.size?`פתחתם ${sn.size} מתוך ${nb} הסברים.`:'';}
+let openK=null;
+function openB(h){
+  const k=h.dataset.k,it=ST[cur.s].items[cur.i],bl=$('bl'),fw=$('fw');
+  if(openK===k&&!bl.hidden){closeB();return;}
+  document.querySelectorAll('.hs[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));
+  h.setAttribute('aria-expanded','true');h.classList.add('seen');openK=k;
+  const key=cur.s+'-'+cur.i;(seen[key]=seen[key]||new Set()).add(k);count();
+  $('blt').innerHTML=it.b[k];bl.hidden=false;
+  const fr=fw.getBoundingClientRect(),hr=h.getBoundingClientRect(),bw=bl.offsetWidth,bh=bl.offsetHeight;
+  const cx=hr.left+hr.width/2-fr.left;
+  let left=Math.max(8,Math.min(fr.width-bw-8,cx-bw/2));
+  const cy=hr.top+hr.height/2-fr.top,cxl=hr.left-fr.left,cxr=hr.right-fr.left;
+  const others=[...fw.querySelectorAll('.hs')].filter(x=>x!==h).map(x=>{const r=x.getBoundingClientRect();return [r.left-fr.left-4,r.top-fr.top-4,r.right-fr.left+4,r.bottom-fr.top+4];});
+  const clampX=v=>Math.max(8,Math.min(fr.width-bw-8,v));
+  const cand=[
+    ['side',cxl-12-bw,Math.max(0,cy-22),cxl-12-bw>=0],
+    ['side-r',cxr+12,Math.max(0,cy-22),cxr+12+bw<=fr.width],
+    ['below',clampX(cx-bw/2),hr.bottom-fr.top+10,true],
+    ['above',clampX(cx-bw/2),hr.top-fr.top-10-bh,hr.top-fr.top-10-bh>=0]];
+  // choose the first allowed position that covers the fewest other hotspots
+  let best=null;
+  cand.forEach(([m,l,t,ok],i)=>{if(!ok)return;
+    const hit=others.filter(([x1,y1,x2,y2])=>x2>l&&x1<l+bw&&y2>t&&y1<t+bh).length;
+    if(!best||hit<best.hit)best={m,l,t,hit};});
+  const mode=best.m;left=best.l;const top=best.t;
+  if(mode==='side'||mode==='side-r')bl.style.setProperty('--ay',(cy-top)+'px');
+  else bl.style.setProperty('--ax',Math.max(16,Math.min(bw-16,cx-left))+'px');
+  ['side','side-r','above','below'].forEach(c=>bl.classList.toggle(c,c===mode));
+  bl.style.left=left+'px';bl.style.top=top+'px';
+  const br=bl.getBoundingClientRect();
+  if(br.bottom>innerHeight||br.top<0)bl.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function closeB(){const bl=$('bl');if(bl)bl.hidden=true;openK=null;document.querySelectorAll('.hs[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));}
+document.addEventListener('click',e=>{const bl=$('bl');if(bl&&!bl.hidden&&!bl.contains(e.target))closeB();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeB();});
+addEventListener('resize',closeB);
+
+/* direct links: #s1 .. #s4, #s1-2 for the second tab, #c for confirmation bias */
+function fromHash(){const m=(location.hash||'').match(/^#(s[1-4]|c)(?:-(\d))?$/);
+  if(!m)return go(0,0,false);const s=ST.findIndex(x=>x.id===m[1]),i=Math.min((+m[2]||1)-1,ST[s].items.length-1);go(s,i,false);}
+fromHash();
+</script>
+</body>
+</html>
