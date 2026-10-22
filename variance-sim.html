@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>שונות וסטיית תקן</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Rubik:wght@500;700&display=swap">
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding:0}
+[hidden]:not([hidden=until-found i]){display:none!important}
+/* Layout: one screen. Title + controls on one row; right column = chart with a stat card under each class; left column = class B table with bars */
+:root{
+  /* track palette: navy #232752, deep blue #014165, cyan #00B0F0, yellow #F9C00C */
+  --bg:#F2F4F8; --surface:#FFFFFF; --ink:#232752; --muted:#3E4470; --line:#D5D8E6; --grid:#E8EAF2;
+  --a:#00B0F0; --a-line:#0096CF; --a-soft:#D6F2FD; --b:#F9C00C; --b-line:#D9A400; --b-soft:#FEF2CC;
+  --dot-stroke:#232752; --focus:#014165;
+  --display:"Rubik","Assistant",system-ui,sans-serif;
+  --body:"Assistant",system-ui,"Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13163A; --surface:#1C2050; --ink:#EEF0FA; --muted:#BFC3DE; --line:#33386A; --grid:#262B5C;
+  --a:#33C3F5; --a-line:#33C3F5; --a-soft:#0D3B55; --b:#F9C00C; --b-line:#F9C00C; --b-soft:#4A3D10;
+  --dot-stroke:#13163A; --focus:#33C3F5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13163A; --surface:#1C2050; --ink:#EEF0FA; --muted:#BFC3DE; --line:#33386A; --grid:#262B5C;
+  --a:#33C3F5; --a-line:#33C3F5; --a-soft:#0D3B55; --b:#F9C00C; --b-line:#F9C00C; --b-soft:#4A3D10;
+  --dot-stroke:#13163A; --focus:#33C3F5; color-scheme:dark}
+
+html{font-size:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.4}
+.wrap{max-width:88rem;margin:0 auto;padding-block:.8rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:.7rem;box-sizing:border-box}
+.num{direction:ltr;unicode-bidi:isolate;font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* site navigation and credit (same as the other pages) */
+.back{display:inline-block;font-size:.72rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:.15rem}
+.back:hover{color:var(--focus);text-decoration:underline}
+.credit{flex:none;font-size:.66rem;color:var(--muted)}
+.credit a{color:inherit}
+
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:.6rem 1.6rem}
+header > div:first-child{flex:1 1 22rem;min-width:0}
+h1{font-family:var(--display);font-weight:700;font-size:2.1rem;margin:0;line-height:1.1}
+.lede{margin:.2rem 0 0;color:var(--muted);font-size:1.05rem}
+.tag{font-weight:700;padding:0 .3em;border-radius:4px;color:var(--ink)}
+.tag.a{background:var(--a-soft);box-shadow:inset 0 -3px 0 var(--a)} .tag.b{background:var(--b-soft);box-shadow:inset 0 -3px 0 var(--b)}
+.controls{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem 1.4rem}
+.group{display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.lbl{font-size:.8rem;font-weight:600;letter-spacing:.02em;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:.95rem;border:0;background:transparent;color:var(--ink);padding:.4rem .85rem;cursor:pointer;border-inline-start:1px solid var(--line)}
+.seg button:first-child{border-inline-start:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:600}
+.seg button:hover:not([aria-pressed="true"]){background:var(--grid)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.slider{display:flex;align-items:center;gap:.6rem;height:2.1rem}
+.slider input{width:11rem;height:1.3rem;accent-color:var(--ink)}
+.slider .num{font-size:.95rem}
+
+.main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:.7rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.6rem .9rem;min-width:0}
+.left-col{display:flex;flex-direction:column;gap:.7rem;min-width:0}
+.chart-panel{display:flex;flex-direction:column}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:500;font-size:1.2rem;margin:0}
+.hint{font-size:.85rem;color:var(--muted)}
+.chip{font-size:.75rem;padding:.05rem .5rem;border-radius:99px;background:var(--b-soft);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1px var(--b-line)}
+#chart{display:block;width:100%;height:auto}
+svg text{font-family:var(--body);fill:var(--muted);font-size:18px}
+svg .tick{font-family:var(--mono);font-size:18px}
+svg .cls{font-family:var(--display);font-size:26px;font-weight:500}
+.hit{cursor:ns-resize;touch-action:none;fill:transparent}
+.hit:focus{outline:none}
+.hit:focus-visible + .dot{stroke:var(--ink);stroke-width:3}
+
+/* stat cards: one under each class, in the same order as the chart (class A on the right) */
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;display:flex;flex-direction:column;gap:.35rem;min-width:0}
+.card.a{border-top:6px solid var(--a)} .card.b{border-top:6px solid var(--b)}
+.card h3{margin:0;font-family:var(--display);font-weight:500;font-size:1.15rem}
+.card h3{color:var(--ink)}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem}
+.trio div{display:flex;flex-direction:column;min-width:0}
+.trio .k{font-size:.8rem;color:var(--muted)}
+.trio .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:1.45rem;direction:ltr;text-align:right;white-space:nowrap}
+.trio .u{font-size:.7rem;color:var(--muted)}
+
+/* class B table with bars */
+.table-panel{display:flex;flex-direction:column;gap:.4rem}
+.table-panel h2{color:var(--ink)}
+.tablewrap{overflow-x:auto}
+.dev{width:100%;border-collapse:collapse}
+.dev th{font-size:.8rem;font-weight:600;color:var(--muted);text-align:right;padding:.2rem .45rem;border-bottom:2px solid var(--line)}
+.dev td{padding:.2rem .45rem;border-bottom:1px solid var(--grid);font-size:.95rem}
+.dev td.n .sg{font-weight:700;font-size:1.2em;line-height:1}
+.dev td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.dev td.barcell{width:32%}
+.dev th bdi{white-space:nowrap}
+.sqbar{height:.65rem;border-radius:2px;background:var(--b);box-shadow:inset 0 0 0 1px var(--b-line)}
+.sqbar.over{border-inline-end:5px solid var(--ink)}
+.dev tfoot td{border-bottom:0;border-top:2px solid var(--line);font-weight:600}
+.note{font-size:.82rem;color:var(--muted);margin:0}
+
+/* board / projector: lock to one screen, scale type with the viewport */
+@media (min-width:1000px) and (min-height:520px){
+  html{font-size:clamp(14px,min(1.35vw,2.45vh),28px)}
+  html,body{height:100%}
+  .wrap{height:100%}
+  .main{flex:1 1 0;min-height:0}
+  .left-col{min-height:0}
+  .chart-panel{flex:1 1 0;min-height:0}
+  #chart{flex:1 1 0;min-height:0;height:100%}
+  .table-panel{overflow:auto}
+}
+@media (max-width:999px){.main{grid-template-columns:minmax(0,1fr)}.controls{flex:1 1 100%;min-width:0}.slider input{width:auto;flex:1 1 8rem;min-width:0}}
+@media (max-width:600px){.cards{grid-template-columns:minmax(0,1fr)}.trio .v{font-size:1.2rem}}
+</style>
+</head>
+<body>
+<div class="wrap" dir="rtl">
+  <header>
+    <div>
+      <a class="back" href="index.html">→ כל הסימולציות</a>
+      <h1>שונות וסטיית תקן</h1>
+      <p class="lede">10 תלמידים בכל כיתה. <b class="tag a">בכיתה יא1</b> כולם קיבלו 70. <b class="tag b">בכיתה יא2</b> הציונים מתפזרים. הממוצע זהה, אז מה שונה?</p>
+    </div>
+    <div class="controls">
+      <div class="group">
+        <span class="lbl">פיזור הציונים בכיתה יא2</span>
+        <div class="seg" id="presets">
+          <button data-p="two">שתי קבוצות</button>
+          <button data-p="even">פיזור אחיד</button>
+          <button data-p="outlier">תלמיד חריג</button>
+        </div>
+      </div>
+      <div class="group" id="gapGroup">
+        <label class="lbl" for="gap">מרחק מהממוצע</label>
+        <div class="slider">
+          <input id="gap" type="range" min="0" max="30" step="1" value="15">
+          <span class="num" id="gapTxt"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="left-col">
+      <section class="panel chart-panel">
+        <div class="chart-head">
+          <h2>ציוני התלמידים</h2>
+          <span class="hint">גררו נקודה של יא2 למעלה או למטה <span class="chip" id="custom" hidden>פיזור אישי</span></span>
+        </div>
+        <svg id="chart" viewBox="0 0 800 425" preserveAspectRatio="xMidYMid meet" role="img" aria-label="גרף פיזור ציונים לשתי הכיתות"></svg>
+      </section>
+      <div class="cards" aria-live="polite">
+        <div class="card a"><h3>יא1</h3><div class="trio" id="statsA"></div></div>
+        <div class="card b"><h3>יא2</h3><div class="trio" id="statsB"></div></div>
+      </div>
+    </div>
+
+    <section class="panel table-panel">
+      <h2><b class="tag b">יא2</b> שורה אחר שורה</h2>
+      <div class="tablewrap">
+        <table class="dev">
+          <thead><tr><th>תלמיד</th><th>ציון <bdi dir="ltr">x</bdi></th><th>סטייה <bdi dir="ltr">x − μ</bdi></th><th>סטייה בריבוע</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+          <tfoot id="foot"></tfoot>
+        </table>
+      </div>
+      <p class="note">סכום הסטיות מהממוצע הוא תמיד 0, ולכן מעלים כל סטייה בריבוע לפני הסיכום. השונות יוצאת ביחידות בריבוע (נקודות²), ושורש שלה מחזיר את סטיית התקן ליחידות של הציונים.</p>
+      <p class="note">באקסל: <span class="num">=VAR.P(…)</span> לשונות, <span class="num">=STDEV.P(…)</span> לסטיית התקן.</p>
+    </section>
+  </div>
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+
+<script>
+(function(){
+const N=10, A=Array(N).fill(70);
+let B=[], preset='two', gap=15;
+const presets={
+  two:()=>[...Array(5).fill(70-gap),...Array(5).fill(70+gap)],
+  even:()=>Array.from({length:N},(_,i)=>52+4*i),
+  outlier:()=>[...Array(9).fill(73),43]
+};
+const $=id=>document.getElementById(id);
+const f=(x,d)=>x.toFixed(d).replace('-','−');
+const fs=(x,d)=>(x>0?'+':'')+f(x,d);
+const sgn=d=>{const t=f(Math.abs(d),1);return d>0?`<span class="sg">+</span>${t}`:d<0?`<span class="sg">−</span>${t}`:t};
+const clean=x=>Math.abs(x)<1e-9?0:x;
+
+function stats(s){
+  const mean=s.reduce((a,b)=>a+b,0)/N;
+  const dev=s.map(x=>clean(x-mean)), sq=dev.map(d=>d*d);
+  const ss=sq.reduce((a,b)=>a+b,0), v=ss/N;
+  return {mean,dev,sq,ss,v,sd:Math.sqrt(v)};
+}
+
+/* ---------- chart ---------- */
+const svg=$('chart'), NS='http://www.w3.org/2000/svg';
+const top=36, plotH=338, x0=10, x1=742, cen={a:540,b:230}, step=26;
+const y=s=>top+(100-s)/100*plotH;
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
+for(let s=0;s<=100;s+=10){
+  el('line',{x1:x0,x2:x1,y1:y(s),y2:y(s),stroke:'var(--grid)','stroke-width':1});
+  el('text',{x:772,y:y(s)+6,'text-anchor':'middle',class:'tick'}).textContent=s;
+}
+el('text',{x:772,y:14,'text-anchor':'middle'}).textContent='ציון';
+const cls={};
+for(const k of ['a','b']){
+  const c=cen[k], col=`var(--${k})`, g=el('g',{});
+  const meanLine=el('line',{x1:c-140,x2:c+140,stroke:'var(--ink)','stroke-width':2.5,'stroke-dasharray':'8 6'},g);
+  const tagAttr={class:'tick',direction:'ltr',style:'fill:var(--ink);font-weight:600'};
+  const meanTag=el('text',Object.assign(k==='a'?{x:c+146,'text-anchor':'start'}:{x:c-146,'text-anchor':'end'},tagAttr),g);
+  const devs=[],dots=[],hits=[];
+  for(let i=0;i<N;i++){
+    const x=c-(i-4.5)*step;
+    devs.push(el('line',{x1:x,x2:x,stroke:`var(--${k}-line)`,'stroke-width':4,class:'devline'},g));
+  }
+  for(let i=0;i<N;i++){
+    const x=c-(i-4.5)*step;
+    if(k==='b'){
+      const h=el('circle',{cx:x,r:13,class:'hit',tabindex:0,role:'slider','aria-valuemin':0,'aria-valuemax':100,'aria-label':`תלמיד ${i+1} בכיתה יא2`},g);
+      bindDrag(h,i); hits.push(h);
+    }
+    dots.push(el('circle',{cx:x,r:11,fill:col,stroke:'var(--dot-stroke)','stroke-width':1.5,class:'dot','pointer-events':'none'},g));
+  }
+  el('circle',{cx:c+40,cy:405,r:9,fill:col,stroke:'var(--dot-stroke)','stroke-width':1.5},g);
+  el('text',{x:c-8,y:414,'text-anchor':'middle',class:'cls',style:'fill:var(--ink)'},g).textContent=k==='a'?'יא1':'יא2';
+  cls[k]={meanLine,meanTag,devs,dots,hits};
+}
+
+function setB(i,v){
+  v=Math.max(0,Math.min(100,Math.round(v)));
+  if(B[i]===v)return;
+  B[i]=v; preset='custom'; render();
+}
+function bindDrag(h,i){
+  const toScore=e=>{const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;
+    const q=p.matrixTransform(svg.getScreenCTM().inverse());return 100-(q.y-top)/plotH*100};
+  h.addEventListener('pointerdown',e=>{h.setPointerCapture(e.pointerId);h.dataset.drag=1;setB(i,toScore(e));e.preventDefault()});
+  h.addEventListener('pointermove',e=>{if(h.dataset.drag)setB(i,toScore(e))});
+  const end=()=>{delete h.dataset.drag};
+  h.addEventListener('pointerup',end);h.addEventListener('pointercancel',end);
+  h.addEventListener('keydown',e=>{
+    const d={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1,PageUp:5,PageDown:-5}[e.key];
+    if(d){setB(i,B[i]+d);e.preventDefault()}
+  });
+}
+
+/* ---------- render ---------- */
+function drawClass(k,s,st){
+  const c=cls[k];
+  c.meanLine.setAttribute('y1',y(st.mean));c.meanLine.setAttribute('y2',y(st.mean));
+  c.meanTag.setAttribute('y',y(st.mean)+6);c.meanTag.textContent=f(st.mean,1);
+  s.forEach((v,i)=>{
+    c.dots[i].setAttribute('cy',y(v));
+    c.devs[i].setAttribute('y1',y(v));c.devs[i].setAttribute('y2',y(st.mean));
+    if(c.hits[i]){c.hits[i].setAttribute('cy',y(v));c.hits[i].setAttribute('aria-valuenow',v)}
+  });
+}
+function trio(id,st){
+  $(id).innerHTML=`
+    <div><span class="k">ממוצע</span><span class="v">${f(st.mean,1)}</span><span class="u">נקודות</span></div>
+    <div><span class="k">שונות</span><span class="v">${f(st.v,2)}</span><span class="u">נקודות²</span></div>
+    <div><span class="k">סטיית תקן</span><span class="v">${f(st.sd,2)}</span><span class="u">נקודות</span></div>`;
+}
+function render(){
+  const sA=stats(A), sB=stats(B);
+  drawClass('a',A,sA); drawClass('b',B,sB);
+  trio('statsA',sA); trio('statsB',sB);
+
+  $('custom').hidden=preset!=='custom';
+  $('gapGroup').style.visibility=preset==='two'?'visible':'hidden';
+  $('gapTxt').textContent=`±${gap} (${70-gap}–${70+gap})`;
+  document.querySelectorAll('#presets button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===preset));
+
+  const SCALE=900; /* fixed: full bar = squared deviation of 30, so bars are comparable across settings */
+  $('rows').innerHTML=B.map((v,i)=>`<tr><td>${i+1}</td><td class="n">${v}</td><td class="n">${sgn(sB.dev[i])}</td>
+    <td class="n">${f(sB.sq[i],1)}</td><td class="barcell"><div class="sqbar${sB.sq[i]>SCALE?' over':''}" style="width:${Math.min(sB.sq[i]/SCALE,1)*100}%"></div></td></tr>`).join('');
+  const sum=a=>clean(a.reduce((x,y)=>x+y,0));
+  $('foot').innerHTML=`<tr><td>סכום</td><td class="n">${sum(B)}</td><td class="n">${f(sum(sB.dev),1)}</td><td class="n">${f(sB.ss,1)}</td><td></td></tr>`;
+}
+
+function applyPreset(p){preset=p;B=presets[p]();render()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('button');if(b)applyPreset(b.dataset.p)});
+$('gap').addEventListener('input',e=>{gap=+e.target.value;applyPreset('two')});
+applyPreset('two');
+})();
+</script>
+</body>
+</html>

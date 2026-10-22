@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>במה מחלקים?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --ink:#1B2540; --muted:#5B6680; --grid:#DCE5F1; --soft:#EEF2F8;
+  --accent:#2F5BD3; --good:#1E8E5A; --goodbg:#E3F4EA; --bad:#D64545; --badbg:#FBE6E6; --mid:#A7B1C6;
+  --warn:#E0891A; --warnbg:#FFF4E0; --star:#E8A317;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --soft:#222B3F;
+  --accent:#7C9BFF; --good:#4CC38A; --goodbg:#183A2A; --bad:#F07575; --badbg:#3E2026; --mid:#5D6884;
+  --warn:#F2A54B; --warnbg:#3A2E1A; --star:#F2C14E;}}
+:root[data-theme="dark"]{
+  --bg:#111726; --paper:#1A2233; --ink:#E6EBF5; --muted:#9AA6BF; --grid:#2A3550; --soft:#222B3F;
+  --accent:#7C9BFF; --good:#4CC38A; --goodbg:#183A2A; --bad:#F07575; --badbg:#3E2026; --mid:#5D6884;
+  --warn:#F2A54B; --warnbg:#3A2E1A; --star:#F2C14E;}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;font-size:16px;line-height:1.5}
+.app{max-width:1100px;margin:0 auto;padding:14px 14px 30px}
+.back{display:inline-block;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.back:hover{color:var(--accent);text-decoration:underline}
+h1{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:clamp(1.4rem,3.6vw,1.9rem);line-height:1.15;margin:0}
+.lead{margin:6px 0 14px;max-width:780px}
+.lead .how{color:var(--muted);font-size:.93rem;display:block;margin-top:4px}
+
+/* example picker */
+.path{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.st{font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--grid);border-radius:12px;padding:10px 8px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.st .n{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.st .t{font-weight:700;font-size:1.02rem;line-height:1.2}
+.st .q{font-size:.85rem;color:var(--muted);line-height:1.25}
+.st[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+.st[aria-current="true"] .n{background:var(--accent);color:var(--paper)}
+@media (max-width:760px){
+  .path{grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+  .path .st{grid-column:span 2}
+  .path .st:nth-child(4){grid-column:2/span 2}
+  .st .t{font-size:.95rem}.st .q{font-size:.78rem}
+}
+
+.panel{background:var(--paper);border:1px solid var(--grid);border-radius:14px;padding:14px 16px}
+.panel h2{font-family:"Secular One","Assistant",Arial,sans-serif;font-weight:400;font-size:1.3rem;margin:0 0 6px}
+.story{margin:0 0 10px}
+.claim{background:var(--paper);border:2px solid var(--star);border-radius:12px;padding:10px 14px;margin:0 0 12px;font-family:"Secular One","Assistant",Arial,sans-serif;font-size:1.2rem;line-height:1.3;text-align:center}
+.tip{font-size:1rem;font-weight:700;color:var(--ink);background:var(--warnbg);border-radius:10px;padding:8px 12px;margin:0 0 16px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px 10px}
+@media (max-width:520px){.tip{grid-template-columns:auto 1fr}.tip .sc{grid-column:2}}
+.tip i{font-style:normal;display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--warn);color:#1B2540;font-size:.95rem;font-weight:700;align-items:center;justify-content:center;border:2px solid var(--paper)}
+.tip .sc{font-weight:600;color:var(--muted);font-size:.9rem}
+
+/* raw | divide | normalized */
+.figwrap{position:relative;margin:4px 0 12px}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:12px;align-items:stretch}
+@media (max-width:760px){.duo{grid-template-columns:minmax(0,1fr)}}
+.blk{position:relative;background:var(--bg);border-radius:12px;padding:12px 14px}
+.blk h4{margin:0 0 2px;font-size:.98rem;padding-right:24px}
+.blk .unit{font-size:.85rem;color:var(--muted);margin:0 0 8px}
+.mid{display:flex;flex-direction:column;justify-content:center;gap:8px;text-align:center;background:var(--soft);border-radius:12px;padding:12px;position:relative}
+.mid .qq{font-weight:700;margin:0}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;font-weight:700;border:2px solid var(--accent);border-radius:10px;padding:6px 10px;background:var(--paper);color:var(--accent);cursor:pointer}
+.opts button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.opts button:disabled{cursor:default}
+.div{font:inherit;font-weight:700;font-size:1.02rem;border:0;border-radius:10px;padding:9px 10px;background:var(--warn);color:#1B2540;cursor:pointer}
+.div:disabled{background:var(--grid);color:var(--muted);cursor:not-allowed}
+.div.done{background:var(--goodbg);color:var(--good);cursor:default}
+.fb{min-height:4.4em;font-size:.93rem;font-weight:600;margin:0}
+.fb .again{font:inherit;font-size:.85rem;font-weight:600;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0}
+
+/* bars */
+.bars{display:flex;align-items:flex-end;justify-content:space-around;gap:10px;height:170px;border-bottom:2px solid var(--ink);padding:0 4px;direction:rtl}
+.bar{flex:1 1 0;max-width:90px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative}
+.bar .v{font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar i{display:block;width:100%;border-radius:6px 6px 0 0;background:var(--mid)}
+.bar.top1 i{background:var(--accent)}
+.bar.ph i{background:transparent;border:2px dashed var(--mid);border-bottom:0}
+.bar.ph .v{color:var(--muted)}
+.bar.small i{background:repeating-linear-gradient(135deg,var(--accent) 0 5px,var(--paper) 5px 9px)}
+.bar .tag{margin-bottom:2px;font-size:.72rem;font-weight:700;background:var(--goodbg);color:var(--good);border-radius:999px;padding:0 7px;white-space:nowrap}
+.labs{display:flex;justify-content:space-around;gap:10px;padding:4px 4px 0;direction:rtl}
+.labs span{flex:1 1 0;max-width:90px;text-align:center;font-size:.85rem;font-weight:700;line-height:1.2}
+.labs small{display:block;font-weight:600;color:var(--muted);font-size:.75rem}
+.after-line{margin-top:10px;font-weight:700}
+
+/* hotspots + balloon (same engine as the bias page) */
+.hs{position:absolute;top:-12px;right:-12px;z-index:35;width:36px;height:36px;border-radius:50%;border:3px solid var(--paper);background:var(--warn);color:#1B2540;font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.3);padding:0}
+.hs[hidden]{display:none!important}
+.hs::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:3px solid var(--warn);opacity:0;animation:pulse 1.6s infinite}
+.hs:hover{transform:scale(1.08)}
+.hs.seen{background:var(--mid);color:var(--ink)}
+.hs.seen::after{animation:none}
+.hs[aria-expanded="true"]{background:var(--accent);color:#fff}
+.hs[aria-expanded="true"]::after{animation:none}
+.hs.in{position:relative;top:auto;right:auto;display:inline-flex;vertical-align:middle;width:32px;height:32px;font-size:1rem;margin:0 4px}
+@keyframes pulse{0%{opacity:.8;transform:scale(.85)}70%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hs::after{animation:none}}
+.balloon{position:absolute;z-index:50;width:min(320px,calc(100% - 16px));background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px 11px 34px;font-size:.97rem;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.balloon[hidden]{display:none}
+.balloon::before{content:"";position:absolute;width:14px;height:14px;background:var(--ink);transform:rotate(45deg);left:var(--ax,50%);margin-left:-7px}
+.balloon.below::before{top:-6px}
+.balloon.above::before{bottom:-6px}
+.balloon.side::before{right:-6px;left:auto;top:var(--ay,20px);margin-left:0;margin-top:-7px}
+.balloon.side-r::before{left:-6px;top:var(--ay,20px);margin-left:0;margin-top:-7px}
+.balloon .x{position:absolute;top:6px;left:6px;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:var(--paper);font:inherit;font-size:1rem;cursor:pointer;opacity:.8}
+.balloon .x:hover{opacity:1;background:rgba(255,255,255,.12)}
+.balloon b{color:var(--star)}
+.balloon .nx{display:block;margin-top:8px;font:inherit;font-weight:700;font-size:.92rem;background:var(--warn);color:#1B2540;border:0;border-radius:8px;padding:4px 12px;cursor:pointer}
+
+.expl{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.expl{grid-template-columns:1fr 1fr}}
+.expl div{background:var(--soft);border-radius:10px;padding:10px 12px}
+.expl h5{margin:0 0 4px;font-size:.98rem}
+.expl p{margin:0}
+.expl[hidden]{display:none}
+
+.sum{margin-top:14px;background:var(--paper);border:1px solid var(--grid);border-radius:14px;padding:12px 16px}
+.sum h3{margin:0 0 6px;font-size:1.08rem}
+.sum ol{margin:0;padding-inline-start:20px;display:grid;gap:3px}
+.credit{flex:none;margin-top:12px;font-size:.82rem;color:var(--muted)}
+.credit a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="back" href="index.html">→ כל הסימולציות</a>
+  <h1>השוואה הוגנת: במה מחלקים?</h1>
+  <p class="lead">מספר גדול יותר לא תמיד אומר "יותר". כדי להשוות בהגינות, צריך לפעמים לחלק במשהו: במספר התלמידים, במשקל, בדקות או במספר התושבים. זה נקרא נרמול.
+    <span class="how">בחרו דוגמה. נחשו מי באמת מוביל, לחצו "חלקו", ואז לחצו על העיגולים הממוספרים כדי לפתוח הסברים.</span></p>
+
+  <nav class="path" id="path" aria-label="הדוגמאות"></nav>
+  <section class="panel" id="panel" aria-live="polite"></section>
+
+  <section class="sum" aria-labelledby="sumH">
+    <h3 id="sumH">שלוש שאלות לפני שמשווים</h3>
+    <ol>
+      <li><b>האם הקבוצות באותו גודל?</b> אם לא, משווים אחוזים, ממוצעים או קצב, ולא מספרים מוחלטים.</li>
+      <li><b>במה הוגן לחלק?</b> במספר האנשים, בזמן, בכמות או במספר הניסיונות. תלוי מה שואלים.</li>
+      <li><b>האם המכנה גדול מספיק?</b> כשמחלקים במספר קטן, מקרה אחד משנה את כל התמונה.</li>
+    </ol>
+  </section>
+
+  <!-- ===== קרדיט: ערכי את הטקסט בשורה הבאה ===== -->
+  <footer class="credit">פיתוח: <a href="mailto:yamit@yam-data.com">yamit@yam-data.com</a></footer>
+  <!-- ===== סוף קרדיט ===== -->
+</div>
+<script>
+const H=(k,after)=>`<button class="hs" data-k="${k}" aria-expanded="false" aria-label="הסבר ${k}"${after?' data-after="1"':''}>${k}</button>`;
+const Hin=(k,after)=>`<button class="hs in" data-k="${k}" aria-expanded="false" aria-label="הסבר ${k}"${after?' data-after="1"':''}>${k}</button>`;
+const fmt=(x,d)=>x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+/* ---------- the five examples ----------
+   raw: what the claim compares. norm: after dividing. lead = index of the leader. */
+const EX=[
+ {id:'n1',t:'נכשלים בכיתה',q:'אחוזים',title:'דוגמה 1: באיזו כיתה המצב גרוע יותר?',
+  story:'רכזת השכבה מסכמת את המבחן האחרון בשתי כיתות.',claim:'"ביא1 נכשלו 12 תלמידים, וביא2 רק 8. יא1 צריכה תגבור."',
+  cats:[['יא1','40 תלמידים'],['יא2','20 תלמידים']],
+  raw:{h:'מספר הנכשלים',unit:'תלמידים',v:[12,8],d:0,max:14},
+  norm:{h:'אחוז הנכשלים',unit:'מתוך כל תלמידי הכיתה',v:[30,40],d:0,max:50,suf:'%'},
+  qq:'באיזו כיתה המצב גרוע יותר?',div:'חלקו במספר התלמידים',win:'המצב גרוע יותר ביא2.',tag:'גרוע יותר',order:[1,0],
+  b:{1:'במספרים, ביא1 נכשלו יותר תלמידים: 12 לעומת 8.',
+     2:'אבל ביא1 יש 40 תלמידים, וביא2 רק 20. מחלקים את מספר הנכשלים במספר התלמידים: 12 מתוך 40 זה <b>30%</b>, ו-8 מתוך 20 זה <b>40%</b>.',
+     3:'באחוזים, ביא2 המצב גרוע יותר: 4 מכל 10 תלמידים נכשלו, לעומת 3 מכל 10 ביא1.'},
+  what:'השווינו אחוזים במקום מספרים: חילקנו את מספר הנכשלים במספר התלמידים בכל כיתה.',
+  ask:'האם הקבוצות באותו גודל? אם לא, מספרים מוחלטים לא מספרים את כל הסיפור.'},
+ {id:'n2',t:'מבצע בסופר',q:'מחיר ל-100 גרם',title:'דוגמה 2: איזה מארז זול יותר?',
+  story:'בסופר יש מבצע על פסטה. ליד המארז הענק עומד מארז רגיל של אותה פסטה.',claim:'"מבצע! מארז ענק, 1.5 ק"ג, רק 45 ₪"',
+  cats:[['מארז ענק','1.5 ק"ג'],['מארז רגיל','500 גרם']],
+  raw:{h:'מחיר לאריזה',unit:'בשקלים',v:[45,13.9],d:2,max:50,pre:'₪ '},
+  norm:{h:'מחיר ל-100 גרם',unit:'בשקלים',v:[3,2.78],d:2,max:3.5,pre:'₪ ',low:true},
+  qq:'איזה מארז זול יותר?',div:'חלקו במשקל (ל-100 גרם)',win:'המארז הרגיל זול יותר.',tag:'זול יותר',order:[0,1],
+  b:{1:'המארז הענק עולה יותר, אבל יש בו פי 3 יותר פסטה. מהמחיר לאריזה אי אפשר לדעת מה משתלם.',
+     2:'מחלקים את המחיר במשקל: 45 ₪ ל-1,500 גרם זה <b>3.00 ₪</b> ל-100 גרם. 13.90 ₪ ל-500 גרם זה <b>2.78 ₪</b> ל-100 גרם.',
+     3:'דווקא המארז הרגיל זול יותר. שלושה מארזים רגילים, 1.5 ק"ג בסך הכול, עולים 41.70 ₪ במקום 45 ₪.',
+     4:'בסופרמרקטים בישראל חייבים להציג על המדף גם את המחיר ליחידת מידה, למשל ל-100 גרם או לליטר. חפשו אותו בפעם הבאה שאתם בסופר.'},
+  extra:'ומה כתוב על המדף?',
+  what:'השווינו מחיר ליחידה: חילקנו את המחיר במשקל, כדי שנשווה אותה כמות פסטה.',
+  ask:'כמה עולה כל 100 גרם? "גדול יותר" לא אומר "משתלם יותר".'},
+ {id:'n3',t:'קלעים בכדורסל',q:'נקודות לדקה',title:'דוגמה 3: מי קולע טוב יותר?',
+  story:'אחרי המשחק המאמן מחליט מי יקבל יותר דקות במשחק הבא.',claim:'"השחקן הפותח קלע 20 נקודות, ושחקן הספסל רק 10."',
+  cats:[['השחקן הפותח','36 דקות'],['שחקן הספסל','12 דקות']],
+  raw:{h:'נקודות במשחק',unit:'נקודות',v:[20,10],d:0,max:24},
+  norm:{h:'נקודות לדקת משחק',unit:'נקודות',v:[20/36,10/12],d:2,max:1},
+  qq:'מי קולע טוב יותר?',div:'חלקו בדקות המשחק',win:'שחקן הספסל קולע יותר בכל דקה.',tag:'מוביל',order:[1,0],
+  b:{1:'במספר הנקודות, השחקן הפותח קלע פי 2: 20 לעומת 10.',
+     2:'אבל השחקן הפותח שיחק 36 דקות, ושחקן הספסל רק 12. נקודות לדקה: 20 חלקי 36 זה <b>0.56</b>, ו-10 חלקי 12 זה <b>0.83</b>.',
+     3:'בכל דקה על המגרש, שחקן הספסל קלע יותר. אילו שיחק 36 דקות באותו קצב, הוא היה קולע כ-30 נקודות.',
+     4:'אבל זה בתנאי שהקצב נשמר. אולי מול השחקנים הטובים של היריבה הוא היה קולע פחות. הנרמול נותן השוואה הוגנת יותר, לא תשובה סופית.'},
+  extra:'אז הוא בטוח טוב יותר?',
+  what:'השווינו קצב: חילקנו את הנקודות בדקות המשחק, כדי שלשניהם יהיה אותו "זמן".',
+  ask:'כמה זמן, או כמה הזדמנויות, היו לכל אחד?'},
+ {id:'n4',t:'בירת הפיצה',q:'לכל 10 אלף תושבים',title:'דוגמה 4: איפה הכי הרבה פיצריות?',
+  story:'כתבה בעיתון המקומי בודקת איפה בארץ הכי הרבה פיצריות.',claim:'"העיר הגדולה היא בירת הפיצה של ישראל: 120 פיצריות!"',
+  cats:[['עיר גדולה','480 אלף תושבים'],['עיר בינונית','90 אלף תושבים'],['יישוב קטן','2,000 תושבים']],
+  raw:{h:'מספר הפיצריות',unit:'פיצריות',v:[120,36,1],d:0,max:140},
+  norm:{h:'פיצריות לכל 10 אלף תושבים',unit:'פיצריות',v:[2.5,4,5],d:1,max:6,small:2},
+  qq:'איפה הכי הרבה פיצריות ביחס למספר התושבים?',div:'חלקו במספר התושבים (לכל 10 אלף)',win:'היישוב הקטן מוביל. אבל אל תמהרו להאמין: פתחו את הסבר 4.',tag:'מוביל',order:[2,0,1],
+  b:{1:'בעיר הגדולה יש הכי הרבה פיצריות, אבל יש בה גם הכי הרבה תושבים.',
+     2:'מחלקים במספר התושבים, לכל 10 אלף תושבים. עיר גדולה: 120 פיצריות ל-480 אלף תושבים, כלומר <b>2.5</b>. עיר בינונית: 36 ל-90 אלף, כלומר <b>4.0</b>. יישוב קטן: פיצרייה אחת ל-2,000 תושבים, כלומר <b>5.0</b>.',
+     3:'למה דווקא 10 אלף? בוחרים מכנה שנותן מספרים נוחים לקריאה. לכל 100 אלף תושבים היינו מקבלים 25, 40 ו-50. זה אותו דירוג בדיוק.',
+     4:'היישוב הקטן "ניצח", אבל רק בזכות פיצרייה אחת. אם תיפתח בו עוד אחת, הוא יקפוץ ל-10. אם היא תיסגר, הוא ירד ל-0. כשהמכנה קטן, מקרה בודד משנה הכול, ולכן לא כדאי לסמוך על התוצאה.'},
+  what:'השווינו לפי גודל האוכלוסייה: חילקנו את מספר הפיצריות במספר התושבים.',
+  ask:'לכמה אנשים זה מתחלק? והאם המכנה גדול מספיק כדי לסמוך על התוצאה?'},
+ {id:'n5',t:'קונים מהטלפון',q:'אחוז המרה',title:'דוגמה 5: מאיזה מכשיר קונים יותר?',
+  story:'מנהלת חנות אונליין מסתכלת בדוח החודשי ומציעה להפסיק להשקיע בגרסת המחשב של האתר.',claim:'"80% מהרכישות נעשו מהטלפון. נשקיע רק במובייל!"',
+  cats:[['טלפון','9,000 מבקרים'],['מחשב','1,000 מבקרים']],
+  raw:{h:'מספר הרכישות',unit:'רכישות',v:[360,90],d:0,max:420},
+  norm:{h:'אחוז המרה',unit:'מבקרים שקנו, מתוך כל המבקרים',v:[4,9],d:0,max:11,suf:'%'},
+  qq:'מאיזה מכשיר מבקר באתר קונה יותר?',div:'חלקו במספר המבקרים',win:'מבקר שמגיע מהמחשב קונה יותר.',tag:'מוביל',order:[0,1],
+  b:{1:'נכון: 360 מתוך 450 הרכישות, כלומר 80%, נעשו מהטלפון.',
+     2:'אבל מהטלפון הגיעו 9,000 מבקרים, ומהמחשב רק 1,000. מחלקים את הרכישות במספר המבקרים: 360 מתוך 9,000 זה <b>4%</b>, ו-90 מתוך 1,000 זה <b>9%</b>. בעולם הנתונים זה נקרא <b>אחוז המרה</b>.',
+     3:'מבקר שמגיע מהמחשב קונה בסיכוי של יותר מפי 2. אם המנהלת תפסיק להשקיע במחשב, היא עלולה לאבד דווקא את המבקרים שהכי סביר שיקנו.',
+     4:'רוב הרכישות מהטלפון פשוט כי רוב המבקרים מגיעים מהטלפון (90%). השאלה הנכונה היא לא "מאיפה רוב הרכישות?", אלא "מאיזה מכשיר מבקר קונה יותר?".'},
+  extra:'אז למה 80% מהרכישות מהטלפון?',
+  what:'השווינו אחוז בתוך כל קבוצה: חילקנו את מספר הרכישות במספר המבקרים מכל מכשיר.',
+  ask:'"רוב ה-X הם Y". אולי פשוט רוב האנשים בכלל הם Y?'}
+];
+
+/* ---------- rendering ---------- */
+const $=id=>document.getElementById(id);
+let cur=0;const ST=EX.map(()=>({pick:null,shown:false})),seen=EX.map(()=>new Set());
+$('path').innerHTML=EX.map((e,k)=>`<button class="st" data-s="${k}"><span class="n">${k+1}</span><span class="t">${e.t}</span><span class="q">${e.q}</span></button>`).join('');
+document.querySelectorAll('.st').forEach(b=>b.onclick=()=>go(+b.dataset.s,true));
+
+function bars(E,which,shown){
+  const S=E[which],isN=which==='norm';let lead=0;
+  S.v.forEach((v,i)=>{if(S.low?v<S.v[lead]:v>S.v[lead])lead=i;});
+  const cols=S.v.map((v,i)=>{
+    const ph=isN&&!shown,h=ph?[40,52,64][i%3]:Math.max(2,v/S.max*70);
+    const txt=ph?'?':(S.pre||'')+fmt(v,S.d)+(S.suf||'');
+    const cls=['bar',ph?'ph':'',isN&&!ph&&i===lead?'top1':'',!ph&&isN&&S.small===i?'small':''].join(' ');
+    const tag=`<span class="tag"${isN&&!ph&&i===lead?'':' style="visibility:hidden"'}>${E.tag}</span>`;
+    const hs4=isN&&S.small===i?`<span style="position:absolute;bottom:4px">${Hin(4,true)}</span>`:'';
+    return `<div class="${cls}">${tag}<span class="v">${txt}</span><i style="height:${h}%"></i>${hs4}</div>`;}).join('');
+  const labs=E.cats.map(([a,b])=>`<span>${a}<small>${b}</small></span>`).join('');
+  return `<div class="bars" role="img" aria-label="${S.h}: ${shown||!isN?E.cats.map((c,i)=>c[0]+' '+fmt(S.v[i],S.d)+(S.suf||'')).join(', '):'עוד לא חושב'}">${cols}</div><div class="labs">${labs}</div>`;
+}
+function go(i,push){
+  cur=i;closeB();const E=EX[i],s=ST[i];
+  document.querySelectorAll('.st').forEach(b=>b.setAttribute('aria-current',+b.dataset.s===i));
+  const opts=E.order.map(k=>`<button data-o="${k}" aria-pressed="${s.pick===k}"${s.shown?' disabled':''}>${E.cats[k][0]}</button>`).join('');
+  let lead=0;E.norm.v.forEach((v,k)=>{if(E.norm.low?v<E.norm.v[lead]:v>E.norm.v[lead])lead=k;});
+  const fb=s.shown?`<b>${s.pick===lead?'צדקתם!':'הפתעה?'}</b> ${E.win} <button class="again" id="again">לנחש שוב</button>`:(s.pick===null?'בחרו תשובה, ואז חלקו.':'עכשיו לחצו "חלקו".');
+  $('panel').innerHTML=`<h2>${E.title}</h2><p class="story">${E.story}</p><div class="claim">${E.claim}</div>
+    <p class="tip"><i>1</i><span id="tipt">${s.shown?'לחצו על העיגולים הכתומים באיור, לפי הסדר.':'נחשו את התשובה, לחצו "חלקו", ואז פתחו את ההסברים.'}</span><span class="sc" id="sc"></span></p>
+    <div class="figwrap" id="fw">
+      <div class="duo">
+        <div class="blk">${H(1)}<h4>לפני החלוקה: ${E.raw.h}</h4><p class="unit">${E.raw.unit}</p>${bars(E,'raw',true)}</div>
+        <div class="mid">${H(2,true)}<p class="qq">${E.qq}</p><div class="opts">${opts}</div>
+          <button class="div${s.shown?' done':''}" id="div"${s.pick===null||s.shown?' disabled':''}>${s.shown?'חילקנו ✓':'÷ '+E.div}</button>
+          <p class="fb">${fb}</p></div>
+        <div class="blk">${H(3,true)}<h4>אחרי החלוקה: ${E.norm.h}</h4><p class="unit">${E.norm.unit}</p>${bars(E,'norm',s.shown)}</div>
+      </div>
+      ${E.extra?`<div class="after-line" data-afterline="1">${E.extra} ${Hin(4,true)}</div>`:''}
+      <div class="balloon" id="bl" role="dialog" aria-modal="false" hidden><button class="x" aria-label="סגירה">✕</button><div id="blt"></div></div>
+    </div>
+    <div class="expl" id="expl"${s.shown?'':' hidden'}><div><h5>מה עשינו?</h5><p>${E.what}</p></div><div><h5>השאלה לשאול</h5><p>${E.ask}</p></div></div>`;
+  // hotspots that explain the result appear only after dividing
+  $('fw').querySelectorAll('.hs[data-after]').forEach(h=>h.hidden=!s.shown);
+  const al=$('fw').querySelector('[data-afterline]');if(al)al.style.visibility=s.shown?'visible':'hidden';
+  $('fw').querySelectorAll('.hs').forEach(h=>{if(seen[i].has(h.dataset.k))h.classList.add('seen');h.onclick=e=>{e.stopPropagation();openB(h);};});
+  $('panel').querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{s.pick=+b.dataset.o;go(i,false);});
+  $('div').onclick=()=>{if(s.pick===null)return;s.shown=true;go(i,false);};
+  const ag=$('again');if(ag)ag.onclick=()=>{s.pick=null;s.shown=false;seen[i].clear();go(i,false);};
+  $('bl').querySelector('.x').onclick=closeB;
+  count();
+  if(push){try{history.replaceState(null,'','#'+E.id);}catch(e){}}
+}
+const visHs=()=>[...$('fw').querySelectorAll('.hs')].filter(h=>!h.hidden);
+function count(){$('sc').textContent=`פתחתם ${[...seen[cur]].filter(k=>visHs().some(h=>h.dataset.k===k)).length} מתוך ${visHs().length}`;}
+let openK=null;
+function openB(h){
+  const k=h.dataset.k,it=EX[cur],bl=$('bl'),fw=$('fw');
+  if(openK===k&&!bl.hidden){closeB();return;}
+  document.querySelectorAll('.hs[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));
+  h.setAttribute('aria-expanded','true');h.classList.add('seen');openK=k;
+  seen[cur].add(k);count();
+  const nk=+k+1,nxt=visHs().find(x=>+x.dataset.k===nk);
+  $('blt').innerHTML=it.b[k]+(nxt?`<button class="nx">להסבר ${nk} ←</button>`:'');bl.hidden=false;
+  const nxb=$('blt').querySelector('.nx');if(nxb)nxb.onclick=e=>{e.stopPropagation();nxt.scrollIntoView({block:'nearest'});openB(nxt);};
+  const fr=fw.getBoundingClientRect(),hr=h.getBoundingClientRect(),bw=bl.offsetWidth,bh=bl.offsetHeight;
+  const cx=hr.left+hr.width/2-fr.left;
+  let left=Math.max(8,Math.min(fr.width-bw-8,cx-bw/2));
+  const cy=hr.top+hr.height/2-fr.top,cxl=hr.left-fr.left,cxr=hr.right-fr.left,ht=hr.top-fr.top,hb=hr.bottom-fr.top;
+  const others=visHs().filter(x=>x!==h).map(x=>{const r=x.getBoundingClientRect();return [r.left-fr.left-6,r.top-fr.top-6,r.right-fr.left+6,r.bottom-fr.top+6];});
+  const W=fr.width,pageTop=-(fr.top+scrollY)+4;
+  // candidate positions: [mode, left, top]; the first one that covers no other hotspot wins
+  const xs=[cx-bw/2,cxr-bw+8,cxl-8],cand=[];
+  xs.forEach(x=>cand.push(['below',x,hb+10]));
+  xs.forEach(x=>cand.push(['above',x,ht-10-bh]));
+  [cy-22,cy-bh+22,cy-bh/2].forEach(t=>{cand.push(['side',cxl-12-bw,t]);cand.push(['side-r',cxr+12,t]);});
+  let best=null;
+  cand.forEach(([m,l,t],i)=>{
+    if(m==='below'||m==='above')l=Math.max(4,Math.min(W-bw-4,l));
+    if(l<4||l+bw>W-4||t<pageTop)return;
+    const hit=others.filter(([x1,y1,x2,y2])=>x2>l&&x1<l+bw&&y2>t&&y1<t+bh).length;
+    const sc=hit*1000+i;
+    if(!best||sc<best.sc)best={m,l,t,sc};});
+  if(!best)best={m:'below',l:Math.max(4,Math.min(W-bw-4,cx-bw/2)),t:hb+10};
+  const mode=best.m;left=best.l;const top=best.t;
+  if(mode==='side'||mode==='side-r')bl.style.setProperty('--ay',Math.max(14,Math.min(bh-14,cy-top))+'px');
+  else bl.style.setProperty('--ax',Math.max(16,Math.min(bw-16,cx-left))+'px');
+  ['side','side-r','above','below'].forEach(c=>bl.classList.toggle(c,c===mode));
+  bl.style.left=left+'px';bl.style.top=top+'px';
+  const br=bl.getBoundingClientRect();
+  if(br.bottom>innerHeight||br.top<0)bl.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function closeB(){const bl=$('bl');if(bl)bl.hidden=true;openK=null;document.querySelectorAll('.hs[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));}
+document.addEventListener('click',e=>{const bl=$('bl');if(bl&&!bl.hidden&&!bl.contains(e.target))closeB();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeB();});
+addEventListener('resize',closeB);
+
+/* direct links: #n1 .. #n5 */
+const m=(location.hash||'').match(/^#n([1-5])$/);go(m?+m[1]-1:0,false);
+</script>
+</body>
+</html>
